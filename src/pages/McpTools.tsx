@@ -10,6 +10,7 @@ const TOOL_CATEGORIES = [
   { label: 'Communication', tools: ['send_email', 'reply_to_email', 'list_email_threads', 'get_email_thread', 'list_email_logs', 'send_sms', 'list_sms_conversations', 'get_sms_conversation', 'get_sms_messages', 'initiate_voice_call', 'list_phone_call_logs', 'list_phone_numbers'] },
   { label: 'Documents & Forms', tools: ['list_document_templates', 'get_document_template', 'create_document_template', 'update_document_template', 'delete_document_template', 'duplicate_document_template', 'add_document_section', 'update_document_section', 'delete_document_section', 'reorder_document_sections', 'list_form_templates', 'get_form_template', 'create_form_template', 'send_form', 'send_for_signing', 'list_signing_envelopes'] },
   { label: 'Tasks & Work Orders', tools: ['list_tasks', 'get_task', 'create_task', 'update_task', 'delete_task', 'complete_task', 'list_work_orders', 'get_work_order', 'create_work_order', 'update_work_order', 'delete_work_order'] },
+  { label: 'AI', tools: ['ai_enrich', 'ai_edit_text', 'ai_deal_probability', 'ai_call_coaching', 'ai_generate_pipeline'] },
   { label: 'Admin', tools: ['get_company', 'update_company', 'list_company_users', 'invite_user', 'update_user_role', 'remove_user', 'get_crm_settings', 'update_crm_settings', 'get_billing_plan', 'get_credit_balance'] },
 ];
 

@@ -21,7 +21,7 @@ function ResourcePage() {
         <p className="text-gray-500 mb-6">
           The API resource "{resource}" does not exist.
         </p>
-        <Link to="/api" className="text-blue-600 hover:underline">
+        <Link to="/api" className="text-teal-600 hover:underline">
           Back to API Reference
         </Link>
       </div>
@@ -64,7 +64,7 @@ function ResourcePage() {
         {/* Resource header */}
         <div className="mb-8">
           <div className="flex items-center gap-2 text-sm text-gray-500 mb-2">
-            <Link to="/api" className="hover:text-blue-600 transition-colors">API Reference</Link>
+            <Link to="/api" className="hover:text-teal-600 transition-colors">API Reference</Link>
             <span>/</span>
             <span className="text-gray-900 font-medium">{group.label}</span>
           </div>

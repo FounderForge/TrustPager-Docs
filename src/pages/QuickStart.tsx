@@ -19,7 +19,7 @@ function QuickStart() {
         {/* Step 1 */}
         <div className="mb-10">
           <div className="flex items-center gap-3 mb-4">
-            <span className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-700 text-sm font-bold">1</span>
+            <span className="flex items-center justify-center w-8 h-8 rounded-full bg-teal-100 text-teal-700 text-sm font-bold">1</span>
             <h2 className="text-xl font-semibold text-gray-900">Get your API Key</h2>
           </div>
           <p className="text-gray-600 mb-4">
@@ -28,7 +28,7 @@ function QuickStart() {
               href="https://app.trustpager.com/admin/company-management"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-blue-600 hover:underline font-medium"
+              className="text-teal-600 hover:underline font-medium"
             >
               Settings &rarr; API Keys
             </a>
@@ -43,7 +43,7 @@ function QuickStart() {
         {/* Step 2 */}
         <div className="mb-10">
           <div className="flex items-center gap-3 mb-4">
-            <span className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-700 text-sm font-bold">2</span>
+            <span className="flex items-center justify-center w-8 h-8 rounded-full bg-teal-100 text-teal-700 text-sm font-bold">2</span>
             <h2 className="text-xl font-semibold text-gray-900">Make your first request</h2>
           </div>
           <p className="text-gray-600 mb-4">
@@ -61,7 +61,7 @@ function QuickStart() {
         {/* Step 3 */}
         <div className="mb-10">
           <div className="flex items-center gap-3 mb-4">
-            <span className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-700 text-sm font-bold">3</span>
+            <span className="flex items-center justify-center w-8 h-8 rounded-full bg-teal-100 text-teal-700 text-sm font-bold">3</span>
             <h2 className="text-xl font-semibold text-gray-900">Create a contact</h2>
           </div>
           <p className="text-gray-600 mb-4">
@@ -87,26 +87,26 @@ function QuickStart() {
         {/* Step 4 */}
         <div className="mb-10">
           <div className="flex items-center gap-3 mb-4">
-            <span className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-700 text-sm font-bold">4</span>
+            <span className="flex items-center justify-center w-8 h-8 rounded-full bg-teal-100 text-teal-700 text-sm font-bold">4</span>
             <h2 className="text-xl font-semibold text-gray-900">Explore further</h2>
           </div>
           <p className="text-gray-600 mb-4">
             The API supports 30+ resource types. Here are the most common next steps:
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <Link to="/api/deals" className="bg-white border border-gray-200 rounded-lg p-4 hover:border-blue-300 transition-colors">
+            <Link to="/api/deals" className="bg-white border border-gray-200 rounded-lg p-4 hover:border-teal-300 transition-colors">
               <h4 className="font-medium text-gray-900 mb-1">Deals</h4>
               <p className="text-xs text-gray-500">Create and manage sales opportunities</p>
             </Link>
-            <Link to="/api/automations" className="bg-white border border-gray-200 rounded-lg p-4 hover:border-blue-300 transition-colors">
+            <Link to="/api/automations" className="bg-white border border-gray-200 rounded-lg p-4 hover:border-teal-300 transition-colors">
               <h4 className="font-medium text-gray-900 mb-1">Automations</h4>
               <p className="text-xs text-gray-500">Set up workflow automations</p>
             </Link>
-            <Link to="/api/email" className="bg-white border border-gray-200 rounded-lg p-4 hover:border-blue-300 transition-colors">
+            <Link to="/api/email" className="bg-white border border-gray-200 rounded-lg p-4 hover:border-teal-300 transition-colors">
               <h4 className="font-medium text-gray-900 mb-1">Email</h4>
               <p className="text-xs text-gray-500">Send emails and manage threads</p>
             </Link>
-            <Link to="/authentication" className="bg-white border border-gray-200 rounded-lg p-4 hover:border-blue-300 transition-colors">
+            <Link to="/authentication" className="bg-white border border-gray-200 rounded-lg p-4 hover:border-teal-300 transition-colors">
               <h4 className="font-medium text-gray-900 mb-1">Authentication</h4>
               <p className="text-xs text-gray-500">Learn about API keys, OAuth, and scopes</p>
             </Link>

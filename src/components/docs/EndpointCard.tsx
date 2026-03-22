@@ -58,7 +58,7 @@ export function EndpointCard({
             {scopes.map(scope => (
               <span
                 key={scope}
-                className="inline-flex px-2 py-0.5 text-xs font-medium bg-purple-50 text-purple-700 rounded-md border border-purple-100"
+                className="inline-flex px-2 py-0.5 text-xs font-medium bg-emerald-50 text-emerald-700 rounded-md border border-emerald-100"
               >
                 {scope}
               </span>

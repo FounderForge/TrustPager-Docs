@@ -20,7 +20,7 @@ export function Navbar() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2 font-bold text-xl text-gray-900">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: 'linear-gradient(to right, #29c6c6, #47a3d9)' }}>
               <Code2 className="w-5 h-5 text-white" />
             </div>
             <span>TrustPager</span>
@@ -38,7 +38,7 @@ export function Navbar() {
                   className={cn(
                     'flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
                     isActive
-                      ? 'bg-blue-50 text-blue-700'
+                      ? 'bg-teal-50 text-teal-700'
                       : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
                   )}
                 >
@@ -55,7 +55,8 @@ export function Navbar() {
               href="https://app.trustpager.com/admin/company-management"
               target="_blank"
               rel="noopener noreferrer"
-              className="hidden sm:inline-flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white text-sm font-medium rounded-lg hover:opacity-90 transition-opacity"
+              className="hidden sm:inline-flex items-center gap-1.5 px-4 py-2 text-white text-sm font-medium rounded-lg hover:opacity-90 transition-opacity"
+              style={{ background: 'linear-gradient(to right, #29c6c6, #47a3d9)' }}
             >
               <Key className="w-4 h-4" />
               Get API Key
@@ -83,7 +84,7 @@ export function Navbar() {
                   className={cn(
                     'flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors',
                     isActive
-                      ? 'bg-blue-50 text-blue-700'
+                      ? 'bg-teal-50 text-teal-700'
                       : 'text-gray-600 hover:bg-gray-50'
                   )}
                 >
@@ -96,7 +97,7 @@ export function Navbar() {
               href="https://app.trustpager.com/admin/company-management"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-2 px-3 py-2.5 mt-2 bg-blue-50 text-blue-700 text-sm font-medium rounded-lg"
+              className="flex items-center gap-2 px-3 py-2.5 mt-2 bg-teal-50 text-teal-700 text-sm font-medium rounded-lg"
             >
               <Key className="w-4 h-4" />
               Get API Key

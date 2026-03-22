@@ -24,9 +24,9 @@ function McpSetup() {
             external tools and data sources. TrustPager's MCP server exposes your CRM as a set of typed tools
             that AI agents can call directly.
           </p>
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm text-blue-800">
+          <div className="bg-teal-50 border border-teal-200 rounded-lg p-4 text-sm text-teal-800">
             <strong>npm package:</strong>{' '}
-            <code className="bg-blue-100 px-1 py-0.5 rounded">@trustpager/mcp-server</code>
+            <code className="bg-teal-100 px-1 py-0.5 rounded">@trustpager/mcp-server</code>
           </div>
         </section>
 

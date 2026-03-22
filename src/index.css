@@ -2,12 +2,16 @@
 @plugin "@tailwindcss/typography";
 
 :root {
-  --theme-primary: #2b9cfd;
-  --theme-secondary: #d644fd;
-  --theme-accent: #8B5CF6;
-  --brand-blue: #2b9cfd;
-  --brand-pink: #d644fd;
-  --brand-purple: #8B5CF6;
+  --tp-primary: #29c6c6;
+  --tp-secondary: #2db87d;
+  --tp-accent: #47a3d9;
+  --tp-primary-dark: #1a8a8a;
+  --tp-secondary-dark: #1a7a5a;
+  --tp-accent-dark: #2a6a9a;
+  --gradient-hero: linear-gradient(135deg, #29c6c6 0%, #2db87d 50%, #47a3d9 100%);
+  --gradient-primary: linear-gradient(to right, #29c6c6, #47a3d9);
+  --gradient-button: linear-gradient(to right, #29c6c6, #47a3d9);
+  --gradient-dark: linear-gradient(to right, #1a8a8a, #1a7a5a, #2a6a9a);
 }
 
 body {
@@ -32,13 +36,4 @@ html {
 pre code {
   font-size: 13px !important;
   line-height: 1.6 !important;
-}
-
-/* Scrollbar styling */
-.docs-sidebar::-webkit-scrollbar {
-  width: 4px;
-}
-.docs-sidebar::-webkit-scrollbar-thumb {
-  background-color: #d1d5db;
-  border-radius: 2px;
 }

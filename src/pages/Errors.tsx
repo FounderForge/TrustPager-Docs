@@ -63,7 +63,7 @@ function Errors() {
                   <code className="text-sm font-mono font-medium text-gray-900">{err.code}</code>
                 </div>
                 <p className="text-sm text-gray-600 mb-2">{err.description}</p>
-                <p className="text-sm text-blue-700 bg-blue-50 px-3 py-1.5 rounded">
+                <p className="text-sm text-teal-700 bg-teal-50 px-3 py-1.5 rounded">
                   <strong>Fix:</strong> {err.fix}
                 </p>
               </div>

@@ -54,10 +54,10 @@ function ApiHub() {
                     <Link
                       key={resource.id}
                       to={`/api/${resource.id}`}
-                      className="group bg-white rounded-lg border border-gray-200 p-4 hover:border-blue-300 hover:shadow-sm transition-all"
+                      className="group bg-white rounded-lg border border-gray-200 p-4 hover:border-teal-300 hover:shadow-sm transition-all"
                     >
                       <div className="flex items-center justify-between mb-1">
-                        <h3 className="font-medium text-gray-900 group-hover:text-blue-600 transition-colors">
+                        <h3 className="font-medium text-gray-900 group-hover:text-teal-600 transition-colors">
                           {resource.label}
                         </h3>
                         <span className="text-xs text-gray-400 bg-gray-50 px-2 py-0.5 rounded-full">

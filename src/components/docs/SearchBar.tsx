@@ -42,7 +42,7 @@ export function SearchBar({ onSearch, placeholder = 'Search documentation...' }:
         className={cn(
           'w-full pl-11 pr-10 py-3 rounded-xl border border-gray-200 shadow-sm',
           'text-sm text-gray-900 placeholder:text-gray-400',
-          'focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-400',
+          'focus:outline-none focus:ring-2 focus:ring-teal-500/20 focus:border-teal-400',
           'transition-shadow'
         )}
       />

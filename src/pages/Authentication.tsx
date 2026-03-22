@@ -28,7 +28,7 @@ function Authentication() {
   -H "Authorization: Bearer tp_live_abc123..."`}
           />
 
-          <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm text-blue-800">
+          <div className="mt-6 bg-teal-50 border border-teal-200 rounded-lg p-4 text-sm text-teal-800">
             <strong>Rate limits:</strong> Default 60 requests per minute, 10,000 per day. Higher limits available on Business and Enterprise plans.
           </div>
         </section>

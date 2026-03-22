@@ -114,9 +114,9 @@ function McpExamples() {
             <h2 className="text-xl font-semibold text-gray-900 mb-2">{example.title}</h2>
             <p className="text-gray-600 mb-4">{example.description}</p>
 
-            <div className="bg-purple-50 border border-purple-200 rounded-lg p-4 mb-4">
-              <p className="text-sm text-purple-800 font-medium">User prompt:</p>
-              <p className="text-sm text-purple-900 mt-1 italic">{example.prompt}</p>
+            <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4 mb-4">
+              <p className="text-sm text-emerald-800 font-medium">User prompt:</p>
+              <p className="text-sm text-emerald-900 mt-1 italic">{example.prompt}</p>
             </div>
 
             <CodeBlock

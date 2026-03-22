@@ -8,9 +8,7 @@ const FOOTER_LINKS = [
 ];
 
 const EXTERNAL_LINKS = [
-  { label: 'TrustPager', href: 'https://trustpager.com' },
-  { label: 'Status', href: 'https://status.trustpager.com' },
-  { label: 'GitHub', href: 'https://github.com/AICrafterZheng/TrustPager-MCP' },
+  { label: 'TrustPager Platform', href: 'https://trustpager.com' },
 ];
 
 export function Footer() {
@@ -60,10 +58,18 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-8 pt-6 border-t border-gray-200 text-center">
+        <div className="mt-8 pt-6 border-t border-gray-200 flex items-center justify-between">
           <p className="text-sm text-gray-400">
             &copy; 2026 FinalPiece AI. All rights reserved.
           </p>
+          <a
+            href="https://finalpiece.ai"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm text-gray-400 hover:text-gray-600 transition-colors"
+          >
+            Built by FinalPiece
+          </a>
         </div>
       </div>
     </footer>
