@@ -168,7 +168,14 @@ const TOOL_CATEGORIES = [
     label: 'Event Queues',
     tools: [
       'list_event_queues', 'get_event_queue', 'create_event_queue', 'update_event_queue', 'delete_event_queue',
-      'add_event_queue_step', 'update_event_queue_step', 'delete_event_queue_step',
+      'add_event_queue_step', 'update_event_queue_step', 'delete_event_queue_step', 'list_event_queue_enrollments',
+    ],
+  },
+  {
+    label: 'Scheduled Event Types',
+    tools: [
+      'list_scheduled_event_types', 'get_scheduled_event_type',
+      'create_scheduled_event_type', 'update_scheduled_event_type', 'delete_scheduled_event_type',
     ],
   },
   {
