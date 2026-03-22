@@ -580,6 +580,67 @@ const DEALS: ResourceGroup = {
       ],
     },
     {
+      method: 'POST',
+      path: '/deals/:id/products/reorder',
+      description: 'Reorder products on a deal by providing an ordered array of deal product IDs.',
+      scopes: ['deals:write'],
+      isWrite: true,
+      params: [
+        { name: 'id', type: 'uuid', required: true, description: 'Deal ID', in: 'path' },
+        { name: 'product_ids', type: 'string[]', required: true, description: 'Ordered array of deal product UUIDs', in: 'body' },
+      ],
+    },
+    {
+      method: 'GET',
+      path: '/deals/:id/product-costs/:dealProductId',
+      description: 'List costs for a deal product.',
+      scopes: ['deals:read'],
+      isWrite: false,
+      params: [
+        { name: 'id', type: 'uuid', required: true, description: 'Deal ID', in: 'path' },
+        { name: 'dealProductId', type: 'uuid', required: true, description: 'Deal product ID', in: 'path' },
+      ],
+    },
+    {
+      method: 'POST',
+      path: '/deals/:id/product-costs/:dealProductId',
+      description: 'Create a cost entry for a deal product.',
+      scopes: ['deals:write'],
+      isWrite: true,
+      params: [
+        { name: 'id', type: 'uuid', required: true, description: 'Deal ID', in: 'path' },
+        { name: 'dealProductId', type: 'uuid', required: true, description: 'Deal product ID', in: 'path' },
+        { name: 'label', type: 'string', required: false, description: 'Cost label', in: 'body' },
+        { name: 'unit_cost', type: 'number', required: false, description: 'Unit cost amount', in: 'body' },
+        { name: 'quantity', type: 'number', required: false, description: 'Quantity', in: 'body' },
+        { name: 'currency', type: 'string', required: false, description: 'Currency code', in: 'body' },
+        { name: 'supplier_id', type: 'uuid', required: false, description: 'Supplier customer ID', in: 'body' },
+        { name: 'supplier_product_id', type: 'uuid', required: false, description: 'Supplier product ID', in: 'body' },
+      ],
+    },
+    {
+      method: 'PATCH',
+      path: '/deals/:id/product-costs/:costId',
+      description: 'Update a deal product cost entry.',
+      scopes: ['deals:write'],
+      isWrite: true,
+      params: [
+        { name: 'id', type: 'uuid', required: true, description: 'Deal ID', in: 'path' },
+        { name: 'costId', type: 'uuid', required: true, description: 'Cost entry ID', in: 'path' },
+      ],
+    },
+    {
+      method: 'DELETE',
+      path: '/deals/:id/product-costs/:costId',
+      description: 'Delete a deal product cost entry.',
+      scopes: ['deals:write'],
+      isWrite: true,
+      params: [
+        { name: 'id', type: 'uuid', required: true, description: 'Deal ID', in: 'path' },
+        { name: 'costId', type: 'uuid', required: true, description: 'Cost entry ID', in: 'path' },
+      ],
+    },
+    {
       method: 'GET',
       path: '/deals/:id/contacts',
       description: 'List all contacts associated with a deal (beyond the primary contact).',
@@ -607,6 +668,36 @@ const DEALS: ResourceGroup = {
       params: [
         { name: 'id', type: 'uuid', required: true, description: 'Deal ID', in: 'path' },
         { name: 'contactId', type: 'uuid', required: true, description: 'Contact ID', in: 'path' },
+      ],
+    },
+    {
+      method: 'GET',
+      path: '/deals/:id/users',
+      description: 'List users assigned to a deal.',
+      scopes: ['deals:read'],
+      isWrite: false,
+      params: [{ name: 'id', type: 'uuid', required: true, description: 'Deal ID', in: 'path' }],
+    },
+    {
+      method: 'POST',
+      path: '/deals/:id/users/:userId',
+      description: 'Assign a user to a deal.',
+      scopes: ['deals:write'],
+      isWrite: true,
+      params: [
+        { name: 'id', type: 'uuid', required: true, description: 'Deal ID', in: 'path' },
+        { name: 'userId', type: 'uuid', required: true, description: 'User ID', in: 'path' },
+      ],
+    },
+    {
+      method: 'DELETE',
+      path: '/deals/:id/users/:userId',
+      description: 'Remove a user assignment from a deal.',
+      scopes: ['deals:write'],
+      isWrite: true,
+      params: [
+        { name: 'id', type: 'uuid', required: true, description: 'Deal ID', in: 'path' },
+        { name: 'userId', type: 'uuid', required: true, description: 'User ID', in: 'path' },
       ],
     },
     {
@@ -841,6 +932,17 @@ const AUTOMATIONS: ResourceGroup = {
       ],
     },
     {
+      method: 'POST',
+      path: '/automations/:id/actions/reorder',
+      description: 'Reorder actions within an automation.',
+      scopes: ['automations:write'],
+      isWrite: true,
+      params: [
+        { name: 'id', type: 'uuid', required: true, description: 'Automation ID', in: 'path' },
+        { name: 'action_ids', type: 'string[]', required: true, description: 'Ordered array of action UUIDs', in: 'body' },
+      ],
+    },
+    {
       method: 'PATCH',
       path: '/automations/:id/actions/:actionId',
       description: 'Update an action.',
@@ -1071,6 +1173,10 @@ const PRODUCTS: ResourceGroup = {
     { method: 'POST', path: '/products', description: 'Create a product. name is required.', scopes: ['products:write'], isWrite: true, params: [{ name: 'name', type: 'string', required: true, description: 'Product name', in: 'body' }, { name: 'price', type: 'number', required: false, description: 'Unit price', in: 'body' }, { name: 'currency', type: 'string', required: false, description: 'Currency (default: AUD)', in: 'body' }, { name: 'sku', type: 'string', required: false, description: 'SKU code', in: 'body' }] },
     { method: 'PATCH', path: '/products/:id', description: 'Update a product.', scopes: ['products:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Product ID', in: 'path' }] },
     { method: 'DELETE', path: '/products/:id', description: 'Delete a product.', scopes: ['products:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Product ID', in: 'path' }] },
+    { method: 'GET', path: '/products/:id/costs', description: 'List cost entries for a product.', scopes: ['products:read'], isWrite: false, params: [{ name: 'id', type: 'uuid', required: true, description: 'Product ID', in: 'path' }] },
+    { method: 'POST', path: '/products/:id/costs', description: 'Create a cost entry for a product.', scopes: ['products:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Product ID', in: 'path' }, { name: 'label', type: 'string', required: false, description: 'Cost label', in: 'body' }, { name: 'cost_price', type: 'number', required: false, description: 'Cost price', in: 'body' }, { name: 'quantity', type: 'number', required: false, description: 'Quantity', in: 'body' }, { name: 'supplier_id', type: 'uuid', required: false, description: 'Supplier customer ID', in: 'body' }, { name: 'supplier_product_id', type: 'uuid', required: false, description: 'Supplier product ID', in: 'body' }] },
+    { method: 'PATCH', path: '/products/:id/costs/:costId', description: 'Update a product cost entry.', scopes: ['products:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Product ID', in: 'path' }, { name: 'costId', type: 'uuid', required: true, description: 'Cost entry ID', in: 'path' }] },
+    { method: 'DELETE', path: '/products/:id/costs/:costId', description: 'Delete a product cost entry.', scopes: ['products:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Product ID', in: 'path' }, { name: 'costId', type: 'uuid', required: true, description: 'Cost entry ID', in: 'path' }] },
   ],
 };
 
@@ -1102,9 +1208,8 @@ const ACTIVITIES: ResourceGroup = {
   endpoints: [
     { method: 'GET', path: '/activities', description: 'List all activities with filters.', scopes: ['activities:read'], isWrite: false },
     { method: 'GET', path: '/activities/:id', description: 'Retrieve an activity by ID.', scopes: ['activities:read'], isWrite: false, params: [{ name: 'id', type: 'uuid', required: true, description: 'Activity ID', in: 'path' }] },
-    { method: 'POST', path: '/activities/log-call', description: 'Log a phone call activity.', scopes: ['activities:write'], isWrite: true, params: [{ name: 'subject', type: 'string', required: true, description: 'Call subject', in: 'body' }, { name: 'contact_id', type: 'uuid', required: false, description: 'Contact ID', in: 'body' }, { name: 'deal_id', type: 'uuid', required: false, description: 'Deal ID', in: 'body' }] },
-    { method: 'POST', path: '/activities/log-meeting', description: 'Log a meeting activity.', scopes: ['activities:write'], isWrite: true, params: [{ name: 'subject', type: 'string', required: true, description: 'Meeting subject', in: 'body' }] },
-    { method: 'POST', path: '/activities/add-note', description: 'Add a note to a contact, deal, or customer.', scopes: ['activities:write'], isWrite: true, params: [{ name: 'description', type: 'string', required: true, description: 'Note content', in: 'body' }, { name: 'contact_id', type: 'uuid', required: false, description: 'Contact ID', in: 'body' }, { name: 'deal_id', type: 'uuid', required: false, description: 'Deal ID', in: 'body' }] },
+    { method: 'POST', path: '/activities', description: 'Create an activity. Set activity_type to "call", "meeting", or "note". Link to a contact, deal, or customer.', scopes: ['activities:write'], isWrite: true, params: [{ name: 'activity_type', type: 'string', required: true, description: 'Type: call, meeting, or note', in: 'body' }, { name: 'subject', type: 'string', required: true, description: 'Activity subject', in: 'body' }, { name: 'description', type: 'string', required: false, description: 'Activity details/notes', in: 'body' }, { name: 'contact_id', type: 'uuid', required: false, description: 'Contact ID', in: 'body' }, { name: 'deal_id', type: 'uuid', required: false, description: 'Deal ID', in: 'body' }, { name: 'customer_id', type: 'uuid', required: false, description: 'Customer ID', in: 'body' }] },
+    { method: 'PATCH', path: '/activities/:id', description: 'Update an activity.', scopes: ['activities:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Activity ID', in: 'path' }, { name: 'subject', type: 'string', required: false, description: 'Activity subject', in: 'body' }, { name: 'description', type: 'string', required: false, description: 'Activity details', in: 'body' }] },
     { method: 'DELETE', path: '/activities/:id', description: 'Delete an activity.', scopes: ['activities:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Activity ID', in: 'path' }] },
   ],
 };
@@ -1123,8 +1228,11 @@ const TASKS: ResourceGroup = {
     { method: 'POST', path: '/tasks', description: 'Create a task. title is required.', scopes: ['tasks:write'], isWrite: true, params: [{ name: 'title', type: 'string', required: true, description: 'Task title', in: 'body' }, { name: 'deal_id', type: 'uuid', required: false, description: 'Link to deal', in: 'body' }, { name: 'assigned_to', type: 'uuid', required: false, description: 'Assign to user ID', in: 'body' }] },
     { method: 'PATCH', path: '/tasks/:id', description: 'Update a task.', scopes: ['tasks:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Task ID', in: 'path' }] },
     { method: 'DELETE', path: '/tasks/:id', description: 'Delete a task.', scopes: ['tasks:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Task ID', in: 'path' }] },
-    { method: 'POST', path: '/tasks/:id/complete', description: 'Mark a task as complete.', scopes: ['tasks:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Task ID', in: 'path' }] },
     { method: 'GET', path: '/tasks/categories', description: 'List task categories.', scopes: ['tasks:read'], isWrite: false },
+    { method: 'POST', path: '/tasks/categories', description: 'Create a task category.', scopes: ['tasks:write'], isWrite: true, params: [{ name: 'name', type: 'string', required: true, description: 'Category name', in: 'body' }, { name: 'color', type: 'string', required: false, description: 'Category color', in: 'body' }] },
+    { method: 'PATCH', path: '/tasks/categories/:id', description: 'Update a task category.', scopes: ['tasks:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Category ID', in: 'path' }] },
+    { method: 'DELETE', path: '/tasks/categories/:id', description: 'Delete a task category.', scopes: ['tasks:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Category ID', in: 'path' }] },
+    { method: 'POST', path: '/tasks/reorder', description: 'Reorder tasks by providing an array of task IDs in desired order.', scopes: ['tasks:write'], isWrite: true, params: [{ name: 'order', type: 'uuid[]', required: true, description: 'Array of task IDs in desired order', in: 'body' }] },
   ],
 };
 
@@ -1194,8 +1302,15 @@ const PHONE: ResourceGroup = {
     { method: 'POST', path: '/phone/numbers/search', description: 'Search available phone numbers to purchase.', scopes: ['phone:read'], isWrite: false, params: [{ name: 'country', type: 'string', required: false, description: 'Country code (default: AU)', in: 'body' }, { name: 'area_code', type: 'string', required: false, description: 'Area code filter', in: 'body' }] },
     { method: 'POST', path: '/phone/numbers/buy', description: 'Purchase a phone number.', scopes: ['phone:write'], isWrite: true, params: [{ name: 'phone_number', type: 'string', required: true, description: 'Phone number to purchase', in: 'body' }] },
     { method: 'DELETE', path: '/phone/numbers/:id', description: 'Release a phone number.', scopes: ['phone:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Phone number ID', in: 'path' }] },
-    { method: 'GET', path: '/phone/calls', description: 'List phone call logs.', scopes: ['calls:read'], isWrite: false },
-    { method: 'POST', path: '/phone/call', description: 'Initiate a phone call via a voice agent.', scopes: ['calls:initiate'], isWrite: true, params: [{ name: 'to_number', type: 'string', required: true, description: 'Number to call (E.164)', in: 'body' }, { name: 'voice_agent_id', type: 'uuid', required: true, description: 'Voice agent to use', in: 'body' }] },
+    { method: 'GET', path: '/phone/numbers/:id', description: 'Get a specific phone number by ID.', scopes: ['phone:read'], isWrite: false, params: [{ name: 'id', type: 'uuid', required: true, description: 'Phone number ID', in: 'path' }] },
+    { method: 'PATCH', path: '/phone/numbers/:id', description: 'Update phone number settings (friendly name, SMS forwarding, etc.).', scopes: ['phone:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Phone number ID', in: 'path' }] },
+    { method: 'POST', path: '/phone/numbers/:id/release', description: 'Release a phone number.', scopes: ['phone:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Phone number ID', in: 'path' }] },
+    { method: 'GET', path: '/phone/call-logs', description: 'List phone call logs.', scopes: ['calls:read'], isWrite: false },
+    { method: 'GET', path: '/phone/addresses', description: 'List regulatory addresses for phone compliance.', scopes: ['phone:read'], isWrite: false },
+    { method: 'POST', path: '/phone/addresses', description: 'Create a regulatory address for phone compliance.', scopes: ['phone:write'], isWrite: true },
+    { method: 'GET', path: '/phone/bundles', description: 'List regulatory bundles for phone compliance.', scopes: ['phone:read'], isWrite: false },
+    { method: 'POST', path: '/phone/bundles', description: 'Create a regulatory bundle.', scopes: ['phone:write'], isWrite: true },
+    { method: 'POST', path: '/phone/bundles/:id/submit', description: 'Submit a regulatory bundle for review.', scopes: ['phone:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Bundle ID', in: 'path' }] },
   ],
 };
 
@@ -1206,10 +1321,25 @@ const PHONE: ResourceGroup = {
 const VOICE_AGENTS: ResourceGroup = {
   id: 'voice-agents',
   label: 'Voice Agents',
-  description: 'Manage AI voice agents that handle phone calls.',
+  description: 'Manage AI voice agents that handle phone calls. Includes sub-resources for call logs, website configs, and outbound configs.',
   endpoints: [
     { method: 'GET', path: '/voice-agents', description: 'List all voice agents.', scopes: ['voice-agents:read'], isWrite: false },
-    { method: 'GET', path: '/voice-agents/:id', description: 'Retrieve a voice agent.', scopes: ['voice-agents:read'], isWrite: false, params: [{ name: 'id', type: 'uuid', required: true, description: 'Voice agent ID', in: 'path' }] },
+    { method: 'GET', path: '/voice-agents/:id', description: 'Retrieve a voice agent with full configuration.', scopes: ['voice-agents:read'], isWrite: false, params: [{ name: 'id', type: 'uuid', required: true, description: 'Voice agent ID', in: 'path' }] },
+    { method: 'POST', path: '/voice-agents', description: 'Create a voice agent. agent_name is required.', scopes: ['voice-agents:write'], isWrite: true, params: [{ name: 'agent_name', type: 'string', required: true, description: 'Agent name', in: 'body' }, { name: 'language', type: 'string', required: false, description: 'Language code', in: 'body' }, { name: 'voice_id', type: 'string', required: false, description: 'Voice ID', in: 'body' }] },
+    { method: 'PATCH', path: '/voice-agents/:id', description: 'Update a voice agent.', scopes: ['voice-agents:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Voice agent ID', in: 'path' }] },
+    { method: 'DELETE', path: '/voice-agents/:id', description: 'Delete a voice agent.', scopes: ['voice-agents:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Voice agent ID', in: 'path' }] },
+    { method: 'POST', path: '/voice-agents/:id/sync', description: 'Sync a voice agent configuration with Retell.', scopes: ['voice-agents:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Voice agent ID', in: 'path' }] },
+    { method: 'POST', path: '/voice-agents/:id/call', description: 'Initiate an outbound voice call using this agent.', scopes: ['calls:initiate'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Voice agent ID', in: 'path' }, { name: 'to_number', type: 'string', required: true, description: 'Destination phone number (E.164)', in: 'body' }, { name: 'from_number', type: 'string', required: false, description: 'Caller ID phone number (E.164)', in: 'body' }] },
+    { method: 'GET', path: '/voice-agents/:id/calls', description: 'List call logs for a voice agent.', scopes: ['calls:read'], isWrite: false, params: [{ name: 'id', type: 'uuid', required: true, description: 'Voice agent ID', in: 'path' }] },
+    { method: 'GET', path: '/voice-agents/calls/:callId', description: 'Get detailed call log including transcript.', scopes: ['calls:read'], isWrite: false, params: [{ name: 'callId', type: 'uuid', required: true, description: 'Call log ID', in: 'path' }] },
+    { method: 'GET', path: '/voice-agents/:id/website-config', description: 'List website configs for a voice agent.', scopes: ['voice-agents:read'], isWrite: false, params: [{ name: 'id', type: 'uuid', required: true, description: 'Voice agent ID', in: 'path' }] },
+    { method: 'POST', path: '/voice-agents/:id/website-config', description: 'Create a website config for a voice agent. website_id is required.', scopes: ['voice-agents:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Voice agent ID', in: 'path' }, { name: 'website_id', type: 'uuid', required: true, description: 'Website ID', in: 'body' }] },
+    { method: 'PATCH', path: '/voice-agents/:id/website-config/:configId', description: 'Update a voice agent website config.', scopes: ['voice-agents:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Voice agent ID', in: 'path' }, { name: 'configId', type: 'uuid', required: true, description: 'Config ID', in: 'path' }] },
+    { method: 'DELETE', path: '/voice-agents/:id/website-config/:configId', description: 'Delete a voice agent website config.', scopes: ['voice-agents:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Voice agent ID', in: 'path' }, { name: 'configId', type: 'uuid', required: true, description: 'Config ID', in: 'path' }] },
+    { method: 'GET', path: '/voice-agents/:id/outbound-config', description: 'List outbound configs for a voice agent.', scopes: ['voice-agents:read'], isWrite: false, params: [{ name: 'id', type: 'uuid', required: true, description: 'Voice agent ID', in: 'path' }] },
+    { method: 'POST', path: '/voice-agents/:id/outbound-config', description: 'Create an outbound config for a voice agent. website_id is required.', scopes: ['voice-agents:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Voice agent ID', in: 'path' }, { name: 'website_id', type: 'uuid', required: true, description: 'Website ID', in: 'body' }] },
+    { method: 'PATCH', path: '/voice-agents/:id/outbound-config/:configId', description: 'Update a voice agent outbound config.', scopes: ['voice-agents:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Voice agent ID', in: 'path' }, { name: 'configId', type: 'uuid', required: true, description: 'Config ID', in: 'path' }] },
+    { method: 'DELETE', path: '/voice-agents/:id/outbound-config/:configId', description: 'Delete a voice agent outbound config.', scopes: ['voice-agents:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Voice agent ID', in: 'path' }, { name: 'configId', type: 'uuid', required: true, description: 'Config ID', in: 'path' }] },
   ],
 };
 
@@ -1242,9 +1372,8 @@ const TRANSCRIPTS: ResourceGroup = {
   endpoints: [
     { method: 'GET', path: '/transcripts', description: 'List all transcripts.', scopes: ['calls:read'], isWrite: false },
     { method: 'GET', path: '/transcripts/:id', description: 'Retrieve a transcript.', scopes: ['calls:read'], isWrite: false, params: [{ name: 'id', type: 'uuid', required: true, description: 'Transcript ID', in: 'path' }] },
-    { method: 'GET', path: '/transcripts/coaching', description: 'List AI coaching results.', scopes: ['calls:read'], isWrite: false },
-    { method: 'GET', path: '/transcripts/coaching/:id', description: 'Retrieve a coaching result.', scopes: ['calls:read'], isWrite: false, params: [{ name: 'id', type: 'uuid', required: true, description: 'Coaching result ID', in: 'path' }] },
-    { method: 'POST', path: '/transcripts/:id/coaching', description: 'Run AI coaching analysis on a transcript.', scopes: ['ai:use'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Transcript ID', in: 'path' }] },
+    { method: 'GET', path: '/coaching-results', description: 'List AI coaching results.', scopes: ['calls:read'], isWrite: false, params: [{ name: 'framework', type: 'string', required: false, description: 'Filter by coaching framework (SPIN, BANT, Challenger, MEDDIC)', in: 'query' }] },
+    { method: 'GET', path: '/coaching-results/:id', description: 'Retrieve a coaching result by ID.', scopes: ['calls:read'], isWrite: false, params: [{ name: 'id', type: 'uuid', required: true, description: 'Coaching result ID', in: 'path' }] },
   ],
 };
 
@@ -1263,9 +1392,11 @@ const DOCUMENT_TEMPLATES: ResourceGroup = {
     { method: 'PATCH', path: '/document-templates/:id', description: 'Update a document template.', scopes: ['documents:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Template ID', in: 'path' }] },
     { method: 'DELETE', path: '/document-templates/:id', description: 'Delete a document template.', scopes: ['documents:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Template ID', in: 'path' }] },
     { method: 'POST', path: '/document-templates/:id/duplicate', description: 'Duplicate a document template.', scopes: ['documents:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Template ID', in: 'path' }] },
+    { method: 'GET', path: '/document-templates/:id/sections', description: 'List sections for a document template.', scopes: ['documents:read'], isWrite: false, params: [{ name: 'id', type: 'uuid', required: true, description: 'Template ID', in: 'path' }] },
     { method: 'POST', path: '/document-templates/:id/sections', description: 'Add a section to a template.', scopes: ['documents:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Template ID', in: 'path' }] },
     { method: 'PATCH', path: '/document-templates/:id/sections/:sectionId', description: 'Update a template section.', scopes: ['documents:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Template ID', in: 'path' }, { name: 'sectionId', type: 'uuid', required: true, description: 'Section ID', in: 'path' }] },
     { method: 'DELETE', path: '/document-templates/:id/sections/:sectionId', description: 'Delete a template section.', scopes: ['documents:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Template ID', in: 'path' }, { name: 'sectionId', type: 'uuid', required: true, description: 'Section ID', in: 'path' }] },
+    { method: 'POST', path: '/document-templates/:id/sections/reorder', description: 'Reorder sections in a document template.', scopes: ['documents:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Template ID', in: 'path' }, { name: 'section_ids', type: 'string[]', required: true, description: 'Ordered array of section UUIDs', in: 'body' }] },
   ],
 };
 
@@ -1276,10 +1407,14 @@ const DOCUMENT_TEMPLATES: ResourceGroup = {
 const DOCUMENTS: ResourceGroup = {
   id: 'documents',
   label: 'Documents',
-  description: 'Manage generated documents (from templates) sent to contacts.',
+  description: 'Manage CRM documents (uploaded files). Supports folders, downloads via signed URLs, and CRUD operations.',
   endpoints: [
-    { method: 'GET', path: '/documents', description: 'List all documents.', scopes: ['documents:read'], isWrite: false },
+    { method: 'GET', path: '/documents', description: 'List all documents. Supports folder, document_type, and search filters.', scopes: ['documents:read'], isWrite: false, params: [{ name: 'folder', type: 'string', required: false, description: 'Filter by folder name', in: 'query' }, { name: 'document_type', type: 'string', required: false, description: 'Filter by document type', in: 'query' }, { name: 'search', type: 'string', required: false, description: 'Search by name', in: 'query' }] },
     { method: 'GET', path: '/documents/:id', description: 'Retrieve a document.', scopes: ['documents:read'], isWrite: false, params: [{ name: 'id', type: 'uuid', required: true, description: 'Document ID', in: 'path' }] },
+    { method: 'POST', path: '/documents', description: 'Create a document record. name is required.', scopes: ['documents:write'], isWrite: true, params: [{ name: 'name', type: 'string', required: true, description: 'Document name', in: 'body' }, { name: 'folder', type: 'string', required: false, description: 'Folder name', in: 'body' }, { name: 'document_type', type: 'string', required: false, description: 'Document type', in: 'body' }] },
+    { method: 'DELETE', path: '/documents/:id', description: 'Delete a document.', scopes: ['documents:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Document ID', in: 'path' }] },
+    { method: 'GET', path: '/documents/:id/download', description: 'Get a signed download URL for a document (expires in 60 seconds).', scopes: ['documents:read'], isWrite: false, params: [{ name: 'id', type: 'uuid', required: true, description: 'Document ID', in: 'path' }] },
+    { method: 'GET', path: '/documents/folders', description: 'List all unique document folder names.', scopes: ['documents:read'], isWrite: false },
   ],
 };
 
@@ -1295,7 +1430,8 @@ const SIGNING: ResourceGroup = {
     { method: 'GET', path: '/signing/envelopes', description: 'List signing envelopes.', scopes: ['documents:read'], isWrite: false },
     { method: 'GET', path: '/signing/envelopes/:id', description: 'Retrieve a signing envelope with recipients.', scopes: ['documents:read'], isWrite: false, params: [{ name: 'id', type: 'uuid', required: true, description: 'Envelope ID', in: 'path' }] },
     { method: 'POST', path: '/signing/send', description: 'Send a document for signing.', scopes: ['signing:send'], isWrite: true, params: [{ name: 'template_id', type: 'uuid', required: true, description: 'Document template ID', in: 'body' }, { name: 'contact_id', type: 'uuid', required: false, description: 'Contact ID', in: 'body' }, { name: 'deal_id', type: 'uuid', required: false, description: 'Deal ID', in: 'body' }] },
-    { method: 'POST', path: '/signing/envelopes/:id/resend', description: 'Resend signing email to recipients.', scopes: ['signing:send'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Envelope ID', in: 'path' }] },
+    { method: 'POST', path: '/signing/envelopes/:id/void', description: 'Void a signing envelope to cancel all pending signatures.', scopes: ['signing:send'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Envelope ID', in: 'path' }] },
+    { method: 'POST', path: '/signing/envelopes/:id/resend', description: 'Resend signing email to a specific recipient.', scopes: ['signing:send'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Envelope ID', in: 'path' }, { name: 'recipient_id', type: 'uuid', required: true, description: 'Recipient ID to resend to', in: 'body' }] },
   ],
 };
 
@@ -1315,6 +1451,7 @@ const FORMS: ResourceGroup = {
     { method: 'DELETE', path: '/forms/templates/:id', description: 'Delete a form template.', scopes: ['forms:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Template ID', in: 'path' }] },
     { method: 'POST', path: '/forms/templates/:id/duplicate', description: 'Duplicate a form template with all its fields.', scopes: ['forms:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Template ID to duplicate', in: 'path' }] },
     { method: 'POST', path: '/forms/templates/:id/archive', description: 'Toggle archive status on a form template.', scopes: ['forms:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Template ID', in: 'path' }] },
+    { method: 'GET', path: '/forms/templates/:id/fields', description: 'List all fields for a form template, ordered by order_index.', scopes: ['forms:read'], isWrite: false, params: [{ name: 'id', type: 'uuid', required: true, description: 'Template ID', in: 'path' }] },
     {
       method: 'POST',
       path: '/forms/templates/:id/fields',
@@ -1390,6 +1527,14 @@ const FORMS: ResourceGroup = {
         { name: 'expires_in_days', type: 'number', required: false, description: 'Days before the form link expires', in: 'body' },
       ],
     },
+    { method: 'GET', path: '/forms/folders', description: 'List form template folders.', scopes: ['forms:read'], isWrite: false },
+    { method: 'POST', path: '/forms/folders', description: 'Create a form template folder. name is required.', scopes: ['forms:write'], isWrite: true, params: [{ name: 'name', type: 'string', required: true, description: 'Folder name', in: 'body' }] },
+    { method: 'PATCH', path: '/forms/folders/:id', description: 'Update a form template folder.', scopes: ['forms:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Folder ID', in: 'path' }] },
+    { method: 'DELETE', path: '/forms/folders/:id', description: 'Delete a form template folder.', scopes: ['forms:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Folder ID', in: 'path' }] },
+    { method: 'GET', path: '/forms/prefills', description: 'List form prefills. Filter by template_id or deal_id.', scopes: ['forms:read'], isWrite: false, params: [{ name: 'template_id', type: 'uuid', required: false, description: 'Filter by template', in: 'query' }, { name: 'deal_id', type: 'uuid', required: false, description: 'Filter by deal', in: 'query' }] },
+    { method: 'POST', path: '/forms/prefills', description: 'Create a form prefill. template_id is required.', scopes: ['forms:write'], isWrite: true, params: [{ name: 'template_id', type: 'uuid', required: true, description: 'Form template ID', in: 'body' }, { name: 'deal_id', type: 'uuid', required: false, description: 'Deal ID', in: 'body' }, { name: 'status', type: 'string', required: false, description: 'Prefill status', in: 'body' }, { name: 'additional_context', type: 'string', required: false, description: 'Additional context for AI prefilling', in: 'body' }] },
+    { method: 'GET', path: '/forms/prefills/:id', description: 'Retrieve a form prefill with its values.', scopes: ['forms:read'], isWrite: false, params: [{ name: 'id', type: 'uuid', required: true, description: 'Prefill ID', in: 'path' }] },
+    { method: 'POST', path: '/forms/prefills/:id/values', description: 'Upsert prefill values for form fields.', scopes: ['forms:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Prefill ID', in: 'path' }, { name: 'values', type: 'object[]', required: true, description: 'Array of { field_id, value, confidence?, reasoning? }', in: 'body' }] },
     { method: 'GET', path: '/forms/submissions', description: 'List form submissions. Filter by template_id, deal_id, contact_id, customer_id, or status.', scopes: ['forms:read'], isWrite: false },
     { method: 'GET', path: '/forms/submissions/:id', description: 'Retrieve a form submission with all response data.', scopes: ['forms:read'], isWrite: false, params: [{ name: 'id', type: 'uuid', required: true, description: 'Submission ID', in: 'path' }] },
     { method: 'POST', path: '/forms/submissions/:id/resend', description: 'Resend a form submission email to the original recipient.', scopes: ['forms:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Submission ID', in: 'path' }] },
@@ -1404,11 +1549,23 @@ const FORMS: ResourceGroup = {
 const WEBSITES: ResourceGroup = {
   id: 'websites',
   label: 'Websites',
-  description: 'Manage TrustPager-hosted websites and landing pages.',
+  description: 'Manage TrustPager-hosted websites, pages, and page sections.',
   endpoints: [
     { method: 'GET', path: '/websites', description: 'List all websites.', scopes: ['websites:read'], isWrite: false },
     { method: 'GET', path: '/websites/:id', description: 'Retrieve a website.', scopes: ['websites:read'], isWrite: false, params: [{ name: 'id', type: 'uuid', required: true, description: 'Website ID', in: 'path' }] },
+    { method: 'POST', path: '/websites', description: 'Create a website. name is required.', scopes: ['websites:write'], isWrite: true, params: [{ name: 'name', type: 'string', required: true, description: 'Website name', in: 'body' }, { name: 'domain', type: 'string', required: false, description: 'Custom domain', in: 'body' }] },
     { method: 'PATCH', path: '/websites/:id', description: 'Update a website.', scopes: ['websites:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Website ID', in: 'path' }] },
+    { method: 'DELETE', path: '/websites/:id', description: 'Delete a website.', scopes: ['websites:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Website ID', in: 'path' }] },
+    { method: 'GET', path: '/websites/:id/pages', description: 'List pages for a website.', scopes: ['websites:read'], isWrite: false, params: [{ name: 'id', type: 'uuid', required: true, description: 'Website ID', in: 'path' }] },
+    { method: 'POST', path: '/websites/:id/pages', description: 'Create a page for a website. title and slug are required.', scopes: ['websites:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Website ID', in: 'path' }, { name: 'title', type: 'string', required: true, description: 'Page title', in: 'body' }, { name: 'slug', type: 'string', required: true, description: 'URL slug', in: 'body' }, { name: 'page_type', type: 'string', required: false, description: 'Page type', in: 'body' }] },
+    { method: 'GET', path: '/websites/:id/pages/:pageId', description: 'Retrieve a page with its sections.', scopes: ['websites:read'], isWrite: false, params: [{ name: 'id', type: 'uuid', required: true, description: 'Website ID', in: 'path' }, { name: 'pageId', type: 'uuid', required: true, description: 'Page ID', in: 'path' }] },
+    { method: 'PATCH', path: '/websites/:id/pages/:pageId', description: 'Update a website page.', scopes: ['websites:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Website ID', in: 'path' }, { name: 'pageId', type: 'uuid', required: true, description: 'Page ID', in: 'path' }] },
+    { method: 'DELETE', path: '/websites/:id/pages/:pageId', description: 'Delete a website page.', scopes: ['websites:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Website ID', in: 'path' }, { name: 'pageId', type: 'uuid', required: true, description: 'Page ID', in: 'path' }] },
+    { method: 'GET', path: '/websites/:id/pages/:pageId/sections', description: 'List sections for a page.', scopes: ['websites:read'], isWrite: false, params: [{ name: 'id', type: 'uuid', required: true, description: 'Website ID', in: 'path' }, { name: 'pageId', type: 'uuid', required: true, description: 'Page ID', in: 'path' }] },
+    { method: 'POST', path: '/websites/:id/pages/:pageId/sections', description: 'Create a section on a page. type is required.', scopes: ['websites:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Website ID', in: 'path' }, { name: 'pageId', type: 'uuid', required: true, description: 'Page ID', in: 'path' }, { name: 'type', type: 'string', required: true, description: 'Section type', in: 'body' }] },
+    { method: 'PATCH', path: '/websites/:id/pages/:pageId/sections/:sectionId', description: 'Update a page section.', scopes: ['websites:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Website ID', in: 'path' }, { name: 'pageId', type: 'uuid', required: true, description: 'Page ID', in: 'path' }, { name: 'sectionId', type: 'uuid', required: true, description: 'Section ID', in: 'path' }] },
+    { method: 'DELETE', path: '/websites/:id/pages/:pageId/sections/:sectionId', description: 'Delete a page section.', scopes: ['websites:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Website ID', in: 'path' }, { name: 'pageId', type: 'uuid', required: true, description: 'Page ID', in: 'path' }, { name: 'sectionId', type: 'uuid', required: true, description: 'Section ID', in: 'path' }] },
+    { method: 'POST', path: '/websites/:id/pages/:pageId/sections/reorder', description: 'Reorder sections on a page.', scopes: ['websites:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Website ID', in: 'path' }, { name: 'pageId', type: 'uuid', required: true, description: 'Page ID', in: 'path' }, { name: 'section_ids', type: 'string[]', required: true, description: 'Ordered array of section UUIDs', in: 'body' }] },
   ],
 };
 
@@ -1479,6 +1636,7 @@ const COMPANY: ResourceGroup = {
     { method: 'GET', path: '/company', description: 'Retrieve company details.', scopes: ['company:read'], isWrite: false },
     { method: 'PATCH', path: '/company', description: 'Update company settings.', scopes: ['company:write'], isWrite: true },
     { method: 'GET', path: '/company/users', description: 'List all users in the company.', scopes: ['users:read'], isWrite: false },
+    { method: 'GET', path: '/company/users/:userId', description: 'Get details for a specific user in the company.', scopes: ['users:read'], isWrite: false, params: [{ name: 'userId', type: 'uuid', required: true, description: 'User ID', in: 'path' }] },
     { method: 'POST', path: '/company/users/invite', description: 'Invite a user to the company.', scopes: ['users:write'], isWrite: true, params: [{ name: 'email', type: 'string', required: true, description: 'Email to invite', in: 'body' }, { name: 'role', type: 'string', required: false, description: 'User role', in: 'body' }] },
     { method: 'PATCH', path: '/company/users/:userId/role', description: 'Update a user role.', scopes: ['users:write'], isWrite: true, params: [{ name: 'userId', type: 'uuid', required: true, description: 'User ID', in: 'path' }, { name: 'role', type: 'string', required: true, description: 'New role', in: 'body' }] },
     { method: 'DELETE', path: '/company/users/:userId', description: 'Remove a user from the company.', scopes: ['users:write'], isWrite: true, params: [{ name: 'userId', type: 'uuid', required: true, description: 'User ID', in: 'path' }] },
@@ -1511,9 +1669,15 @@ const CRM_TEMPLATES: ResourceGroup = {
 const INTEGRATIONS: ResourceGroup = {
   id: 'integrations',
   label: 'Integrations',
-  description: 'View connected integrations (Slack, Xero, etc.).',
+  description: 'Manage native integrations (Xero, MYOB, etc.). Connect, configure, query, and execute actions.',
   endpoints: [
-    { method: 'GET', path: '/integrations', description: 'List all active integrations.', scopes: ['integrations:read'], isWrite: false },
+    { method: 'GET', path: '/integrations', description: 'List all integrations.', scopes: ['integrations:read'], isWrite: false },
+    { method: 'GET', path: '/integrations/:id', description: 'Retrieve an integration.', scopes: ['integrations:read'], isWrite: false, params: [{ name: 'id', type: 'uuid', required: true, description: 'Integration ID', in: 'path' }] },
+    { method: 'POST', path: '/integrations/connect', description: 'Connect a new integration. platform_type is required.', scopes: ['integrations:write'], isWrite: true, params: [{ name: 'platform_type', type: 'string', required: true, description: 'Integration platform type (e.g. xero, myob)', in: 'body' }] },
+    { method: 'PATCH', path: '/integrations/:id', description: 'Update an integration configuration.', scopes: ['integrations:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Integration ID', in: 'path' }] },
+    { method: 'DELETE', path: '/integrations/:id', description: 'Delete (disconnect) an integration.', scopes: ['integrations:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Integration ID', in: 'path' }] },
+    { method: 'POST', path: '/integrations/:id/query', description: 'Query data from an integration (e.g. list invoices from Xero).', scopes: ['integrations:read'], isWrite: false, params: [{ name: 'id', type: 'uuid', required: true, description: 'Integration ID', in: 'path' }, { name: 'query_type', type: 'string', required: true, description: 'Query type', in: 'body' }, { name: 'params', type: 'object', required: false, description: 'Query parameters', in: 'body' }] },
+    { method: 'POST', path: '/integrations/:id/action', description: 'Execute an action on an integration (e.g. create invoice in Xero).', scopes: ['integrations:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Integration ID', in: 'path' }, { name: 'action_type', type: 'string', required: true, description: 'Action type', in: 'body' }, { name: 'params', type: 'object', required: true, description: 'Action parameters', in: 'body' }] },
   ],
 };
 
@@ -1539,8 +1703,10 @@ const WEBHOOKS: ResourceGroup = {
     { method: 'POST', path: '/webhooks/outgoing/:id/test', description: 'Send a test event to an outgoing webhook.', scopes: ['webhooks:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Webhook ID', in: 'path' }] },
     { method: 'GET', path: '/webhooks/outgoing/:id/logs', description: 'View delivery logs for an outgoing webhook.', scopes: ['webhooks:read'], isWrite: false, params: [{ name: 'id', type: 'uuid', required: true, description: 'Webhook ID', in: 'path' }] },
     { method: 'GET', path: '/webhooks/subscriptions', description: 'List webhook event subscriptions.', scopes: ['webhooks:read'], isWrite: false },
-    { method: 'POST', path: '/webhooks/subscriptions', description: 'Subscribe to a webhook event.', scopes: ['webhooks:write'], isWrite: true },
-    { method: 'DELETE', path: '/webhooks/subscriptions/:id', description: 'Unsubscribe from a webhook event.', scopes: ['webhooks:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Subscription ID', in: 'path' }] },
+    { method: 'POST', path: '/webhooks/subscriptions', description: 'Subscribe to webhook events. url, events array, and secret are required.', scopes: ['webhooks:write'], isWrite: true, params: [{ name: 'url', type: 'string', required: true, description: 'Delivery URL', in: 'body' }, { name: 'events', type: 'string[]', required: true, description: 'Event types to subscribe to', in: 'body' }, { name: 'secret', type: 'string', required: true, description: 'Signing secret for payload verification', in: 'body' }] },
+    { method: 'PATCH', path: '/webhooks/subscriptions/:id', description: 'Update a webhook subscription.', scopes: ['webhooks:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Subscription ID', in: 'path' }] },
+    { method: 'DELETE', path: '/webhooks/subscriptions/:id', description: 'Delete a webhook subscription.', scopes: ['webhooks:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Subscription ID', in: 'path' }] },
+    { method: 'GET', path: '/webhooks/subscriptions/:id/logs', description: 'List delivery logs for a webhook subscription.', scopes: ['webhooks:read'], isWrite: false, params: [{ name: 'id', type: 'uuid', required: true, description: 'Subscription ID', in: 'path' }] },
   ],
 };
 
@@ -1558,6 +1724,8 @@ const AI: ResourceGroup = {
     { method: 'POST', path: '/ai/deal-probability', description: 'Get AI-generated qualification score and win probability for a deal. Costs 2 credits.', scopes: ['ai:use'], isWrite: true, params: [{ name: 'deal_id', type: 'uuid', required: true, description: 'Deal ID', in: 'body' }] },
     { method: 'POST', path: '/ai/call-coaching', description: 'Analyze a call, meeting, or SMS transcript for coaching insights. Returns performance scores, strengths, improvements, and coaching summary. Costs 3 credits. Provide transcript_id (preferred, auto-resolves text and metadata) or transcript_text (raw text).', scopes: ['ai:use'], isWrite: true, params: [{ name: 'transcript_id', type: 'uuid', required: false, description: 'Transcript UUID (preferred -- auto-resolves transcript text, source type, and context)', in: 'body' }, { name: 'transcript_text', type: 'string', required: false, description: 'Raw transcript text (use only if no transcript_id). Lines formatted as "Speaker Name: text..."', in: 'body' }, { name: 'team_member_name', type: 'string', required: true, description: 'Full name of the team member to coach. Must match a company user.', in: 'body' }, { name: 'source_type', type: 'string', required: false, description: 'Type of interaction: zoom_call (sales), zoom_meeting (team), sms_conversation. Auto-detected from transcript_id. Defaults to zoom_call.', in: 'body' }] },
     { method: 'POST', path: '/ai/generate-pipeline', description: 'Auto-generate a pipeline structure with stages from a text description. Costs 3 credits.', scopes: ['ai:use'], isWrite: true, params: [{ name: 'description', type: 'string', required: true, description: 'Description of the business/sales process', in: 'body' }, { name: 'industry', type: 'string', required: false, description: 'Industry for tailored stage suggestions', in: 'body' }] },
+    { method: 'POST', path: '/ai/needs-analysis', description: 'Run AI needs analysis from a transcript to extract client requirements and recommendations.', scopes: ['ai:use'], isWrite: true, params: [{ name: 'transcript_text', type: 'string', required: true, description: 'Transcript text to analyze', in: 'body' }] },
+    { method: 'POST', path: '/ai/fill-form', description: 'Use AI to pre-fill form fields based on deal/contact context. template_id is required.', scopes: ['ai:use'], isWrite: true, params: [{ name: 'template_id', type: 'uuid', required: true, description: 'Form template ID', in: 'body' }, { name: 'deal_id', type: 'uuid', required: false, description: 'Deal ID for context', in: 'body' }, { name: 'contact_id', type: 'uuid', required: false, description: 'Contact ID for context', in: 'body' }] },
   ],
 };
 
@@ -1571,7 +1739,8 @@ const BILLING: ResourceGroup = {
   description: 'View billing plans and credit balance.',
   endpoints: [
     { method: 'GET', path: '/billing/plan', description: 'Get the company billing plan details.', scopes: ['billing:read'], isWrite: false },
-    { method: 'GET', path: '/billing/credits', description: 'Get the current API credit balance.', scopes: ['billing:read'], isWrite: false },
+    { method: 'GET', path: '/billing/balance', description: 'Get the current API credit balance.', scopes: ['billing:read'], isWrite: false },
+    { method: 'GET', path: '/billing/usage', description: 'List credit transactions and usage history.', scopes: ['billing:read'], isWrite: false, params: [{ name: 'limit', type: 'number', required: false, description: 'Max results per page', in: 'query' }, { name: 'after', type: 'string', required: false, description: 'Cursor for pagination', in: 'query' }] },
   ],
 };
 
