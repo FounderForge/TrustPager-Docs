@@ -151,6 +151,7 @@ export const SCHEDULED_EVENT_TYPES: ResourceGroup = {
         { name: 'booking_pipeline_id', type: 'uuid', required: false, description: 'Pipeline for auto-created deals', in: 'body' },
         { name: 'booking_stage_id', type: 'uuid', required: false, description: 'Stage for auto-created deals', in: 'body' },
         { name: 'booking_assigned_user_ids', type: 'array', required: false, description: 'Team member UUIDs to assign to deals and check calendar availability', in: 'body' },
+        { name: 'booking_deal_behavior', type: 'string', required: false, description: 'How bookings interact with CRM deals: "create" (always new), "update_or_create" (match existing or create), "never_create" (match only). Default: "create"', in: 'body' },
         { name: 'booking_notifications', type: 'object', required: false, description: 'Booking notifications. Object with keys: pre_meeting, meeting_start, late, no_show, rebooking. Each key is an array of { offset_minutes? (pre_meeting/rebooking), channels: ["email"|"sms"], recipients: "booker"|"booker_and_attendees"|"team"|"all", email_subject, email_body, sms_body, label }. Template vars: {booker_name}, {event_type}, {date}, {time}, {meet_link}, {duration}, {rebook_link}', in: 'body' },
       ],
       requestExample: `curl -X PATCH \\
