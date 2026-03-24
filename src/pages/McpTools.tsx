@@ -3,6 +3,10 @@ import { RESOURCES } from '@/data/endpoints';
 
 const TOOL_CATEGORIES = [
   {
+    label: 'Universal Search',
+    tools: ['search'],
+  },
+  {
     label: 'Contacts',
     tools: [
       'search_contacts', 'list_contacts', 'get_contact', 'create_contact', 'update_contact', 'delete_contact',

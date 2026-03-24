@@ -1,4 +1,5 @@
 export { type EndpointParam, type Endpoint, type ResourceGroup, API_BASE_URL } from './types.js';
+export { SEARCH } from './search.js';
 export { CONTACTS } from './contacts.js';
 export { CUSTOMERS } from './customers.js';
 export { DEALS } from './deals.js';
@@ -35,6 +36,7 @@ export { SCHEDULING_AVAILABILITY } from './scheduling-availability.js';
 export { SCHEDULING_BOOKINGS } from './scheduling-bookings.js';
 
 import { type ResourceGroup } from './types.js';
+import { SEARCH } from './search.js';
 import { CONTACTS } from './contacts.js';
 import { CUSTOMERS } from './customers.js';
 import { DEALS } from './deals.js';
@@ -71,6 +73,7 @@ import { SCHEDULING_AVAILABILITY } from './scheduling-availability.js';
 import { SCHEDULING_BOOKINGS } from './scheduling-bookings.js';
 
 export const RESOURCES: ResourceGroup[] = [
+  SEARCH,
   CONTACTS,
   CUSTOMERS,
   DEALS,
