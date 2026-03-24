@@ -16,7 +16,7 @@ export const CUSTOMERS: ResourceGroup = {
       scopes: ['customers:read'],
       isWrite: false,
       params: [
-        { name: 'search', type: 'string', required: false, description: 'Search by name or email', in: 'query' },
+        { name: 'search', type: 'string', required: false, description: 'Search by name, email, or phone', in: 'query' },
         { name: 'limit', type: 'number', required: false, description: 'Max results (1-100, default 25)', in: 'query' },
         { name: 'cursor', type: 'string', required: false, description: 'Cursor for next page', in: 'query' },
       ],

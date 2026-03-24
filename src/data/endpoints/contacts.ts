@@ -16,7 +16,7 @@ export const CONTACTS: ResourceGroup = {
       scopes: ['contacts:read'],
       isWrite: false,
       params: [
-        { name: 'search', type: 'string', required: false, description: 'Search by first_name, last_name, or email', in: 'query' },
+        { name: 'search', type: 'string', required: false, description: 'Search by first_name, last_name, email, or phone', in: 'query' },
         { name: 'source', type: 'string', required: false, description: 'Filter by lead source', in: 'query' },
         { name: 'tags', type: 'string[]', required: false, description: 'Filter by tags (JSON array)', in: 'query' },
         { name: 'customer_id', type: 'uuid', required: false, description: 'Filter contacts linked to a specific customer', in: 'query' },
@@ -167,7 +167,7 @@ export const CONTACTS: ResourceGroup = {
     {
       method: 'POST',
       path: '/contacts/search',
-      description: 'Full-text search across contact names and email. Returns up to 100 results.',
+      description: 'Full-text search across contact names, email, and phone. Returns up to 100 results.',
       scopes: ['contacts:read'],
       isWrite: false,
       params: [

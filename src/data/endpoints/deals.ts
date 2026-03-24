@@ -16,7 +16,7 @@ export const DEALS: ResourceGroup = {
       scopes: ['deals:read'],
       isWrite: false,
       params: [
-        { name: 'search', type: 'string', required: false, description: 'Search by deal name', in: 'query' },
+        { name: 'search', type: 'string', required: false, description: 'Search by deal name, contact name/email/phone, or customer name/email/phone', in: 'query' },
         { name: 'status', type: 'string', required: false, description: 'Filter by status (open, won, lost)', in: 'query' },
         { name: 'contact_id', type: 'uuid', required: false, description: 'Filter by primary contact', in: 'query' },
         { name: 'customer_id', type: 'uuid', required: false, description: 'Filter by customer', in: 'query' },
@@ -134,7 +134,7 @@ export const DEALS: ResourceGroup = {
     {
       method: 'POST',
       path: '/deals/search',
-      description: 'Search deals by name.',
+      description: 'Search deals by name, contact name/email/phone, or customer name/email/phone. Matches across deal name and linked contact/customer fields.',
       scopes: ['deals:read'],
       isWrite: false,
       params: [
