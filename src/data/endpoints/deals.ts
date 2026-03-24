@@ -145,20 +145,29 @@ export const DEALS: ResourceGroup = {
     {
       method: 'POST',
       path: '/deals/:id/move',
-      description: 'Move a deal to a pipeline stage. If the deal is not in the pipeline, it will be added. If it is in a different pipeline, it will be moved.',
+      description: 'Move a deal to a pipeline stage. If the deal is not in the pipeline, it will be added. If it is in a different pipeline, it will be moved. When the stage actually changes, any stage_changed automations configured for the target stage fire automatically (fire-and-forget). Set skip_automations=true to suppress this, e.g. for bulk moves or when the caller handles automations separately.',
       scopes: ['deals:write'],
       isWrite: true,
       params: [
         { name: 'id', type: 'uuid', required: true, description: 'Deal ID', in: 'path' },
         { name: 'pipeline_id', type: 'uuid', required: true, description: 'Target pipeline ID', in: 'body' },
         { name: 'stage_id', type: 'uuid', required: true, description: 'Target stage ID', in: 'body' },
-        { name: 'position', type: 'number', required: false, description: 'Position within stage', in: 'body' },
+        { name: 'position', type: 'number', required: false, description: 'Position within stage (default 0)', in: 'body' },
+        { name: 'skip_automations', type: 'boolean', required: false, description: 'Set true to suppress stage_changed automation triggers. Default false.', in: 'body' },
       ],
       requestExample: `curl -X POST \\
   "${API_BASE_URL}/deals/deal-uuid/move" \\
   -H "Authorization: Bearer YOUR_API_KEY" \\
   -H "Content-Type: application/json" \\
-  -d '{ "pipeline_id": "pipe-uuid", "stage_id": "stage-uuid" }'`,
+  -d '{ "pipeline_id": "pipe-uuid", "stage_id": "stage-uuid", "skip_automations": false }'`,
+      responseExample: `{
+  "id": "placement-uuid",
+  "deal_id": "deal-uuid",
+  "pipeline_id": "pipe-uuid",
+  "stage_id": "stage-uuid",
+  "position": 0,
+  "meta": { "credits_remaining": 9499 }
+}`,
     },
     {
       method: 'GET',
