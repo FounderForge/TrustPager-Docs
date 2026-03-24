@@ -1,0 +1,20 @@
+import { type ResourceGroup } from './types.js';
+
+// =============================================================================
+// AI
+// =============================================================================
+
+export const AI: ResourceGroup = {
+  id: 'ai',
+  label: 'AI',
+  description: 'AI-powered features including entity enrichment, text editing, deal probability, call coaching, and pipeline generation.',
+  endpoints: [
+    { method: 'POST', path: '/ai/enrich', description: 'Enrich a contact or customer with AI-generated data from the web. Costs 5 credits.', scopes: ['ai:use'], isWrite: true, params: [{ name: 'entity_type', type: 'string', required: true, description: 'Entity type: "contact" or "customer"', in: 'body' }, { name: 'entity_id', type: 'uuid', required: true, description: 'Entity ID', in: 'body' }] },
+    { method: 'POST', path: '/ai/edit-text', description: 'Rewrite, improve, translate, summarize, or edit text using AI. Costs 1 credit.', scopes: ['ai:use'], isWrite: true, params: [{ name: 'text', type: 'string', required: true, description: 'Text to edit', in: 'body' }, { name: 'instruction', type: 'string', required: true, description: 'Editing instruction (e.g. "make it more professional", "translate to French")', in: 'body' }, { name: 'style', type: 'string', required: false, description: 'Writing style (e.g. formal, casual, persuasive)', in: 'body' }] },
+    { method: 'POST', path: '/ai/deal-probability', description: 'Get AI-generated qualification score and win probability for a deal. Costs 2 credits.', scopes: ['ai:use'], isWrite: true, params: [{ name: 'deal_id', type: 'uuid', required: true, description: 'Deal ID', in: 'body' }] },
+    { method: 'POST', path: '/ai/call-coaching', description: 'Analyze a call, meeting, or SMS transcript for coaching insights. Returns performance scores, strengths, improvements, and coaching summary. Costs 3 credits. Provide transcript_id (preferred, auto-resolves text and metadata) or transcript_text (raw text).', scopes: ['ai:use'], isWrite: true, params: [{ name: 'transcript_id', type: 'uuid', required: false, description: 'Transcript UUID (preferred -- auto-resolves transcript text, source type, and context)', in: 'body' }, { name: 'transcript_text', type: 'string', required: false, description: 'Raw transcript text (use only if no transcript_id). Lines formatted as "Speaker Name: text..."', in: 'body' }, { name: 'team_member_name', type: 'string', required: true, description: 'Full name of the team member to coach. Must match a company user.', in: 'body' }, { name: 'source_type', type: 'string', required: false, description: 'Type of interaction: zoom_call (sales), zoom_meeting (team), sms_conversation. Auto-detected from transcript_id. Defaults to zoom_call.', in: 'body' }] },
+    { method: 'POST', path: '/ai/generate-pipeline', description: 'Auto-generate a pipeline structure with stages from a text description. Costs 3 credits.', scopes: ['ai:use'], isWrite: true, params: [{ name: 'description', type: 'string', required: true, description: 'Description of the business/sales process', in: 'body' }, { name: 'industry', type: 'string', required: false, description: 'Industry for tailored stage suggestions', in: 'body' }] },
+    { method: 'POST', path: '/ai/needs-analysis', description: 'Run AI needs analysis from a transcript to extract client requirements and recommendations.', scopes: ['ai:use'], isWrite: true, params: [{ name: 'transcript_text', type: 'string', required: true, description: 'Transcript text to analyze', in: 'body' }] },
+    { method: 'POST', path: '/ai/fill-form', description: 'Use AI to pre-fill form fields based on deal/contact context. template_id is required.', scopes: ['ai:use'], isWrite: true, params: [{ name: 'template_id', type: 'uuid', required: true, description: 'Form template ID', in: 'body' }, { name: 'deal_id', type: 'uuid', required: false, description: 'Deal ID for context', in: 'body' }, { name: 'contact_id', type: 'uuid', required: false, description: 'Contact ID for context', in: 'body' }] },
+  ],
+};

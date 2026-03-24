@@ -87,6 +87,7 @@ const TOOL_CATEGORIES = [
       'initiate_voice_call', 'list_phone_call_logs',
       'list_phone_numbers', 'search_phone_numbers', 'buy_phone_number', 'release_phone_number',
       'list_voice_agents', 'get_voice_agent', 'create_voice_agent', 'update_voice_agent', 'delete_voice_agent', 'sync_voice_agent',
+      'update_voice_agent_flow', 'update_voice_agent_settings', 'publish_voice_agent',
       'list_voice_agent_calls',
       'list_voice_agent_website_configs', 'create_voice_agent_website_config', 'update_voice_agent_website_config', 'delete_voice_agent_website_config',
       'list_voice_agent_outbound_configs', 'create_voice_agent_outbound_config', 'update_voice_agent_outbound_config', 'delete_voice_agent_outbound_config',
