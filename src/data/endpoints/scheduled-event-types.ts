@@ -151,7 +151,7 @@ export const SCHEDULED_EVENT_TYPES: ResourceGroup = {
         { name: 'booking_pipeline_id', type: 'uuid', required: false, description: 'Pipeline for auto-created deals', in: 'body' },
         { name: 'booking_stage_id', type: 'uuid', required: false, description: 'Stage for auto-created deals', in: 'body' },
         { name: 'booking_assigned_user_ids', type: 'array', required: false, description: 'Team member UUIDs to assign to deals and check calendar availability', in: 'body' },
-        { name: 'booking_reminders', type: 'array', required: false, description: 'Pre-meeting reminders. Array of { offset_minutes, channels: ["email","sms"], recipients: "booker"|"booker_and_attendees"|"team"|"all", email_subject, email_body, sms_body, label }. Template vars: {booker_name}, {event_type}, {date}, {time}, {meet_link}, {duration}', in: 'body' },
+        { name: 'booking_notifications', type: 'object', required: false, description: 'Booking notifications. Object with keys: pre_meeting, meeting_start, late, no_show, rebooking. Each key is an array of { offset_minutes? (pre_meeting/rebooking), channels: ["email"|"sms"], recipients: "booker"|"booker_and_attendees"|"team"|"all", email_subject, email_body, sms_body, label }. Template vars: {booker_name}, {event_type}, {date}, {time}, {meet_link}, {duration}, {rebook_link}', in: 'body' },
       ],
       requestExample: `curl -X PATCH \\
   "${API_BASE_URL}/scheduled-event-types/a1b2c3d4-..." \\
