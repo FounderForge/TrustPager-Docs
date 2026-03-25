@@ -191,10 +191,52 @@ export const AUTOMATIONS: ResourceGroup = {
       isWrite: true,
       params: [
         { name: 'id', type: 'uuid', required: true, description: 'Automation ID', in: 'path' },
-        { name: 'action_type', type: 'string', required: true, description: 'Action type (send_custom_email, send_sms, trigger_voice_call, call_webhook, add_tasks, create_lead, attach_to_event_queue, remove_from_event_queue, send_document, send_for_signing, send_form, slack_send_message, trigger_automation, etc.)', in: 'body' },
+        { name: 'action_type', type: 'string', required: true, description: 'Action type (send_custom_email, send_gmail_email, send_sms, trigger_voice_call, call_webhook, add_tasks, create_lead, attach_to_event_queue, remove_from_event_queue, send_document, send_for_signing, send_form, slack_send_message, trigger_automation, etc.)', in: 'body' },
         { name: 'sequence', type: 'number', required: true, description: 'Execution order', in: 'body' },
-        { name: 'config', type: 'object', required: false, description: 'Action configuration (varies by action_type)', in: 'body' },
+        {
+          name: 'config',
+          type: 'object',
+          required: false,
+          description: `Action configuration (varies by action_type). Key configs:
+send_custom_email: { greeting, customMessage, showReplyButton?, recipient_target?, replyEmail? }
+send_gmail_email: { subject, body, recipient_target, sender_mode? } — sender_mode: "company" (workspace Gmail from /tools/email) or "assignee" (deal primary assignee personal Gmail). recipient_target: "contact", "account_customer", or "account_supplier". subject and body support {{variable}} placeholders. Gmail signature is auto-appended.
+send_sms: { phone_number_id, message_body }
+trigger_voice_call: { voice_agent_id }
+add_tasks: { tasks: [{ title, category?, due_offset_days? }] }
+call_webhook: { url, method? }
+create_lead: { pipeline_id, stage_id }`,
+          in: 'body',
+        },
       ],
+      requestExample: `curl -X POST \\
+  "${API_BASE_URL}/automations/auto-uuid/actions" \\
+  -H "Authorization: Bearer YOUR_API_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "action_type": "send_gmail_email",
+    "sequence": 1,
+    "config": {
+      "subject": "Following up on {{deal.name}}",
+      "body": "Hi {{contact.first_name}},\\n\\nJust wanted to follow up. Let me know if you have any questions.\\n\\nBest regards",
+      "recipient_target": "contact",
+      "sender_mode": "company"
+    }
+  }'`,
+      responseExample: `{
+  "data": {
+    "id": "action-uuid-...",
+    "automation_id": "auto-uuid-...",
+    "action_type": "send_gmail_email",
+    "sequence": 1,
+    "config": {
+      "subject": "Following up on {{deal.name}}",
+      "body": "Hi {{contact.first_name}},\\n\\nJust wanted to follow up.",
+      "recipient_target": "contact",
+      "sender_mode": "company"
+    },
+    "created_at": "2026-03-25T05:00:00Z"
+  }
+}`,
     },
     {
       method: 'POST',

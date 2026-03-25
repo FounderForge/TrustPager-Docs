@@ -1,13 +1,13 @@
 import { type ResourceGroup, API_BASE_URL } from './types.js';
 
 // =============================================================================
-// EMAIL (11 endpoints)
+// EMAIL (12 endpoints - threads, send, reply, capabilities, logs, configs)
 // =============================================================================
 
 export const EMAIL: ResourceGroup = {
   id: 'email',
   label: 'Email',
-  description: 'Send and receive emails, manage threads, view logs, and configure email settings. Emails are sent via Postmark.',
+  description: 'Send and receive emails via Postmark or Gmail, manage threads, view logs, and configure email settings. Supports provider selection for Gmail integration.',
   endpoints: [
     {
       method: 'GET',
@@ -67,7 +67,7 @@ export const EMAIL: ResourceGroup = {
     {
       method: 'POST',
       path: '/email/send',
-      description: 'Send a new email. Requires to_email, subject, and html_body.',
+      description: 'Send a new email. Default mode is "company" (uses configured Company Mail provider). Use mode "personal" with sender_user_id to send from a specific user\'s Gmail.',
       scopes: ['email:send'],
       isWrite: true,
       params: [
@@ -75,6 +75,8 @@ export const EMAIL: ResourceGroup = {
         { name: 'to_name', type: 'string', required: false, description: 'Recipient name', in: 'body' },
         { name: 'subject', type: 'string', required: true, description: 'Email subject', in: 'body' },
         { name: 'html_body', type: 'string', required: true, description: 'HTML email body', in: 'body' },
+        { name: 'mode', type: 'string', required: false, description: 'Send mode: "company" (default) or "personal"', in: 'body' },
+        { name: 'sender_user_id', type: 'uuid', required: false, description: 'User UUID whose Gmail to send from (required when mode is "personal")', in: 'body' },
         { name: 'contact_id', type: 'uuid', required: false, description: 'Link to contact', in: 'body' },
         { name: 'deal_id', type: 'uuid', required: false, description: 'Link to deal', in: 'body' },
         { name: 'customer_id', type: 'uuid', required: false, description: 'Link to customer', in: 'body' },
@@ -89,13 +91,14 @@ export const EMAIL: ResourceGroup = {
     "to_name": "Jane Doe",
     "subject": "Your Proposal",
     "html_body": "<h1>Hello!</h1><p>Your proposal is ready.</p>",
+    "provider": "gmail",
     "deal_id": "deal-uuid-..."
   }'`,
     },
     {
       method: 'POST',
       path: '/email/reply',
-      description: 'Reply to an existing email thread.',
+      description: 'Reply to an existing email thread. Default mode is "company" (uses configured provider). Use mode "personal" with sender_user_id for a user\'s Gmail.',
       scopes: ['email:send'],
       isWrite: true,
       params: [
@@ -104,7 +107,33 @@ export const EMAIL: ResourceGroup = {
         { name: 'to_email', type: 'string', required: true, description: 'Recipient email', in: 'body' },
         { name: 'to_name', type: 'string', required: false, description: 'Recipient name', in: 'body' },
         { name: 'in_reply_to', type: 'string', required: false, description: 'Message ID to reply to (for threading)', in: 'body' },
+        { name: 'mode', type: 'string', required: false, description: 'Send mode: "company" (default) or "personal"', in: 'body' },
+        { name: 'sender_user_id', type: 'uuid', required: false, description: 'User UUID whose Gmail to reply from (required when mode is "personal")', in: 'body' },
       ],
+    },
+    {
+      method: 'GET',
+      path: '/email/capabilities',
+      description: 'Check email sending capabilities. Returns Company Mail provider (TrustPager Mail or Gmail), configuration, and which users have personal Gmail connected.',
+      scopes: ['email:read'],
+      isWrite: false,
+      responseExample: `{
+  "data": {
+    "company_mail": {
+      "configured": true,
+      "provider": "gmail",
+      "gmail_email": "team@example.com",
+      "gmail_sender_user_id": "user-uuid-...",
+      "connection_status": "active",
+      "send_as_aliases": [
+        { "email": "team@example.com", "displayName": "Team Name", "isDefault": true }
+      ]
+    },
+    "personal_gmail_users": [
+      { "user_id": "user-uuid-...", "email": "simon@example.com", "display_name": "Simon" }
+    ]
+  }
+}`,
     },
     {
       method: 'GET',
@@ -117,6 +146,7 @@ export const EMAIL: ResourceGroup = {
         { name: 'contact_id', type: 'uuid', required: false, description: 'Filter by contact', in: 'query' },
         { name: 'deal_id', type: 'uuid', required: false, description: 'Filter by deal', in: 'query' },
         { name: 'email_type', type: 'string', required: false, description: 'Filter by type', in: 'query' },
+        { name: 'provider', type: 'string', required: false, description: 'Filter by provider: "postmark" or "gmail"', in: 'query' },
       ],
     },
     {
@@ -148,15 +178,21 @@ export const EMAIL: ResourceGroup = {
         { name: 'logo_url', type: 'string', required: false, description: 'Logo URL for emails', in: 'body' },
         { name: 'primary_color', type: 'string', required: false, description: 'Primary brand color hex', in: 'body' },
         { name: 'is_default', type: 'boolean', required: false, description: 'Set as default config', in: 'body' },
+        { name: 'email_provider', type: 'string', required: false, description: 'Company Mail provider: "postmark" (TrustPager Mail) or "gmail"', in: 'body' },
+        { name: 'gmail_sender_user_id', type: 'uuid', required: false, description: 'User UUID whose Gmail is used when email_provider is "gmail"', in: 'body' },
       ],
     },
     {
       method: 'PATCH',
       path: '/email/configs/:id',
-      description: 'Update an email configuration.',
+      description: 'Update an email configuration. Set email_provider to "gmail" and gmail_sender_user_id to switch Company Mail to Gmail.',
       scopes: ['email-config:write'],
       isWrite: true,
-      params: [{ name: 'id', type: 'uuid', required: true, description: 'Email config ID', in: 'path' }],
+      params: [
+        { name: 'id', type: 'uuid', required: true, description: 'Email config ID', in: 'path' },
+        { name: 'email_provider', type: 'string', required: false, description: 'Company Mail provider: "postmark" (TrustPager Mail) or "gmail"', in: 'body' },
+        { name: 'gmail_sender_user_id', type: 'uuid', required: false, description: 'User UUID whose Gmail is used when email_provider is "gmail"', in: 'body' },
+      ],
     },
     {
       method: 'DELETE',
