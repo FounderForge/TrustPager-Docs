@@ -86,6 +86,7 @@ const TOOL_CATEGORIES = [
     label: 'Communication',
     tools: [
       'send_email', 'reply_to_email', 'list_email_threads', 'get_email_thread', 'list_email_logs',
+      'get_email_capabilities',
       'list_email_configs', 'get_email_config', 'create_email_config', 'update_email_config', 'delete_email_config',
       'send_sms', 'list_sms_conversations', 'get_sms_conversation', 'get_sms_messages',
       'initiate_voice_call', 'list_phone_call_logs',
@@ -218,6 +219,10 @@ const TOOL_CATEGORIES = [
       'list_integrations', 'get_integration', 'connect_integration', 'update_integration', 'delete_integration',
       'query_integration', 'execute_integration_action',
     ],
+  },
+  {
+    label: 'Service Requests',
+    tools: ['create_service_request'],
   },
   {
     label: 'Admin & Billing',

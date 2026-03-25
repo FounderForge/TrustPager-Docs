@@ -34,6 +34,7 @@ export { BILLING } from './billing.js';
 export { SCHEDULED_EVENT_TYPES } from './scheduled-event-types.js';
 export { SCHEDULING_AVAILABILITY } from './scheduling-availability.js';
 export { SCHEDULING_BOOKINGS } from './scheduling-bookings.js';
+export { SERVICE_REQUESTS } from './service-requests.js';
 
 import { type ResourceGroup } from './types.js';
 import { SEARCH } from './search.js';
@@ -71,6 +72,7 @@ import { BILLING } from './billing.js';
 import { SCHEDULED_EVENT_TYPES } from './scheduled-event-types.js';
 import { SCHEDULING_AVAILABILITY } from './scheduling-availability.js';
 import { SCHEDULING_BOOKINGS } from './scheduling-bookings.js';
+import { SERVICE_REQUESTS } from './service-requests.js';
 
 export const RESOURCES: ResourceGroup[] = [
   SEARCH,
@@ -108,6 +110,7 @@ export const RESOURCES: ResourceGroup[] = [
   WEBHOOKS,
   AI,
   BILLING,
+  SERVICE_REQUESTS,
 ];
 
 /** Look up a resource group by its id (URL slug) */
