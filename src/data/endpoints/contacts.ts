@@ -39,6 +39,7 @@ export const CONTACTS: ResourceGroup = {
       "last_name": "Smith",
       "email": "john@example.com",
       "phone": "+61412345678",
+      "date_of_birth": "1985-06-15",
       "job_title": "Director",
       "source": "website",
       "tags": ["vip"],
@@ -77,6 +78,7 @@ export const CONTACTS: ResourceGroup = {
     "last_name": "Smith",
     "email": "john@example.com",
     "phone": "+61412345678",
+    "date_of_birth": "1985-06-15",
     "job_title": "Director",
     "source": "website",
     "tags": ["vip"],
@@ -97,6 +99,7 @@ export const CONTACTS: ResourceGroup = {
         { name: 'last_name', type: 'string', required: false, description: 'Contact last name', in: 'body' },
         { name: 'email', type: 'string', required: false, description: 'Email address', in: 'body' },
         { name: 'phone', type: 'string', required: false, description: 'Phone number (E.164 format preferred)', in: 'body' },
+        { name: 'date_of_birth', type: 'string', required: false, description: 'Date of birth in YYYY-MM-DD format (e.g. 1990-03-26). Used by the birthday messaging cron to send automated birthday emails/SMS.', in: 'body' },
         { name: 'job_title', type: 'string', required: false, description: 'Job title', in: 'body' },
         { name: 'source', type: 'string', required: false, description: 'Lead source (e.g. website, referral, api)', in: 'body' },
         { name: 'tags', type: 'object[]', required: false, description: 'Tags. Each tag is {name: string, color?: string} (hex color, default "#3b82f6"). Plain strings are also accepted and auto-converted. Example: [{"name":"vip","color":"#ef4444"}]', in: 'body' },
@@ -149,6 +152,7 @@ export const CONTACTS: ResourceGroup = {
         { name: 'last_name', type: 'string', required: false, description: 'Last name', in: 'body' },
         { name: 'email', type: 'string', required: false, description: 'Email', in: 'body' },
         { name: 'phone', type: 'string', required: false, description: 'Phone', in: 'body' },
+        { name: 'date_of_birth', type: 'string', required: false, description: 'Date of birth in YYYY-MM-DD format. Set to null to clear.', in: 'body' },
         { name: 'tags', type: 'object[]', required: false, description: 'Tags. Each tag is {name: string, color?: string}. Plain strings are also accepted. Replaces entire tags array.', in: 'body' },
         { name: 'notes', type: 'string', required: false, description: 'Notes', in: 'body' },
         { name: 'metadata', type: 'object', required: false, description: 'Custom field values as { field_id: value } pairs. Replaces entire metadata object.', in: 'body' },
@@ -231,6 +235,28 @@ export const CONTACTS: ResourceGroup = {
         { name: 'id', type: 'uuid', required: true, description: 'Contact ID', in: 'path' },
         { name: 'customerId', type: 'uuid', required: true, description: 'Customer ID to unlink', in: 'path' },
       ],
+    },
+    {
+      method: 'GET',
+      path: '/contacts/:id/birthday-sends',
+      description: 'Get birthday message send history for a contact. Returns all years birthday emails/SMS were sent, the channels used, and the send date. Useful for auditing birthday message delivery.',
+      scopes: ['contacts:read'],
+      isWrite: false,
+      params: [
+        { name: 'id', type: 'uuid', required: true, description: 'Contact ID', in: 'path' },
+      ],
+      responseExample: `{
+  "data": [
+    {
+      "id": "uuid-...",
+      "year_number": 1,
+      "birthday_date": "2026-03-26",
+      "channels_sent": ["email", "sms"],
+      "sent_at": "2026-03-26T06:00:00Z"
+    }
+  ],
+  "meta": { "credits_remaining": 9490 }
+}`,
     },
   ],
 };

@@ -7,7 +7,7 @@ import { type ResourceGroup, API_BASE_URL } from './types.js';
 export const EMAIL: ResourceGroup = {
   id: 'email',
   label: 'Email',
-  description: 'Send and receive emails via Postmark or Gmail, manage threads, view logs, and configure email settings. Supports provider selection for Gmail integration.',
+  description: 'Send and receive emails via TrustPager Mail or Gmail, manage threads, view logs, and configure email settings. Supports provider selection for Gmail integration.',
   endpoints: [
     {
       method: 'GET',

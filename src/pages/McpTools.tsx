@@ -10,7 +10,7 @@ const TOOL_CATEGORIES = [
     label: 'Contacts',
     tools: [
       'search_contacts', 'list_contacts', 'get_contact', 'create_contact', 'update_contact', 'delete_contact',
-      'get_contact_deals', 'get_contact_activities', 'get_contact_employers',
+      'get_contact_deals', 'get_contact_activities', 'get_contact_employers', 'get_contact_birthday_sends',
       'link_contact_to_customer', 'unlink_contact_from_customer',
     ],
   },
@@ -230,6 +230,7 @@ const TOOL_CATEGORIES = [
       'get_company', 'update_company',
       'list_company_users', 'get_company_user', 'invite_user', 'update_user_role', 'remove_user',
       'get_crm_settings', 'update_crm_settings',
+      'get_birthday_messages', 'update_birthday_messages',
       'get_billing_plan', 'get_credit_balance', 'get_billing_usage',
     ],
   },
