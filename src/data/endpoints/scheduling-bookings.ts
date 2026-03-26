@@ -1,7 +1,7 @@
 import { type ResourceGroup, API_BASE_URL } from './types.js';
 
 // =============================================================================
-// SCHEDULING BOOKINGS (5 endpoints)
+// SCHEDULING BOOKINGS (8 endpoints)
 // =============================================================================
 
 export const SCHEDULING_BOOKINGS: ResourceGroup = {
@@ -16,7 +16,7 @@ export const SCHEDULING_BOOKINGS: ResourceGroup = {
       scopes: ['company:read'],
       isWrite: false,
       params: [
-        { name: 'status', type: 'string', required: false, description: 'Filter: confirmed, cancelled, completed, no_show', in: 'query' },
+        { name: 'status', type: 'string', required: false, description: 'Filter: confirmed, cancelled, attended, late, no_show', in: 'query' },
         { name: 'event_type_id', type: 'string', required: false, description: 'Filter by event type UUID', in: 'query' },
         { name: 'date_from', type: 'string', required: false, description: 'Filter: bookings on or after YYYY-MM-DD', in: 'query' },
         { name: 'date_to', type: 'string', required: false, description: 'Filter: bookings on or before YYYY-MM-DD', in: 'query' },
@@ -213,6 +213,36 @@ export const SCHEDULING_BOOKINGS: ResourceGroup = {
     }
   }
 }`,
+    },
+    {
+      method: 'POST',
+      path: '/scheduling-bookings/:id/mark-attended',
+      description: 'Mark a booking as attended. Sets status to "attended", clears linked deal next action, cancels pending reminders, and logs a CRM activity with full booking context.',
+      scopes: ['company:write'],
+      isWrite: true,
+      params: [
+        { name: 'id', type: 'string', required: true, description: 'Booking UUID', in: 'path' },
+      ],
+    },
+    {
+      method: 'POST',
+      path: '/scheduling-bookings/:id/mark-late',
+      description: 'Mark a booking as late. Sets status to "late", sends late notifications to the booker (if configured on the event type), and logs a CRM activity.',
+      scopes: ['company:write'],
+      isWrite: true,
+      params: [
+        { name: 'id', type: 'string', required: true, description: 'Booking UUID', in: 'path' },
+      ],
+    },
+    {
+      method: 'POST',
+      path: '/scheduling-bookings/:id/mark-no-show',
+      description: 'Mark a booking as no-show. Sets status to "no_show", sends no-show notifications, schedules rebooking reminders (if configured), and logs a CRM activity.',
+      scopes: ['company:write'],
+      isWrite: true,
+      params: [
+        { name: 'id', type: 'string', required: true, description: 'Booking UUID', in: 'path' },
+      ],
     },
   ],
 };
