@@ -84,6 +84,7 @@ export const EMAIL: ResourceGroup = {
         { name: 'cc', type: 'string', required: false, description: 'CC recipients as comma-separated email addresses', in: 'body' },
         { name: 'customer_id', type: 'uuid', required: false, description: 'Link to customer', in: 'body' },
         { name: 'email_config_id', type: 'uuid', required: false, description: 'Email config to use (defaults to company default)', in: 'body' },
+        { name: 'attachments', type: 'array', required: false, description: 'File attachments (Gmail only, max 25MB total). Array of objects with filename, mime_type, and content (base64-encoded file data).', in: 'body' },
       ],
       requestExample: `curl -X POST \\
   "${API_BASE_URL}/email/send" \\
@@ -92,10 +93,17 @@ export const EMAIL: ResourceGroup = {
   -d '{
     "to_email": "client@example.com",
     "to_name": "Jane Doe",
-    "subject": "Your Proposal",
-    "html_body": "<h1>Hello!</h1><p>Your proposal is ready.</p>",
-    "provider": "gmail",
-    "deal_id": "deal-uuid-..."
+    "subject": "Your CRM Setup Report",
+    "html_body": "<h1>Hello!</h1><p>See attached report.</p>",
+    "mode": "personal",
+    "sender_user_id": "user-uuid-...",
+    "attachments": [
+      {
+        "filename": "report.pdf",
+        "mime_type": "application/pdf",
+        "content": "JVBERi0xLjQg... (base64-encoded file)"
+      }
+    ]
   }'`,
     },
     {
@@ -113,6 +121,7 @@ export const EMAIL: ResourceGroup = {
         { name: 'in_reply_to', type: 'string', required: false, description: 'Message ID to reply to (for threading)', in: 'body' },
         { name: 'mode', type: 'string', required: false, description: 'Send mode: "company" (default) or "personal"', in: 'body' },
         { name: 'sender_user_id', type: 'uuid', required: false, description: 'User UUID whose Gmail to reply from (required when mode is "personal")', in: 'body' },
+        { name: 'attachments', type: 'array', required: false, description: 'File attachments (Gmail only, max 25MB total). Array of objects with filename, mime_type, and content (base64-encoded file data).', in: 'body' },
       ],
     },
     {
