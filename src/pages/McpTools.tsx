@@ -216,7 +216,7 @@ const TOOL_CATEGORIES = [
   {
     label: 'Integrations',
     tools: [
-      'list_integrations', 'get_integration', 'connect_integration', 'update_integration', 'delete_integration',
+      'list_integrations', 'get_integration',
       'query_integration', 'execute_integration_action',
     ],
   },
