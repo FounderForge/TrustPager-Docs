@@ -69,7 +69,7 @@ export const EMAIL: ResourceGroup = {
     {
       method: 'POST',
       path: '/email/send',
-      description: 'Send a new email. Default mode is "company" (uses configured Company Mail provider). Use mode "personal" with sender_user_id to send from a specific user\'s Gmail.',
+      description: 'Send a new email. Default mode is "company" (uses configured Company Mail provider). Use mode "personal" with sender_user_id to send from a specific user\'s Gmail. When contact_id or deal_id is provided, an outbound email activity is automatically logged to their CRM timeline.',
       scopes: ['email:send'],
       isWrite: true,
       params: [
@@ -80,8 +80,8 @@ export const EMAIL: ResourceGroup = {
         { name: 'mode', type: 'string', required: false, description: 'Send mode: "company" (default) or "personal"', in: 'body' },
         { name: 'sender_user_id', type: 'uuid', required: false, description: 'User UUID whose Gmail to send from (required when mode is "personal")', in: 'body' },
         { name: 'from_email', type: 'string', required: false, description: 'Send-as alias when mode is "personal". Must be a valid alias for the sender (use GET /email/capabilities to see available aliases). If omitted, auto-resolves to the user\'s workspace email if it is a valid alias.', in: 'body' },
-        { name: 'contact_id', type: 'uuid', required: false, description: 'Link to contact', in: 'body' },
-        { name: 'deal_id', type: 'uuid', required: false, description: 'Link to deal', in: 'body' },
+        { name: 'contact_id', type: 'uuid', required: false, description: 'Link to contact. Auto-logs an outbound email activity on the contact timeline.', in: 'body' },
+        { name: 'deal_id', type: 'uuid', required: false, description: 'Link to deal. Auto-logs an outbound email activity on the deal timeline.', in: 'body' },
         { name: 'cc', type: 'string', required: false, description: 'CC recipients as comma-separated email addresses', in: 'body' },
         { name: 'customer_id', type: 'uuid', required: false, description: 'Link to customer', in: 'body' },
         { name: 'email_config_id', type: 'uuid', required: false, description: 'Email config to use (defaults to company default)', in: 'body' },
