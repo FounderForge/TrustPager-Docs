@@ -12,7 +12,7 @@ export const EMAIL: ResourceGroup = {
     {
       method: 'GET',
       path: '/email/threads',
-      description: 'List email threads with linked entities (contacts, deals, customers).',
+      description: 'List email threads with linked entities (contacts, deals, customers). Supports full-text subject search, entity-based filtering, participant email filtering, and direction filtering.',
       scopes: ['email:read'],
       isWrite: false,
       params: [
@@ -20,11 +20,16 @@ export const EMAIL: ResourceGroup = {
         { name: 'is_read', type: 'boolean', required: false, description: 'Filter by read status', in: 'query' },
         { name: 'is_automated', type: 'boolean', required: false, description: 'Filter by automated (true) or manual (false) threads', in: 'query' },
         { name: 'direction', type: 'string', required: false, description: 'Filter by last message direction: "inbound" or "outbound"', in: 'query' },
+        { name: 'search', type: 'string', required: false, description: 'Search by subject (partial match, case-insensitive). Example: ?search=brochure', in: 'query' },
+        { name: 'contact_id', type: 'uuid', required: false, description: 'Filter threads linked to a specific contact UUID via conversation links', in: 'query' },
+        { name: 'customer_id', type: 'uuid', required: false, description: 'Filter threads linked to a specific customer/account UUID via conversation links', in: 'query' },
+        { name: 'deal_id', type: 'uuid', required: false, description: 'Filter threads linked to a specific deal UUID via conversation links', in: 'query' },
+        { name: 'participant', type: 'string', required: false, description: 'Filter by participant email address (exact match). Finds threads where the given email appears in the participants list.', in: 'query' },
         { name: 'limit', type: 'number', required: false, description: 'Max results (1-100)', in: 'query' },
         { name: 'cursor', type: 'string', required: false, description: 'Cursor for pagination', in: 'query' },
       ],
       requestExample: `curl -X GET \\
-  "${API_BASE_URL}/email/threads?status=open&limit=10" \\
+  "${API_BASE_URL}/email/threads?search=proposal&direction=inbound&limit=10" \\
   -H "Authorization: Bearer YOUR_API_KEY"`,
       responseExample: `{
   "data": [
@@ -37,6 +42,7 @@ export const EMAIL: ResourceGroup = {
       "last_message_at": "2026-03-22T15:30:00Z",
       "last_message_direction": "inbound",
       "last_message_preview": "Thanks for the proposal...",
+      "participants": [{ "name": "John Smith", "email": "john@example.com" }],
       "linked_entities": {
         "contacts": [{ "id": "...", "first_name": "John", "last_name": "Smith" }],
         "deals": [{ "id": "...", "name": "Website Redesign" }],
@@ -58,13 +64,39 @@ export const EMAIL: ResourceGroup = {
     {
       method: 'GET',
       path: '/email/threads/:id/messages',
-      description: 'List all messages (inbound and outbound) in a thread, sorted chronologically.',
+      description: 'List all messages (inbound and outbound) in a thread, sorted chronologically. Inbound messages include an "attachments" array with attachment metadata (name, mimeType, size). Outbound messages include "has_attachment" (boolean) and "attachment_filename" (string or null).',
       scopes: ['email:read'],
       isWrite: false,
       params: [
         { name: 'id', type: 'uuid', required: true, description: 'Thread ID', in: 'path' },
         { name: 'limit', type: 'number', required: false, description: 'Max messages per page', in: 'query' },
       ],
+      responseExample: `{
+  "data": [
+    {
+      "id": "msg-uuid-...",
+      "direction": "inbound",
+      "from_email": "client@example.com",
+      "from_name": "Jane Doe",
+      "subject": "RE: Project Proposal",
+      "text_body": "Thanks for the proposal...",
+      "attachments": [
+        { "name": "contract.pdf", "mimeType": "application/pdf", "size": 45231 }
+      ],
+      "created_at": "2026-03-22T15:30:00Z"
+    },
+    {
+      "id": "msg-uuid-...",
+      "direction": "outbound",
+      "sender_email": "team@company.com",
+      "recipient_email": "client@example.com",
+      "has_attachment": true,
+      "attachment_filename": "proposal_v2.pdf",
+      "created_at": "2026-03-22T16:00:00Z"
+    }
+  ],
+  "pagination": { "limit": 25, "has_more": false, "next_cursor": null, "prev_cursor": null }
+}`,
     },
     {
       method: 'POST',
