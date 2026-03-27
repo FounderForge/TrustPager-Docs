@@ -79,6 +79,7 @@ export const EMAIL: ResourceGroup = {
         { name: 'html_body', type: 'string', required: true, description: 'HTML email body', in: 'body' },
         { name: 'mode', type: 'string', required: false, description: 'Send mode: "company" (default) or "personal"', in: 'body' },
         { name: 'sender_user_id', type: 'uuid', required: false, description: 'User UUID whose Gmail to send from (required when mode is "personal")', in: 'body' },
+        { name: 'from_email', type: 'string', required: false, description: 'Send-as alias when mode is "personal". Must be a valid alias for the sender (use GET /email/capabilities to see available aliases). If omitted, auto-resolves to the user\'s workspace email if it is a valid alias.', in: 'body' },
         { name: 'contact_id', type: 'uuid', required: false, description: 'Link to contact', in: 'body' },
         { name: 'deal_id', type: 'uuid', required: false, description: 'Link to deal', in: 'body' },
         { name: 'cc', type: 'string', required: false, description: 'CC recipients as comma-separated email addresses', in: 'body' },
@@ -121,13 +122,14 @@ export const EMAIL: ResourceGroup = {
         { name: 'in_reply_to', type: 'string', required: false, description: 'Message ID to reply to (for threading)', in: 'body' },
         { name: 'mode', type: 'string', required: false, description: 'Send mode: "company" (default) or "personal"', in: 'body' },
         { name: 'sender_user_id', type: 'uuid', required: false, description: 'User UUID whose Gmail to reply from (required when mode is "personal")', in: 'body' },
+        { name: 'from_email', type: 'string', required: false, description: 'Send-as alias when mode is "personal". Must be a valid alias for the sender. Use GET /email/capabilities to see available aliases.', in: 'body' },
         { name: 'attachments', type: 'array', required: false, description: 'File attachments (Gmail only, max 25MB total). Array of objects with filename, mime_type, and content (base64-encoded file data).', in: 'body' },
       ],
     },
     {
       method: 'GET',
       path: '/email/capabilities',
-      description: 'Check email sending capabilities. Returns Company Mail provider (TrustPager Mail or Gmail), configuration, and which users have personal Gmail connected.',
+      description: 'Check email sending capabilities. Returns Company Mail provider (TrustPager Mail or Gmail), configuration, and which users have personal Gmail connected. Each user includes email (recommended alias), send_as_aliases (all aliases), gmail_address (raw Gmail), and display_name.',
       scopes: ['email:read'],
       isWrite: false,
       responseExample: `{
@@ -143,7 +145,16 @@ export const EMAIL: ResourceGroup = {
       ]
     },
     "personal_gmail_users": [
-      { "user_id": "user-uuid-...", "email": "simon@example.com", "display_name": "Simon" }
+      {
+        "user_id": "user-uuid-...",
+        "email": "simon@company.com",
+        "display_name": "Simon",
+        "gmail_address": "simon@gmail.com",
+        "send_as_aliases": [
+          { "email": "simon@company.com", "displayName": "Simon Smith", "isDefault": true },
+          { "email": "team@company.com", "displayName": "Team", "isDefault": false }
+        ]
+      }
     ]
   }
 }`,
