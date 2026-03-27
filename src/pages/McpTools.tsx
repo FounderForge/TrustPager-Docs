@@ -136,7 +136,7 @@ const TOOL_CATEGORIES = [
   {
     label: 'Files',
     tools: [
-      'list_files', 'get_file', 'delete_file', 'download_file', 'list_file_folders', 'create_file_folder',
+      'list_files', 'get_file', 'upload_file', 'delete_file', 'download_file', 'list_file_folders', 'create_file_folder',
     ],
   },
   {
@@ -202,7 +202,7 @@ const TOOL_CATEGORIES = [
     label: 'AI',
     tools: [
       'ai_enrich', 'ai_edit_text', 'ai_deal_probability', 'ai_call_coaching', 'ai_generate_pipeline',
-      'ai_needs_analysis', 'ai_fill_form',
+      'ai_needs_analysis', 'ai_fill_form', 'ai_generate_image',
     ],
   },
   {
