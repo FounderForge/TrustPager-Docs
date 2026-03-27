@@ -45,8 +45,7 @@ function McpSetup() {
       "command": "npx",
       "args": ["-y", "@trustpager/mcp-server"],
       "env": {
-        "TRUSTPAGER_API_KEY": "tp_live_your_api_key_here",
-        "TRUSTPAGER_COMPANY_ID": "your-company-uuid"
+        "TRUSTPAGER_API_KEY": "tp_live_your_api_key_here"
       }
     }
   }
@@ -58,15 +57,23 @@ function McpSetup() {
         <section className="mb-12">
           <h2 className="text-xl font-semibold text-gray-900 mb-4">Claude.ai Integration (OAuth)</h2>
           <p className="text-gray-600 mb-4">
-            For Claude.ai web and Claude for Enterprise, TrustPager uses OAuth 2.0 for authentication.
-            The MCP server is available as a remote integration -- no local setup required.
+            For Claude.ai web, TrustPager uses OAuth 2.0 for authentication.
+            No local setup or API key required -- you log in through the browser.
           </p>
           <ol className="list-decimal pl-6 space-y-2 text-gray-600">
-            <li>Open Claude.ai and navigate to Settings &rarr; Integrations</li>
-            <li>Search for "TrustPager" or "FinalPiece CRM"</li>
-            <li>Click Connect and authorize access to your CRM</li>
-            <li>Start chatting -- Claude can now manage your CRM directly</li>
+            <li>In TrustPager, go to <strong>Settings &rarr; API Keys</strong></li>
+            <li>Click <strong>"Create OAuth Client"</strong> and name it (e.g. "Claude.ai")</li>
+            <li>Copy the <strong>MCP Server URL</strong>, <strong>Client ID</strong>, and <strong>Client Secret</strong></li>
+            <li>In Claude.ai, go to <strong>Settings &rarr; Connectors &rarr; Add custom connector</strong></li>
+            <li>Paste the MCP URL, Client ID, and Client Secret</li>
+            <li>Click Connect and log into TrustPager to authorize access</li>
           </ol>
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm text-blue-800 mt-4">
+            <strong>Multi-workspace:</strong> Each workspace has a unique MCP URL with a{' '}
+            <code className="bg-blue-100 px-1 py-0.5 rounded">?company=slug</code> parameter.
+            To connect multiple workspaces, create an OAuth client in each workspace and add each as a
+            separate custom connector in Claude.ai. The server validates that each token matches its workspace.
+          </div>
         </section>
 
         {/* Environment vars */}
@@ -85,12 +92,7 @@ function McpSetup() {
                 <tr>
                   <td className="px-4 py-2 font-mono text-xs">TRUSTPAGER_API_KEY</td>
                   <td className="px-4 py-2"><span className="text-xs bg-red-50 text-red-700 px-2 py-0.5 rounded">Required</span></td>
-                  <td className="px-4 py-2 text-gray-600">Your TrustPager API key</td>
-                </tr>
-                <tr className="bg-gray-50/50">
-                  <td className="px-4 py-2 font-mono text-xs">TRUSTPAGER_COMPANY_ID</td>
-                  <td className="px-4 py-2"><span className="text-xs bg-red-50 text-red-700 px-2 py-0.5 rounded">Required</span></td>
-                  <td className="px-4 py-2 text-gray-600">Your company UUID</td>
+                  <td className="px-4 py-2 text-gray-600">Your TrustPager API key (from Settings &gt; API Keys)</td>
                 </tr>
               </tbody>
             </table>
