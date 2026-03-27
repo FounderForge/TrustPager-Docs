@@ -129,11 +129,18 @@ export const EMAIL: ResourceGroup = {
     {
       method: 'GET',
       path: '/email/capabilities',
-      description: 'Check email sending capabilities. Returns Company Mail provider (TrustPager Mail or Gmail), configuration, and which users have personal Gmail connected. Each user includes email (recommended alias), send_as_aliases (all aliases), gmail_address (raw Gmail), and display_name.',
+      description: 'Check email sending capabilities. Returns authenticated_user (the API caller\'s identity), Company Mail provider (TrustPager Mail or Gmail), and which users have personal Gmail connected. Use authenticated_user to identify who "I" is for personal/conversational sends.',
       scopes: ['email:read'],
       isWrite: false,
       responseExample: `{
   "data": {
+    "authenticated_user": {
+      "user_id": "user-uuid-...",
+      "name": "Simon Smith",
+      "email": "simon@company.com",
+      "has_personal_gmail": true,
+      "hint": "This is the user who owns the API key. For personal sends, use mode \\"personal\\" with this user's sender_user_id."
+    },
     "company_mail": {
       "configured": true,
       "provider": "gmail",
@@ -148,7 +155,7 @@ export const EMAIL: ResourceGroup = {
       {
         "user_id": "user-uuid-...",
         "email": "simon@company.com",
-        "display_name": "Simon",
+        "display_name": "Simon Smith",
         "gmail_address": "simon@gmail.com",
         "send_as_aliases": [
           { "email": "simon@company.com", "displayName": "Simon Smith", "isDefault": true },
