@@ -7,7 +7,7 @@ import { type ResourceGroup } from './types.js';
 export const TRANSCRIPTS: ResourceGroup = {
   id: 'transcripts',
   label: 'Transcripts',
-  description: 'View call transcripts and AI coaching results.',
+  description: 'View call transcripts and AI coaching results. Coaching results are accessed under /transcripts/coaching.',
   endpoints: [
     { method: 'GET', path: '/transcripts', description: 'List all transcripts with optional filters for type, source, date range, and participant email.', scopes: ['calls:read'], isWrite: false, params: [
       { name: 'type', type: 'string', required: false, description: 'Filter by type (call, meeting)', in: 'query' },
@@ -18,8 +18,14 @@ export const TRANSCRIPTS: ResourceGroup = {
       { name: 'limit', type: 'number', required: false, description: 'Max results (1-100, default 25)', in: 'query' },
       { name: 'cursor', type: 'string', required: false, description: 'Cursor for next page', in: 'query' },
     ] },
-    { method: 'GET', path: '/transcripts/:id', description: 'Retrieve a transcript.', scopes: ['calls:read'], isWrite: false, params: [{ name: 'id', type: 'uuid', required: true, description: 'Transcript ID', in: 'path' }] },
-    { method: 'GET', path: '/coaching-results', description: 'List AI coaching results.', scopes: ['calls:read'], isWrite: false, params: [{ name: 'framework', type: 'string', required: false, description: 'Filter by coaching framework (SPIN, BANT, Challenger, MEDDIC)', in: 'query' }] },
-    { method: 'GET', path: '/coaching-results/:id', description: 'Retrieve a coaching result by ID.', scopes: ['calls:read'], isWrite: false, params: [{ name: 'id', type: 'uuid', required: true, description: 'Coaching result ID', in: 'path' }] },
+    { method: 'GET', path: '/transcripts/:id', description: 'Retrieve a transcript with full text, participants, and linked entities.', scopes: ['calls:read'], isWrite: false, params: [{ name: 'id', type: 'uuid', required: true, description: 'Transcript ID', in: 'path' }] },
+    { method: 'DELETE', path: '/transcripts/:id', description: 'Delete a transcript and its linked entity relationships.', scopes: ['calls:read'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Transcript ID', in: 'path' }] },
+    { method: 'GET', path: '/transcripts/:id/coaching', description: 'Get all coaching results for a specific transcript.', scopes: ['calls:read'], isWrite: false, params: [{ name: 'id', type: 'uuid', required: true, description: 'Transcript ID', in: 'path' }] },
+    { method: 'GET', path: '/transcripts/coaching', description: 'List all AI coaching results across all transcripts. Filter by framework, source_type, or team_member_id.', scopes: ['calls:read'], isWrite: false, params: [
+      { name: 'framework', type: 'string', required: false, description: 'Filter by coaching framework (SPIN, BANT, Challenger, MEDDIC)', in: 'query' },
+      { name: 'source_type', type: 'string', required: false, description: 'Filter by source type', in: 'query' },
+      { name: 'team_member_id', type: 'uuid', required: false, description: 'Filter by team member UUID', in: 'query' },
+    ] },
+    { method: 'GET', path: '/transcripts/coaching/:id', description: 'Retrieve a specific AI coaching result by ID.', scopes: ['calls:read'], isWrite: false, params: [{ name: 'id', type: 'uuid', required: true, description: 'Coaching result ID', in: 'path' }] },
   ],
 };

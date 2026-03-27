@@ -48,7 +48,7 @@ const TOOL_CATEGORIES = [
     ],
   },
   {
-    label: 'Supplier Products',
+    label: 'Supplier Catalog',
     tools: [
       'list_supplier_products', 'get_supplier_product', 'create_supplier_product', 'update_supplier_product', 'delete_supplier_product',
     ],
@@ -113,7 +113,7 @@ const TOOL_CATEGORIES = [
   {
     label: 'CRM Documents',
     tools: [
-      'list_documents', 'get_document', 'create_document', 'delete_document', 'download_document', 'list_document_folders',
+      'list_documents', 'get_document', 'delete_document', 'download_document', 'list_document_folders',
     ],
   },
   {
