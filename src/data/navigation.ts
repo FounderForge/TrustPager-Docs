@@ -70,6 +70,7 @@ export const API_CATEGORIES: NavCategory[] = [
       { id: 'websites', label: 'Websites', icon: 'Globe' },
       { id: 'order-forms', label: 'Order Forms', icon: 'ShoppingCart' },
       { id: 'billing', label: 'Billing', icon: 'CreditCard' },
+      { id: 'approvals', label: 'Approvals', icon: 'ShieldCheck' },
     ],
   },
 ];
