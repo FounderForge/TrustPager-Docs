@@ -237,7 +237,7 @@ const TOOL_CATEGORIES = [
       'list_company_users', 'get_company_user', 'invite_user', 'update_user_role', 'remove_user',
       'get_crm_settings', 'update_crm_settings',
       'get_birthday_messages', 'update_birthday_messages',
-      'get_billing_plan', 'get_credit_balance', 'get_billing_usage',
+      'get_billing_plan', 'get_credit_balance', 'get_billing_usage', 'get_billing_pricing',
       'get_ai_instructions',
     ],
   },
