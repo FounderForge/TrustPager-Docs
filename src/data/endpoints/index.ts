@@ -36,6 +36,7 @@ export { SCHEDULING_AVAILABILITY } from './scheduling-availability.js';
 export { SCHEDULING_BOOKINGS } from './scheduling-bookings.js';
 export { SERVICE_REQUESTS } from './service-requests.js';
 export { APPROVALS } from './approvals.js';
+export { AI_INSTRUCTIONS } from './ai-instructions.js';
 
 import { type ResourceGroup } from './types.js';
 import { SEARCH } from './search.js';
@@ -75,6 +76,7 @@ import { SCHEDULING_AVAILABILITY } from './scheduling-availability.js';
 import { SCHEDULING_BOOKINGS } from './scheduling-bookings.js';
 import { SERVICE_REQUESTS } from './service-requests.js';
 import { APPROVALS } from './approvals.js';
+import { AI_INSTRUCTIONS } from './ai-instructions.js';
 
 export const RESOURCES: ResourceGroup[] = [
   SEARCH,
@@ -114,6 +116,7 @@ export const RESOURCES: ResourceGroup[] = [
   BILLING,
   SERVICE_REQUESTS,
   APPROVALS,
+  AI_INSTRUCTIONS,
 ];
 
 /** Look up a resource group by its id (URL slug) */

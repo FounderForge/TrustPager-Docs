@@ -238,6 +238,7 @@ const TOOL_CATEGORIES = [
       'get_crm_settings', 'update_crm_settings',
       'get_birthday_messages', 'update_birthday_messages',
       'get_billing_plan', 'get_credit_balance', 'get_billing_usage',
+      'get_ai_instructions',
     ],
   },
 ];
