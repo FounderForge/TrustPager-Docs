@@ -225,6 +225,12 @@ const TOOL_CATEGORIES = [
     tools: ['create_service_request'],
   },
   {
+    label: 'Approval Queue',
+    tools: [
+      'list_approvals', 'get_approval', 'approve_action', 'reject_action',
+    ],
+  },
+  {
     label: 'Admin & Billing',
     tools: [
       'get_company', 'update_company',
