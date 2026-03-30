@@ -202,7 +202,13 @@ const TOOL_CATEGORIES = [
     label: 'AI',
     tools: [
       'ai_enrich', 'ai_edit_text', 'ai_deal_probability', 'ai_call_coaching', 'ai_generate_pipeline',
-      'ai_needs_analysis', 'ai_fill_form', 'ai_generate_image',
+      'ai_needs_analysis', 'ai_fill_form', 'ai_generate_image', 'ai_generate_speech',
+    ],
+  },
+  {
+    label: 'Voices',
+    tools: [
+      'list_voices', 'get_voice', 'create_voice', 'update_voice', 'delete_voice',
     ],
   },
   {

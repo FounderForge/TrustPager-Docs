@@ -78,6 +78,9 @@ export const SCOPE_GROUPS: ScopeGroup[] = [
       { key: 'webhooks:read', label: 'Webhooks (Read)' },
       { key: 'webhooks:write', label: 'Webhooks (Write)' },
       { key: 'ai:use', label: 'AI Features' },
+      { key: 'voices:read', label: 'Voices (Read)' },
+      { key: 'voices:write', label: 'Voices (Write)' },
+      { key: 'voices:delete', label: 'Voices (Delete)' },
     ],
   },
   {

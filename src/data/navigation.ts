@@ -59,6 +59,7 @@ export const API_CATEGORIES: NavCategory[] = [
       { id: 'event-queues', label: 'Event Queues', icon: 'ListOrdered' },
       { id: 'webhooks', label: 'Webhooks', icon: 'Webhook' },
       { id: 'ai', label: 'AI', icon: 'Brain' },
+      { id: 'voices', label: 'Voices', icon: 'Mic' },
     ],
   },
   {
