@@ -154,6 +154,13 @@ const TOOL_CATEGORIES = [
     ],
   },
   {
+    label: 'Knowledge Base',
+    tools: [
+      'list_knowledge', 'get_knowledge', 'create_knowledge', 'update_knowledge', 'delete_knowledge',
+      'search_knowledge',
+    ],
+  },
+  {
     label: 'Text Agents',
     tools: [
       'list_text_agents', 'create_text_agent', 'update_text_agent', 'delete_text_agent',

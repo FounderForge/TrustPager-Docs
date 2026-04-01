@@ -38,6 +38,7 @@ export { SERVICE_REQUESTS } from './service-requests.js';
 export { APPROVALS } from './approvals.js';
 export { AI_INSTRUCTIONS } from './ai-instructions.js';
 export { VOICES } from './voices.js';
+export { KNOWLEDGE } from './knowledge.js';
 
 import { type ResourceGroup } from './types.js';
 import { SEARCH } from './search.js';
@@ -79,6 +80,7 @@ import { SERVICE_REQUESTS } from './service-requests.js';
 import { APPROVALS } from './approvals.js';
 import { AI_INSTRUCTIONS } from './ai-instructions.js';
 import { VOICES } from './voices.js';
+import { KNOWLEDGE } from './knowledge.js';
 
 export const RESOURCES: ResourceGroup[] = [
   SEARCH,
@@ -110,6 +112,7 @@ export const RESOURCES: ResourceGroup[] = [
   ORDER_FORMS,
   FILES,
   NOTEPADS,
+  KNOWLEDGE,
   COMPANY,
   CRM_TEMPLATES,
   INTEGRATIONS,
