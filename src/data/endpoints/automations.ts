@@ -199,7 +199,7 @@ export const AUTOMATIONS: ResourceGroup = {
           required: false,
           description: `Action configuration (varies by action_type). Key configs:
 send_custom_email: { greeting, customMessage, showReplyButton?, recipient_target?, replyEmail? }
-send_gmail_email: { subject, body, recipient_target, sender_mode? } — sender_mode: "company" (workspace Gmail from /tools/email) or "assignee" (deal primary assignee personal Gmail). recipient_target: "contact", "account_customer", or "account_supplier". subject and body support {{variable}} placeholders. Gmail signature is auto-appended.
+send_gmail_email: { subject, body, recipient_target, sender_mode? } — sender_mode: "company" (workspace Gmail from /settings/email) or "assignee" (deal primary assignee personal Gmail). recipient_target: "contact", "account_customer", or "account_supplier". subject and body support {{variable}} placeholders. Gmail signature is auto-appended.
 send_sms: { phone_number_id, message_body }
 trigger_voice_call: { voice_agent_id }
 add_tasks: { tasks: [{ title, category?, due_offset_days? }] }
