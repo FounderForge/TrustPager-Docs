@@ -43,6 +43,9 @@ export const SCOPE_GROUPS: ScopeGroup[] = [
     scopes: [
       { key: 'email:read', label: 'Email (Read)' },
       { key: 'email:send', label: 'Email (Send)' },
+      { key: 'email-campaigns:read', label: 'Email Campaigns (Read)' },
+      { key: 'email-campaigns:write', label: 'Email Campaigns (Write)' },
+      { key: 'email-campaigns:delete', label: 'Email Campaigns (Delete)' },
       { key: 'sms:read', label: 'SMS (Read)' },
       { key: 'sms:send', label: 'SMS (Send)' },
       { key: 'calls:read', label: 'Calls & Transcripts (Read)' },

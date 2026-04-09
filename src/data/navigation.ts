@@ -32,6 +32,7 @@ export const API_CATEGORIES: NavCategory[] = [
     description: 'Email, SMS, phone calls, voice agents, and transcripts',
     items: [
       { id: 'email', label: 'Email', icon: 'Mail' },
+      { id: 'email-campaigns', label: 'Email Campaigns', icon: 'Megaphone' },
       { id: 'sms', label: 'SMS', icon: 'MessageSquare' },
       { id: 'phone', label: 'Phone', icon: 'Phone' },
       { id: 'agents', label: 'Agents', icon: 'Mic' },
