@@ -201,16 +201,39 @@ export const EMAIL: ResourceGroup = {
     {
       method: 'GET',
       path: '/email/logs',
-      description: 'List email send logs with optional filters.',
+      description: 'List email send logs. Each log includes subject, recipient_email, sender_email, status, provider, cc, thread_id, and sender_user_id. Filter by status, contact, deal, type, or provider.',
       scopes: ['email:read'],
       isWrite: false,
       params: [
-        { name: 'status', type: 'string', required: false, description: 'Filter by status', in: 'query' },
-        { name: 'contact_id', type: 'uuid', required: false, description: 'Filter by contact', in: 'query' },
-        { name: 'deal_id', type: 'uuid', required: false, description: 'Filter by deal', in: 'query' },
-        { name: 'email_type', type: 'string', required: false, description: 'Filter by type', in: 'query' },
+        { name: 'status', type: 'string', required: false, description: 'Filter by status (sent, delivered, bounced, failed, spam_complaint)', in: 'query' },
+        { name: 'contact_id', type: 'uuid', required: false, description: 'Filter by contact UUID', in: 'query' },
+        { name: 'deal_id', type: 'uuid', required: false, description: 'Filter by deal UUID', in: 'query' },
+        { name: 'email_type', type: 'string', required: false, description: 'Filter by type (e.g. form_submission, automation, manual)', in: 'query' },
         { name: 'provider', type: 'string', required: false, description: 'Filter by provider: "postmark" or "gmail"', in: 'query' },
       ],
+      responseExample: `{
+  "data": [
+    {
+      "id": "log-uuid-...",
+      "subject": "Welcome to TrustPager",
+      "recipient_email": "client@example.com",
+      "recipient_name": "Jane Doe",
+      "sender_email": "team@company.com",
+      "sender_name": "Acme Corp",
+      "sender_user_id": null,
+      "email_type": "automation",
+      "status": "delivered",
+      "provider": "postmark",
+      "cc": null,
+      "thread_id": null,
+      "contact_id": "contact-uuid-...",
+      "customer_id": null,
+      "deal_id": null,
+      "created_at": "2026-04-14T10:00:00Z"
+    }
+  ],
+  "pagination": { "limit": 25, "has_more": false, "next_cursor": null }
+}`,
     },
     {
       method: 'GET',
