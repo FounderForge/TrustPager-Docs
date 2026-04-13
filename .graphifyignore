@@ -1,0 +1,3 @@
+# Barrel files: cause BFS explosion (43+42 edges)
+src/data/endpoints/index.ts
+src/data/endpoints/types.ts
