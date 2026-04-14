@@ -258,5 +258,24 @@ export const CONTACTS: ResourceGroup = {
   "meta": { "credits_remaining": 9490 }
 }`,
     },
+    {
+      method: 'POST',
+      path: '/contacts/bulk-delete',
+      description: 'Permanently delete up to 100 contacts in a single request. Returns a count of deleted records. Cannot be undone.',
+      scopes: ['contacts:delete'],
+      isWrite: true,
+      params: [
+        { name: 'ids', type: 'uuid[]', required: true, description: 'Array of contact UUIDs to delete (max 100)', in: 'body' },
+      ],
+      requestExample: `curl -X POST \\
+  "${API_BASE_URL}/contacts/bulk-delete" \\
+  -H "Authorization: Bearer YOUR_API_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{"ids":["uuid-1","uuid-2","uuid-3"]}'`,
+      responseExample: `{
+  "data": { "success": true, "deleted": 3 },
+  "meta": { "credits_remaining": 9450 }
+}`,
+    },
   ],
 };

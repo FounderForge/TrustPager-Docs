@@ -288,5 +288,51 @@ export const EMAIL: ResourceGroup = {
       isWrite: true,
       params: [{ name: 'id', type: 'uuid', required: true, description: 'Email config ID', in: 'path' }],
     },
+    {
+      method: 'PATCH',
+      path: '/email/threads/:id',
+      description: 'Update an email thread — mark as read/unread or change status (active, archived, spam).',
+      scopes: ['email:write'],
+      isWrite: true,
+      params: [
+        { name: 'id', type: 'uuid', required: true, description: 'Email thread UUID', in: 'path' },
+        { name: 'is_read', type: 'boolean', required: false, description: 'Mark thread as read or unread', in: 'body' },
+        { name: 'status', type: 'string', required: false, description: 'Thread status: active, archived, or spam', in: 'body' },
+      ],
+      requestExample: `curl -X PATCH \\
+  "${API_BASE_URL}/email/threads/THREAD_UUID" \\
+  -H "Authorization: Bearer YOUR_API_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{"is_read":true}'`,
+      responseExample: `{
+  "data": {
+    "id": "thread-uuid-...",
+    "is_read": true,
+    "status": "active",
+    "subject": "Re: Project Proposal"
+  },
+  "meta": { "credits_remaining": 9490 }
+}`,
+    },
+    {
+      method: 'POST',
+      path: '/email/threads/mark-read',
+      description: 'Bulk mark email threads as read. Use thread_ids for specific threads, or all:true to mark all unread threads read. Returns the count of threads updated.',
+      scopes: ['email:write'],
+      isWrite: true,
+      params: [
+        { name: 'thread_ids', type: 'uuid[]', required: false, description: 'Array of thread UUIDs to mark as read (max 100). Omit if using all:true.', in: 'body' },
+        { name: 'all', type: 'boolean', required: false, description: 'Set true to mark ALL unread threads as read', in: 'body' },
+      ],
+      requestExample: `curl -X POST \\
+  "${API_BASE_URL}/email/threads/mark-read" \\
+  -H "Authorization: Bearer YOUR_API_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{"all":true}'`,
+      responseExample: `{
+  "data": { "success": true, "updated": 14 },
+  "meta": { "credits_remaining": 9487 }
+}`,
+    },
   ],
 };

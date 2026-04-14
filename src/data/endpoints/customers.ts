@@ -131,5 +131,24 @@ export const CUSTOMERS: ResourceGroup = {
       isWrite: false,
       params: [{ name: 'id', type: 'uuid', required: true, description: 'Customer ID', in: 'path' }],
     },
+    {
+      method: 'POST',
+      path: '/customers/bulk-delete',
+      description: 'Permanently delete up to 100 customers/accounts in a single request. Returns a count of deleted records. Cannot be undone.',
+      scopes: ['customers:delete'],
+      isWrite: true,
+      params: [
+        { name: 'ids', type: 'uuid[]', required: true, description: 'Array of customer UUIDs to delete (max 100)', in: 'body' },
+      ],
+      requestExample: `curl -X POST \\
+  "${API_BASE_URL}/customers/bulk-delete" \\
+  -H "Authorization: Bearer YOUR_API_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{"ids":["uuid-1","uuid-2"]}'`,
+      responseExample: `{
+  "data": { "success": true, "deleted": 2 },
+  "meta": { "credits_remaining": 9480 }
+}`,
+    },
   ],
 };

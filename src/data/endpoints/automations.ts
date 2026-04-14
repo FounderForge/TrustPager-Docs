@@ -191,7 +191,7 @@ export const AUTOMATIONS: ResourceGroup = {
       isWrite: true,
       params: [
         { name: 'id', type: 'uuid', required: true, description: 'Automation ID', in: 'path' },
-        { name: 'action_type', type: 'string', required: true, description: 'Action type (send_custom_email, send_gmail_email, send_sms, trigger_voice_call, call_webhook, add_tasks, create_lead, attach_to_event_queue, remove_from_event_queue, send_document, send_for_signing, send_form, slack_send_message, trigger_automation, etc.)', in: 'body' },
+        { name: 'action_type', type: 'string', required: true, description: 'Action type (send_custom_email, send_gmail_email, send_sms, trigger_voice_call, call_webhook, add_tasks, create_lead, move_deal, attach_to_event_queue, remove_from_event_queue, send_document, send_for_signing, send_form, slack_send_message, trigger_automation, etc.)', in: 'body' },
         { name: 'sequence', type: 'number', required: true, description: 'Execution order', in: 'body' },
         {
           name: 'config',
@@ -204,7 +204,8 @@ send_sms: { phone_number_id, message_body }
 trigger_voice_call: { voice_agent_id }
 add_tasks: { tasks: [{ title, category?, due_offset_days? }] }
 call_webhook: { url, method? }
-create_lead: { pipeline_id, stage_id }`,
+create_lead: { pipeline_id, stage_id }
+move_deal: { pipeline_id, stage_id, pipeline_name?, stage_name? } - moves the triggering deal to the specified stage`,
           in: 'body',
         },
       ],

@@ -366,5 +366,46 @@ export const DEALS: ResourceGroup = {
       isWrite: true,
       params: [{ name: 'id', type: 'uuid', required: true, description: 'Deal ID', in: 'path' }],
     },
+    {
+      method: 'POST',
+      path: '/deals/bulk-delete',
+      description: 'Permanently delete up to 100 deals in a single request. Each deal is cascade-deleted including its products, pipeline placements, contacts, and users. Returns a count of deleted records and any IDs that failed. Cannot be undone.',
+      scopes: ['deals:delete'],
+      isWrite: true,
+      params: [
+        { name: 'ids', type: 'uuid[]', required: true, description: 'Array of deal UUIDs to delete (max 100)', in: 'body' },
+      ],
+      requestExample: `curl -X POST \\
+  "${API_BASE_URL}/deals/bulk-delete" \\
+  -H "Authorization: Bearer YOUR_API_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{"ids":["uuid-1","uuid-2","uuid-3"]}'`,
+      responseExample: `{
+  "data": { "success": true, "deleted": 3 },
+  "meta": { "credits_remaining": 9450 }
+}`,
+    },
+    {
+      method: 'POST',
+      path: '/deals/bulk-move',
+      description: 'Move up to 100 deals to a pipeline stage in a single request. Set skip_automations=true to suppress stage_changed automation triggers (recommended for bulk moves). Returns a count of moved records and any IDs that failed.',
+      scopes: ['deals:write'],
+      isWrite: true,
+      params: [
+        { name: 'ids', type: 'uuid[]', required: true, description: 'Array of deal UUIDs to move (max 100)', in: 'body' },
+        { name: 'pipeline_id', type: 'uuid', required: true, description: 'Target pipeline UUID', in: 'body' },
+        { name: 'stage_id', type: 'uuid', required: true, description: 'Target stage UUID within the pipeline', in: 'body' },
+        { name: 'skip_automations', type: 'boolean', required: false, description: 'Suppress stage_changed automation triggers (default false). Strongly recommended for bulk moves.', in: 'body' },
+      ],
+      requestExample: `curl -X POST \\
+  "${API_BASE_URL}/deals/bulk-move" \\
+  -H "Authorization: Bearer YOUR_API_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{"ids":["uuid-1","uuid-2"],"pipeline_id":"pipe-uuid","stage_id":"stage-uuid","skip_automations":true}'`,
+      responseExample: `{
+  "data": { "success": true, "moved": 2 },
+  "meta": { "credits_remaining": 9440 }
+}`,
+    },
   ],
 };
