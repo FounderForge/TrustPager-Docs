@@ -25,11 +25,11 @@ export const KNOWLEDGE: ResourceGroup = {
     {
       method: 'GET',
       path: '/knowledge/:id',
-      description: 'Retrieve a single knowledge base entry by ID.',
+      description: 'Retrieve a single knowledge base entry by ID. The id must be a complete UUID (e.g. "203cf566-22ff-4dd3-87c7-22983d630a31"). Passing a truncated UUID returns a VALIDATION_ERROR with a clear message.',
       scopes: ['knowledge:read'],
       isWrite: false,
       params: [
-        { name: 'id', type: 'uuid', required: true, description: 'Knowledge entry ID', in: 'path' },
+        { name: 'id', type: 'uuid', required: true, description: 'Knowledge entry full UUID - do not abbreviate or truncate', in: 'path' },
       ],
     },
     {
@@ -50,11 +50,11 @@ export const KNOWLEDGE: ResourceGroup = {
     {
       method: 'PATCH',
       path: '/knowledge/:id',
-      description: 'Update a knowledge base entry. If title or content changes, the embedding is automatically regenerated.',
+      description: 'Update a knowledge base entry. If title or content changes, the embedding is automatically regenerated. The id must be a complete UUID - truncated values return VALIDATION_ERROR.',
       scopes: ['knowledge:write'],
       isWrite: true,
       params: [
-        { name: 'id', type: 'uuid', required: true, description: 'Knowledge entry ID', in: 'path' },
+        { name: 'id', type: 'uuid', required: true, description: 'Knowledge entry full UUID - do not abbreviate or truncate', in: 'path' },
         { name: 'title', type: 'string', required: false, description: 'Updated title', in: 'body' },
         { name: 'content', type: 'string', required: false, description: 'Updated content', in: 'body' },
         { name: 'category', type: 'string', required: false, description: 'Category: general, agent, faq, policy, procedure, product', in: 'body' },
@@ -66,11 +66,11 @@ export const KNOWLEDGE: ResourceGroup = {
     {
       method: 'DELETE',
       path: '/knowledge/:id',
-      description: 'Delete a knowledge base entry permanently.',
+      description: 'Delete a knowledge base entry permanently. The id must be a complete UUID - truncated values return VALIDATION_ERROR.',
       scopes: ['knowledge:write'],
       isWrite: true,
       params: [
-        { name: 'id', type: 'uuid', required: true, description: 'Knowledge entry ID', in: 'path' },
+        { name: 'id', type: 'uuid', required: true, description: 'Knowledge entry full UUID - do not abbreviate or truncate', in: 'path' },
       ],
     },
     {
