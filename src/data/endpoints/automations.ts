@@ -47,16 +47,17 @@ export const AUTOMATIONS: ResourceGroup = {
     {
       method: 'POST',
       path: '/automations',
-      description: 'Create a new automation. name and trigger_type are required.',
+      description: 'Create a new automation. name and trigger_type are required. For stage_changed automations, pass stage_id directly on the automation -- this is the single source of truth for stage matching (do not use automations_triggers for stage_changed).',
       scopes: ['automations:write'],
       isWrite: true,
       params: [
         { name: 'name', type: 'string', required: true, description: 'Automation name', in: 'body' },
-        { name: 'trigger_type', type: 'string', required: true, description: 'Trigger type (pipeline, website, custom_webhook, platform_trigger)', in: 'body' },
+        { name: 'trigger_type', type: 'string', required: true, description: 'Trigger type. Examples: stage_changed, form_submitted, call_analyzed, sms_received, email_received, checkout_completed', in: 'body' },
+        { name: 'stage_id', type: 'uuid', required: false, description: 'Pipeline stage UUID. Required when trigger_type is "stage_changed". Single source of truth for stage matching.', in: 'body' },
         { name: 'description', type: 'string', required: false, description: 'Description', in: 'body' },
         { name: 'enabled', type: 'boolean', required: false, description: 'Whether enabled (default: false)', in: 'body' },
         { name: 'priority', type: 'number', required: false, description: 'Execution priority', in: 'body' },
-        { name: 'conditions', type: 'object', required: false, description: 'Trigger conditions', in: 'body' },
+        { name: 'conditions', type: 'object', required: false, description: 'Trigger conditions. Note: for stage_changed, use the stage_id field, not conditions.', in: 'body' },
       ],
       requestExample: `curl -X POST \\
   "${API_BASE_URL}/automations" \\

@@ -79,5 +79,47 @@ export const COMPANY: ResourceGroup = {
   "meta": { "credits_remaining": 9489 }
 }`,
     },
+    {
+      method: 'GET',
+      path: '/company/settings/tag-palette',
+      description: 'Get the company-wide tag palette -- the list of pre-defined tags shown as quick-picks in the Add Tag modal on opportunity cards. Returns an array of {name, color} objects stored in company_settings.deal_tag_options.',
+      scopes: ['company:read'],
+      isWrite: false,
+      responseExample: `{
+  "data": [
+    { "name": "Hot Lead", "color": "#ef4444" },
+    { "name": "Priority", "color": "#f97316" },
+    { "name": "Follow Up", "color": "#3b82f6" }
+  ],
+  "meta": { "credits_remaining": 9490, "url": "https://app.trustpager.com/settings/crm" }
+}`,
+    },
+    {
+      method: 'PATCH',
+      path: '/company/settings/tag-palette',
+      description: 'Replace the company-wide tag palette. Accepts an array of {name, color} objects directly (or wrapped in a "tags" key). Duplicates with the same name (case-insensitive) are deduplicated -- last entry wins. Replaces the entire palette.',
+      scopes: ['company:write'],
+      isWrite: true,
+      params: [
+        { name: '(body)', type: 'object[] | { tags: object[] }', required: true, description: 'Array of tag objects. Each tag needs name (string) and color (hex string, e.g. "#ef4444").', in: 'body' },
+      ],
+      requestExample: `curl -X PATCH \\
+  "\${API_BASE_URL}/company/settings/tag-palette" \\
+  -H "Authorization: Bearer YOUR_API_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '[
+    { "name": "Hot Lead", "color": "#ef4444" },
+    { "name": "Priority", "color": "#f97316" },
+    { "name": "Follow Up", "color": "#3b82f6" }
+  ]'`,
+      responseExample: `{
+  "data": [
+    { "name": "Hot Lead", "color": "#ef4444" },
+    { "name": "Priority", "color": "#f97316" },
+    { "name": "Follow Up", "color": "#3b82f6" }
+  ],
+  "meta": { "credits_remaining": 9489, "url": "https://app.trustpager.com/settings/crm" }
+}`,
+    },
   ],
 };
