@@ -51,5 +51,39 @@ export const SERVICE_REQUESTS: ResourceGroup = {
   "meta": { "credits_remaining": 3457 }
 }`,
     },
+    {
+      method: 'POST',
+      path: '/service-requests/:id/notes',
+      description: 'Add a note to an existing service request. Notes are appended to a JSONB array on the record. Each note stores a UUID, the user_id of the API key owner, the content text, and a created_at timestamp. Useful for adding follow-up information or status updates after the initial request.',
+      scopes: ['service-requests:write'],
+      isWrite: true,
+      params: [
+        { name: 'id', type: 'string', required: true, description: 'Service request UUID', in: 'path' },
+        { name: 'content', type: 'string', required: true, description: 'Text content of the note (max 5000 chars)', in: 'body' },
+      ],
+      requestExample: `curl -X POST https://ucqwijexmjctglmrxlej.supabase.co/functions/v1/api/v1/service-requests/f112de7b-c7df-4193-bacd-2d43c31c1f11/notes \\
+  -H "Authorization: Bearer tp_live_..." \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "content": "Investigated the issue — confirmed the filter parameter is missing from the query builder. Scheduled for sprint 14."
+  }'`,
+      responseExample: `{
+  "data": {
+    "id": "f112de7b-c7df-4193-bacd-2d43c31c1f11",
+    "title": "Add status filter to list_deals",
+    "notes": [
+      {
+        "id": "572f46fd-a78b-4115-8636-215cdd5c204a",
+        "user_id": "771a4a38-3a5d-4a9b-98c3-e10879850c9d",
+        "content": "Investigated the issue — confirmed the filter parameter is missing from the query builder. Scheduled for sprint 14.",
+        "created_at": "2026-04-15T20:47:11.328Z"
+      }
+    ],
+    "status": "pending",
+    "created_at": "2026-03-25T05:08:56.498025+00:00"
+  },
+  "meta": { "credits_remaining": 3454, "url": "https://app.trustpager.com/settings/service-requests" }
+}`,
+    },
   ],
 };
