@@ -30,7 +30,8 @@ export const CUSTOMERS: ResourceGroup = {
       "public_id": "A-001",
       "name": "Acme Corp",
       "email": "info@acme.com",
-      "phone": "+61290001234",
+      "phone": "+61412345678",
+      "landline": "+61290001234",
       "industry": "Construction",
       "tags": ["enterprise"],
       "created_at": "2026-01-10T09:00:00Z"
@@ -57,7 +58,8 @@ export const CUSTOMERS: ResourceGroup = {
       params: [
         { name: 'name', type: 'string', required: true, description: 'Company/organisation name', in: 'body' },
         { name: 'email', type: 'string', required: false, description: 'Primary email', in: 'body' },
-        { name: 'phone', type: 'string', required: false, description: 'Primary phone', in: 'body' },
+        { name: 'phone', type: 'string', required: false, description: 'Mobile number in E.164 format (e.g. +61412345678). MUST be a mobile number -- landlines will be rejected with a 400 error. Use the landline field for fixed-line/office numbers.', in: 'body' },
+        { name: 'landline', type: 'string', required: false, description: 'Landline/office phone number in E.164 format (e.g. +61299991234)', in: 'body' },
         { name: 'industry', type: 'string', required: false, description: 'Industry sector', in: 'body' },
         { name: 'website', type: 'string', required: false, description: 'Website URL', in: 'body' },
         { name: 'tags', type: 'object[]', required: false, description: 'Tags. Each tag is {name: string, color?: string} (hex color, default "#3b82f6"). Plain strings are also accepted and auto-converted. Example: [{"name":"enterprise","color":"#8b5cf6"}]', in: 'body' },
@@ -68,7 +70,7 @@ export const CUSTOMERS: ResourceGroup = {
   "${API_BASE_URL}/customers" \\
   -H "Authorization: Bearer YOUR_API_KEY" \\
   -H "Content-Type: application/json" \\
-  -d '{ "name": "Acme Corp", "email": "info@acme.com" }'`,
+  -d '{ "name": "Acme Corp", "email": "info@acme.com", "phone": "+61412345678", "landline": "+61290001234" }'`,
     },
     {
       method: 'PATCH',
@@ -80,7 +82,8 @@ export const CUSTOMERS: ResourceGroup = {
         { name: 'id', type: 'uuid', required: true, description: 'Customer ID', in: 'path' },
         { name: 'name', type: 'string', required: false, description: 'Company/organisation name', in: 'body' },
         { name: 'email', type: 'string', required: false, description: 'Primary email', in: 'body' },
-        { name: 'phone', type: 'string', required: false, description: 'Primary phone', in: 'body' },
+        { name: 'phone', type: 'string', required: false, description: 'Mobile number in E.164 format. Landlines will be rejected -- use the landline field.', in: 'body' },
+        { name: 'landline', type: 'string', required: false, description: 'Landline/office phone number in E.164 format. Set to null to clear.', in: 'body' },
         { name: 'industry', type: 'string', required: false, description: 'Industry sector', in: 'body' },
         { name: 'website', type: 'string', required: false, description: 'Website URL', in: 'body' },
         { name: 'tags', type: 'object[]', required: false, description: 'Tags. Each tag is {name: string, color?: string}. Plain strings are also accepted. Replaces entire tags array.', in: 'body' },
