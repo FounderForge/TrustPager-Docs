@@ -26,5 +26,12 @@ export const WORK_ORDERS: ResourceGroup = {
       { name: 'sort_order', type: 'number', required: false, description: 'Sort order for display', in: 'body' },
     ] },
     { method: 'DELETE', path: '/work-orders/:id', description: 'Delete a work order.', scopes: ['work-orders:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Work order ID', in: 'path' }] },
+    { method: 'POST', path: '/work-orders/send-work-status', description: 'Send a PIN-protected Work Status Portal link to a client via email. The client receives a unique link where they can view the progress of all work orders on the deal. Requires the deal to have work orders and the company to have email configured. Returns success, portal_id, and token.', scopes: ['work-orders:write'], isWrite: true, params: [
+      { name: 'deal_id', type: 'uuid', required: true, description: 'Deal UUID. The portal shows all work orders for this deal.', in: 'body' },
+      { name: 'recipient_email', type: 'string', required: true, description: 'Client email address', in: 'body' },
+      { name: 'recipient_name', type: 'string', required: true, description: 'Client display name', in: 'body' },
+      { name: 'personal_message', type: 'string', required: false, description: 'Optional personal message included in the email', in: 'body' },
+      { name: 'expires_in_days', type: 'number', required: false, description: 'Days until the portal link expires (default 30)', in: 'body' },
+    ] },
   ],
 };
