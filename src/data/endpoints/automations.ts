@@ -192,7 +192,7 @@ export const AUTOMATIONS: ResourceGroup = {
       isWrite: true,
       params: [
         { name: 'id', type: 'uuid', required: true, description: 'Automation ID', in: 'path' },
-        { name: 'action_type', type: 'string', required: true, description: 'Action type (send_custom_email, send_gmail_email, send_sms, trigger_voice_call, call_webhook, add_tasks, create_lead, move_deal, attach_to_event_queue, remove_from_event_queue, apply_tags, remove_tags, send_document, send_for_signing, send_form, slack_send_message, trigger_automation, etc.)', in: 'body' },
+        { name: 'action_type', type: 'string', required: true, description: 'Action type (send_custom_email, send_gmail_email, send_sms, trigger_voice_call, call_webhook, add_tasks, create_lead, move_deal, attach_to_event_queue, remove_from_event_queue, apply_tags, remove_tags, assign_user, send_document, send_for_signing, send_form, slack_send_message, trigger_automation, etc.)', in: 'body' },
         { name: 'sequence', type: 'number', required: true, description: 'Execution order', in: 'body' },
         {
           name: 'config',
@@ -200,15 +200,16 @@ export const AUTOMATIONS: ResourceGroup = {
           required: false,
           description: `Action configuration (varies by action_type). Key configs:
 send_custom_email: { greeting, customMessage, showReplyButton?, recipient_target?, replyEmail? }
-send_gmail_email: { subject, body, recipient_target, sender_mode? } — sender_mode: "company" (workspace Gmail from /settings/email) or "assignee" (deal primary assignee personal Gmail). recipient_target: "contact", "account_customer", or "account_supplier". subject and body support {{variable}} placeholders. Gmail signature is auto-appended.
+send_gmail_email: { subject, body, recipient_target, sender_mode? } -- sender_mode: "company" (workspace Gmail from /settings/email) or "assignee" (deal primary assignee personal Gmail). recipient_target: "contact", "account_customer", or "account_supplier". subject and body support {{variable}} placeholders. Gmail signature is auto-appended.
 send_sms: { phone_number_id, message_body }
 trigger_voice_call: { voice_agent_id }
 add_tasks: { tasks: [{ title, category?, due_offset_days? }] }
 call_webhook: { url, method? }
 create_lead: { pipeline_id, stage_id }
 move_deal: { pipeline_id, stage_id, pipeline_name?, stage_name? } - moves the triggering deal to the specified stage
-apply_tags: { tags: [{ name, color? }], apply_to? } - merges tags onto the deal. apply_to: "deal" (default). Deduplicates by name (case-insensitive). Color falls back to tag palette or #6b7280.
-remove_tags: { tags: [{ name }] } - removes tags from the deal by name (case-insensitive). Alias: move_opportunity_card and move_opportunity normalize to move_deal.`,
+apply_tags: { tags: [{ name, color? }] } - merges tags onto the deal. Deduplicates by name. Color falls back to tag palette or #6b7280.
+remove_tags: { tags: [{ name }] } - removes tags from the deal by name (case-insensitive).
+assign_user: { user_id } - assigns a team member as primary deal owner. Aliases: assign_deal_user, set_deal_owner. Demotes any existing primary assignee. Use GET /company/users to find user UUIDs.`,
           in: 'body',
         },
       ],

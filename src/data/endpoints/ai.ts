@@ -18,5 +18,43 @@ export const AI: ResourceGroup = {
     { method: 'POST', path: '/ai/fill-form', description: 'Use AI to pre-fill form fields based on a prompt. template_id and prompt are required. The system fetches form fields automatically.', scopes: ['ai:use'], isWrite: true, params: [{ name: 'template_id', type: 'uuid', required: true, description: 'Form template ID', in: 'body' }, { name: 'prompt', type: 'string', required: true, description: 'Instructions for filling the form, e.g. "Fill this incident report for a slip-and-fall at the warehouse on 28 March 2026"', in: 'body' }] },
     { method: 'POST', path: '/ai/generate-image', description: 'Generate an AI image from a text prompt using the NanoBanana model (google:4@1). Returns a CDN image URL, seed, and dimensions. Costs credits. The image is automatically saved to company files. IMPORTANT: Only 11 specific dimension pairs are accepted -- invalid dimensions return a VALIDATION_ERROR with the full list. Default: 1024x1024.', scopes: ['ai:use'], isWrite: true, params: [{ name: 'prompt', type: 'string', required: true, description: 'Text description of the image to generate (2-3000 chars). Be descriptive for best results.', in: 'body' }, { name: 'width', type: 'number', required: false, description: 'Image width in pixels. Must be part of a valid pair. Default 1024. Valid pairs: 1024x1024, 1248x832, 832x1248, 1184x864, 864x1184, 896x1152, 1152x896, 768x1344, 1344x768, 1536x672, 672x1536.', in: 'body' }, { name: 'height', type: 'number', required: false, description: 'Image height in pixels. Must be part of a valid pair with width. See width description for all valid pairs. Default 1024.', in: 'body' }, { name: 'seed', type: 'number', required: false, description: 'Random seed for reproducible results. Omit for random.', in: 'body' }] },
     { method: 'POST', path: '/ai/generate-speech', description: 'Convert text to speech audio using ElevenLabs. Uploads the audio to R2 and saves to company files. Returns an audio URL, duration, file size, and credits charged. Costs 50 credits per 100 characters (minimum 50 credits). Voice resolution order: workspace voices by name -> workspace default -> platform voices -> presets (jessica/rachel/adam/sam) -> raw ElevenLabs voice ID. Optionally returns timed transcript segments (sentences, phrases, or words) for animation timing (e.g. Remotion video sync).', scopes: ['ai:use'], isWrite: true, params: [{ name: 'text', type: 'string', required: true, description: 'Text to convert to speech (2-5000 characters)', in: 'body' }, { name: 'voice', type: 'string', required: false, description: 'Voice name, preset (jessica/rachel/adam/sam), or raw ElevenLabs voice ID. Default: jessica.', in: 'body' }, { name: 'model', type: 'string', required: false, description: 'ElevenLabs model: eleven_multilingual_v2 (default), eleven_monolingual_v1, eleven_turbo_v2_5', in: 'body' }, { name: 'stability', type: 'number', required: false, description: 'Voice stability 0-1 (default 0.6). Higher = more consistent, lower = more expressive.', in: 'body' }, { name: 'similarity_boost', type: 'number', required: false, description: 'Voice clarity/similarity 0-1 (default 0.75)', in: 'body' }, { name: 'style', type: 'number', required: false, description: 'Speaking style intensity 0-1 (default 0.4)', in: 'body' }, { name: 'output_format', type: 'string', required: false, description: 'Audio output format (default: mp3_44100_128)', in: 'body' }, { name: 'name', type: 'string', required: false, description: 'Custom file name for the audio (auto-generated if omitted)', in: 'body' }, { name: 'transcript', type: 'string', required: false, description: 'Request timed transcript segments alongside audio. Values: "none" (default, no transcript), "sentences" (sentence-level timestamps), "phrases" (comma/clause-level timestamps), "words" (word-level timestamps). When set (not "none"), response includes transcript array of {text, start, end, frame_start, frame_end} objects and transcript_mode. frame_start/frame_end are at 30fps for Remotion animation.', in: 'body' }] },
+    {
+      method: 'POST',
+      path: '/ai/transcript-summary',
+      description: 'Server-side AI intelligence extraction from a transcript. Runs Claude on the full transcript text server-side (no transport size limits) and returns a compact structured summary. Ideal for large transcripts that exceed MCP context limits, or when you need intelligence rather than raw text. Costs 1 credit.',
+      scopes: ['ai:use'],
+      isWrite: true,
+      params: [
+        { name: 'transcript_id', type: 'uuid', required: true, description: 'Transcript UUID. Use GET /transcripts to find IDs.', in: 'body' },
+        { name: 'focus', type: 'string', required: false, description: 'Optional focus area for the extraction (e.g. "product feedback", "pricing objections", "competitor comparison")', in: 'body' },
+      ],
+      responseExample: `{
+  "data": {
+    "transcript_id": "uuid",
+    "title": "Demo Call - Acme Corp",
+    "occurred_at": "2026-04-17T09:00:00Z",
+    "duration_minutes": 42,
+    "participant_count": 3,
+    "type": "zoom_call",
+    "source": "Zoom",
+    "sentiment": "positive",
+    "summary": "Strong interest in workflow automation. Client asked about Xero integration and API access. Decision expected by end of April.",
+    "key_topics": ["automation", "Xero integration", "pricing", "timeline"],
+    "key_quotes": [
+      { "quote": "This would save us 3 hours a day", "context": "After seeing the automation demo", "use": "testimonial" }
+    ],
+    "feature_gaps": ["Bulk SMS to a segment"],
+    "competitor_mentions": [{ "name": "HubSpot", "context": "Currently using, wants to switch" }],
+    "impressive_features": ["Pipeline automation", "Document signing"],
+    "bugs_reported": [],
+    "pricing_feedback": "Pricing is reasonable but wants annual discount",
+    "integration_requests": ["Xero", "Zapier"],
+    "action_items": ["Send API docs", "Schedule follow-up for April 25"],
+    "input_tokens": 4820,
+    "output_tokens": 312
+  },
+  "meta": { "credits_remaining": 9489 }
+}`,
+    },
   ],
 };
