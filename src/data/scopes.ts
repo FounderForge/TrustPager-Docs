@@ -68,6 +68,9 @@ export const SCOPE_GROUPS: ScopeGroup[] = [
       { key: 'signing:send', label: 'Signing (Send)' },
       { key: 'files:read', label: 'Files (Read)' },
       { key: 'files:write', label: 'Files (Write)' },
+      { key: 'resources:read', label: 'Resources (Read)' },
+      { key: 'resources:write', label: 'Resources (Write)' },
+      { key: 'resources:delete', label: 'Resources (Delete)' },
     ],
   },
   {

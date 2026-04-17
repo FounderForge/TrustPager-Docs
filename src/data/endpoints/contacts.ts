@@ -12,13 +12,12 @@ export const CONTACTS: ResourceGroup = {
     {
       method: 'GET',
       path: '/contacts',
-      description: 'List all contacts with cursor-based pagination. Supports search, source filter, tags filter, and date range.',
+      description: 'List all contacts with cursor-based pagination. Supports search, source filter, and date range. Note: contacts do not have tags -- tags live on opportunities (deals) only.',
       scopes: ['contacts:read'],
       isWrite: false,
       params: [
         { name: 'search', type: 'string', required: false, description: 'Search by first_name, last_name, email, phone (mobile), or landline', in: 'query' },
         { name: 'source', type: 'string', required: false, description: 'Filter by lead source', in: 'query' },
-        { name: 'tags', type: 'string[]', required: false, description: 'Filter by tags (JSON array)', in: 'query' },
         { name: 'customer_id', type: 'uuid', required: false, description: 'Filter contacts linked to a specific customer', in: 'query' },
         { name: 'created_after', type: 'string', required: false, description: 'ISO date, return contacts created after this date', in: 'query' },
         { name: 'created_before', type: 'string', required: false, description: 'ISO date, return contacts created before this date', in: 'query' },
@@ -43,7 +42,6 @@ export const CONTACTS: ResourceGroup = {
       "date_of_birth": "1985-06-15",
       "job_title": "Director",
       "source": "website",
-      "tags": ["vip"],
       "created_at": "2026-01-15T10:30:00Z",
       "updated_at": "2026-03-20T14:00:00Z"
     }
@@ -83,7 +81,6 @@ export const CONTACTS: ResourceGroup = {
     "date_of_birth": "1985-06-15",
     "job_title": "Director",
     "source": "website",
-    "tags": ["vip"],
     "created_at": "2026-01-15T10:30:00Z",
     "updated_at": "2026-03-20T14:00:00Z"
   },
@@ -105,7 +102,6 @@ export const CONTACTS: ResourceGroup = {
         { name: 'date_of_birth', type: 'string', required: false, description: 'Date of birth in YYYY-MM-DD format (e.g. 1990-03-26). Used by the birthday messaging cron to send automated birthday emails/SMS.', in: 'body' },
         { name: 'job_title', type: 'string', required: false, description: 'Job title', in: 'body' },
         { name: 'source', type: 'string', required: false, description: 'Lead source (e.g. website, referral, api)', in: 'body' },
-        { name: 'tags', type: 'object[]', required: false, description: 'Tags. Each tag is {name: string, color?: string} (hex color, default "#3b82f6"). Plain strings are also accepted and auto-converted. Example: [{"name":"vip","color":"#ef4444"}]', in: 'body' },
         { name: 'notes', type: 'string', required: false, description: 'Free-text notes', in: 'body' },
         { name: 'metadata', type: 'object', required: false, description: 'Custom field values as { field_id: value } pairs. Use GET /crm-settings to discover available custom fields.', in: 'body' },
         { name: 'address_line1', type: 'string', required: false, description: 'Street address line 1', in: 'body' },
@@ -124,8 +120,7 @@ export const CONTACTS: ResourceGroup = {
     "email": "jane@example.com",
     "phone": "+61412345678",
     "landline": "+61299991234",
-    "source": "api",
-    "tags": ["new-lead"]
+    "source": "api"
   }'`,
       responseExample: `{
   "data": {
@@ -138,7 +133,6 @@ export const CONTACTS: ResourceGroup = {
     "landline": "+61299991234",
     "job_title": null,
     "source": "api",
-    "tags": ["new-lead"],
     "created_at": "2026-03-23T10:00:00Z",
     "updated_at": "2026-03-23T10:00:00Z"
   },
@@ -159,7 +153,6 @@ export const CONTACTS: ResourceGroup = {
         { name: 'phone', type: 'string', required: false, description: 'Mobile number in E.164 format. Landlines will be rejected -- use the landline field.', in: 'body' },
         { name: 'landline', type: 'string', required: false, description: 'Landline/fixed-line number in E.164 format. Set to null to clear.', in: 'body' },
         { name: 'date_of_birth', type: 'string', required: false, description: 'Date of birth in YYYY-MM-DD format. Set to null to clear.', in: 'body' },
-        { name: 'tags', type: 'object[]', required: false, description: 'Tags. Each tag is {name: string, color?: string}. Plain strings are also accepted. Replaces entire tags array.', in: 'body' },
         { name: 'notes', type: 'string', required: false, description: 'Notes', in: 'body' },
         { name: 'metadata', type: 'object', required: false, description: 'Custom field values as { field_id: value } pairs. Replaces entire metadata object.', in: 'body' },
       ],
