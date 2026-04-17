@@ -12,7 +12,7 @@ export const FORMS: ResourceGroup = {
     { method: 'GET', path: '/forms/templates', description: 'List all form templates.', scopes: ['forms:read'], isWrite: false },
     { method: 'GET', path: '/forms/templates/:id', description: 'Retrieve a form template with all fields inline.', scopes: ['forms:read'], isWrite: false, params: [{ name: 'id', type: 'uuid', required: true, description: 'Template ID', in: 'path' }] },
     { method: 'POST', path: '/forms/templates', description: 'Create a form template.', scopes: ['forms:write'], isWrite: true, params: [{ name: 'name', type: 'string', required: true, description: 'Form name', in: 'body' }, { name: 'description', type: 'string', required: false, description: 'Form description', in: 'body' }] },
-    { method: 'PATCH', path: '/forms/templates/:id', description: 'Update a form template. Use settings to configure the completion screen shown after submission.', scopes: ['forms:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Template ID', in: 'path' }, { name: 'name', type: 'string', required: false, description: 'Form name', in: 'body' }, { name: 'settings', type: 'object', required: false, description: 'Template settings JSON. Completion keys: completionMessage (string), completionButtonEnabled (boolean), completionButtonText (string), completionButtonUrl (string), completionButtonNewTab (boolean, default true). Merge with existing settings to avoid overwriting stepCount/stepHeaders.', in: 'body' }] },
+    { method: 'PATCH', path: '/forms/templates/:id', description: 'Update a form template. Use settings to configure the completion screen and notification addresses.', scopes: ['forms:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Template ID', in: 'path' }, { name: 'name', type: 'string', required: false, description: 'Form name', in: 'body' }, { name: 'settings', type: 'object', required: false, description: 'Template settings JSON. Completion keys: completionMessage (string), completionButtonEnabled (boolean), completionButtonText (string), completionButtonUrl (string), completionButtonNewTab (boolean, default true). Notification key: notifyEmails (string[] - email addresses to notify when this form is completed, overrides workspace default). Merge with existing settings to avoid overwriting stepCount/stepHeaders.', in: 'body' }] },
     { method: 'DELETE', path: '/forms/templates/:id', description: 'Delete a form template.', scopes: ['forms:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Template ID', in: 'path' }] },
     { method: 'POST', path: '/forms/templates/:id/duplicate', description: 'Duplicate a form template with all its fields.', scopes: ['forms:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Template ID to duplicate', in: 'path' }] },
     { method: 'POST', path: '/forms/templates/:id/archive', description: 'Toggle archive status on a form template.', scopes: ['forms:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Template ID', in: 'path' }] },
@@ -78,7 +78,7 @@ export const FORMS: ResourceGroup = {
     {
       method: 'POST',
       path: '/forms/send',
-      description: 'Send a form to a recipient via email. Costs 3 credits. Link to a deal to enable CRM Variable Injection on submission.',
+      description: 'Send a form to a recipient via email. Costs 3 credits. Link to a deal to enable CRM Variable Injection on submission. Notification cascade: notify_emails (this call) -> template notifyEmails -> workspace form_completion_notify_emails -> sender fallback.',
       scopes: ['forms:send'],
       isWrite: true,
       params: [
@@ -90,6 +90,7 @@ export const FORMS: ResourceGroup = {
         { name: 'customer_id', type: 'uuid', required: false, description: 'Link to a customer account', in: 'body' },
         { name: 'personal_message', type: 'string', required: false, description: 'Personal message included in the email', in: 'body' },
         { name: 'expires_in_days', type: 'number', required: false, description: 'Days before the form link expires', in: 'body' },
+        { name: 'notify_emails', type: 'string[]', required: false, description: 'Email addresses to notify when this form is completed. Overrides template-level notifyEmails for this specific submission. Falls back to template notifyEmails, then workspace form_completion_notify_emails, then the sending user.', in: 'body' },
       ],
     },
     { method: 'GET', path: '/forms/folders', description: 'List form template folders.', scopes: ['forms:read'], isWrite: false },

@@ -16,8 +16,8 @@ export const COMPANY: ResourceGroup = {
     { method: 'POST', path: '/company/users/invite', description: 'Invite a user to the company.', scopes: ['users:write'], isWrite: true, params: [{ name: 'email', type: 'string', required: true, description: 'Email to invite', in: 'body' }, { name: 'role', type: 'string', required: false, description: 'User role', in: 'body' }] },
     { method: 'PATCH', path: '/company/users/:userId/role', description: 'Update a user role.', scopes: ['users:write'], isWrite: true, params: [{ name: 'userId', type: 'uuid', required: true, description: 'User ID', in: 'path' }, { name: 'role', type: 'string', required: true, description: 'New role', in: 'body' }] },
     { method: 'DELETE', path: '/company/users/:userId', description: 'Remove a user from the company.', scopes: ['users:write'], isWrite: true, params: [{ name: 'userId', type: 'uuid', required: true, description: 'User ID', in: 'path' }] },
-    { method: 'GET', path: '/company/crm-settings', description: 'Get CRM settings (deal stages, lead sources, etc.).', scopes: ['company:read'], isWrite: false },
-    { method: 'PATCH', path: '/company/crm-settings', description: 'Update CRM settings.', scopes: ['company:write'], isWrite: true },
+    { method: 'GET', path: '/company/crm-settings', description: 'Get CRM settings including custom field definitions, lead sources, lost/won reasons, and form_completion_notify_emails (workspace-wide default emails notified on any form completion).', scopes: ['company:read'], isWrite: false },
+    { method: 'PATCH', path: '/company/crm-settings', description: 'Update CRM settings. Supports form_completion_notify_emails (string[] - workspace-wide default notification emails for all form completions, overridden per template via notifyEmails in settings).', scopes: ['company:write'], isWrite: true, params: [{ name: 'form_completion_notify_emails', type: 'string[]', required: false, description: 'Workspace-wide default email addresses notified when any form is completed. Falls back to the sending user if empty.', in: 'body' }] },
     {
       method: 'GET',
       path: '/company/birthday-messages',
