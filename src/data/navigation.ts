@@ -64,6 +64,13 @@ export const API_CATEGORIES: NavCategory[] = [
     ],
   },
   {
+    label: 'Lead Generation',
+    description: 'Search Google Maps for business leads, save search configs, and import into CRM',
+    items: [
+      { id: 'lead-gen', label: 'Lead Generation', icon: 'MapPin' },
+    ],
+  },
+  {
     label: 'Admin & Platform',
     description: 'Company settings, users, integrations, websites, and billing',
     items: [

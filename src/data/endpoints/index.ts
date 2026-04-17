@@ -41,6 +41,7 @@ export { VOICES } from './voices.js';
 export { KNOWLEDGE } from './knowledge.js';
 export { EMAIL_CAMPAIGNS } from './email-campaigns.js';
 export { AGENT_PROPOSALS } from './agent-proposals.js';
+export { LEAD_GEN } from './lead-gen.js';
 
 import { type ResourceGroup } from './types.js';
 import { SEARCH } from './search.js';
@@ -85,6 +86,7 @@ import { VOICES } from './voices.js';
 import { KNOWLEDGE } from './knowledge.js';
 import { EMAIL_CAMPAIGNS } from './email-campaigns.js';
 import { AGENT_PROPOSALS } from './agent-proposals.js';
+import { LEAD_GEN } from './lead-gen.js';
 
 export const RESOURCES: ResourceGroup[] = [
   SEARCH,
@@ -129,6 +131,7 @@ export const RESOURCES: ResourceGroup[] = [
   AI_INSTRUCTIONS,
   VOICES,
   AGENT_PROPOSALS,
+  LEAD_GEN,
 ];
 
 /** Look up a resource group by its id (URL slug) */

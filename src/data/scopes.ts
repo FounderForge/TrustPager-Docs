@@ -93,6 +93,16 @@ export const SCOPE_GROUPS: ScopeGroup[] = [
     ],
   },
   {
+    label: 'Lead Generation',
+    description: 'Search, save, and manage lead generation results',
+    admin: false,
+    scopes: [
+      { key: 'lead-gen:read', label: 'Lead Generation (Read)' },
+      { key: 'lead-gen:write', label: 'Lead Generation (Write)' },
+      { key: 'lead-gen:delete', label: 'Lead Generation (Delete)' },
+    ],
+  },
+  {
     label: 'Admin Only',
     description: 'Company settings, billing, users, and infrastructure -- restrict to admins',
     admin: true,
