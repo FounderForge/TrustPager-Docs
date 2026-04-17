@@ -139,7 +139,7 @@ export const LEAD_GEN: ResourceGroup = {
     {
       method: 'POST',
       path: '/lead-gen/import',
-      description: 'Import selected search results into the CRM. Each result creates one contact AND one customer, linked together via crm_contact_customers. A note activity is automatically logged recording the Google Maps source. Optionally creates a deal in a specified pipeline stage. Only results with imported=false can be imported -- already-imported results are silently skipped.',
+      description: 'Import selected search results into the CRM. Each result creates one contact AND one customer, linked together via crm_contact_customers. A note activity is automatically logged recording the Google Maps source. Optionally creates a deal placed into a specified pipeline stage via crm_deal_pipeline_placements. Only results with imported=false are imported -- already-imported results are filtered out in code (not via a PostgREST filter, to correctly handle null values). Each imported record returns contact_id, customer_id, and deal_id (null if no pipeline provided). Partial failures are non-fatal: a failed individual record returns an error field instead of IDs and is excluded from imported_count.',
       scopes: ['lead-gen:write'],
       isWrite: true,
       params: [
@@ -163,7 +163,7 @@ export const LEAD_GEN: ResourceGroup = {
       responseExample: `{
   "data": {
     "imported_count": 2,
-    "total_requested": 2,
+    "total_requested": 3,
     "imported": [
       {
         "result_id": "a1b2c3d4-...",
@@ -175,7 +175,14 @@ export const LEAD_GEN: ResourceGroup = {
         "result_id": "b2c3d4e5-...",
         "contact_id": "contact-uuid-2...",
         "customer_id": "customer-uuid-2...",
-        "deal_id": "deal-uuid-2..."
+        "deal_id": null
+      },
+      {
+        "result_id": "c3d4e5f6-...",
+        "contact_id": null,
+        "customer_id": null,
+        "deal_id": null,
+        "error": "duplicate key value violates unique constraint"
       }
     ]
   }
