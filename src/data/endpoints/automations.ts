@@ -57,22 +57,49 @@ export const AUTOMATIONS: ResourceGroup = {
         { name: 'description', type: 'string', required: false, description: 'Description', in: 'body' },
         { name: 'enabled', type: 'boolean', required: false, description: 'Whether enabled (default: false)', in: 'body' },
         { name: 'priority', type: 'number', required: false, description: 'Execution priority', in: 'body' },
-        { name: 'conditions', type: 'object', required: false, description: 'Trigger conditions. Note: for stage_changed, use the stage_id field, not conditions.', in: 'body' },
+        {
+          name: 'conditions',
+          type: 'object',
+          required: false,
+          description: `Conditions that must ALL pass (AND logic) for the automation to fire. Evaluated AFTER CRM enrichment, so CRM fields (tags, deal value, lead source, contact email) are available for ALL trigger types. When conditions are not met the run status is "skipped". Operators: eq, neq, exists, not_exists, gt, gte, lt, lte, contains (tag array), not_contains, contains_any, contains_text, in. Example: { "tags": { "contains": "VIP" }, "deal.value": { "gte": 5000 }, "lead_source": { "in": ["Referral", "Website"] } }`,
+          in: 'body',
+        },
       ],
       requestExample: `curl -X POST \\
   "${API_BASE_URL}/automations" \\
   -H "Authorization: Bearer YOUR_API_KEY" \\
   -H "Content-Type: application/json" \\
   -d '{
-    "name": "New Lead Welcome",
-    "trigger_type": "pipeline",
-    "description": "Send welcome email when lead enters pipeline"
+    "name": "VIP Lead Welcome",
+    "trigger_type": "stage_changed",
+    "stage_id": "stage-uuid",
+    "conditions": {
+      "tags": { "contains": "VIP" },
+      "deal.value": { "gte": 5000 },
+      "lead_source": { "in": ["Referral", "Website"] }
+    },
+    "description": "Send welcome email to VIP leads only"
   }'`,
+      responseExample: `{
+  "data": {
+    "id": "auto-uuid-...",
+    "name": "VIP Lead Welcome",
+    "trigger_type": "stage_changed",
+    "stage_id": "stage-uuid",
+    "conditions": {
+      "tags": { "contains": "VIP" },
+      "deal.value": { "gte": 5000 },
+      "lead_source": { "in": ["Referral", "Website"] }
+    },
+    "enabled": false,
+    "created_at": "2026-04-18T00:00:00Z"
+  }
+}`,
     },
     {
       method: 'PATCH',
       path: '/automations/:id',
-      description: 'Update an automation.',
+      description: 'Update an automation. Same writable fields as POST, including conditions. Pass conditions: null to remove all conditions from an automation.',
       scopes: ['automations:write'],
       isWrite: true,
       params: [{ name: 'id', type: 'uuid', required: true, description: 'Automation ID', in: 'path' }],
@@ -120,7 +147,7 @@ export const AUTOMATIONS: ResourceGroup = {
     {
       method: 'GET',
       path: '/automations/:id/runs',
-      description: 'List execution runs for an automation.',
+      description: 'List execution runs for an automation. Run status values: completed, failed, running, skipped. Status "skipped" means conditions were evaluated but not met -- the automation did not execute any actions.',
       scopes: ['automations:read'],
       isWrite: false,
       params: [{ name: 'id', type: 'uuid', required: true, description: 'Automation ID', in: 'path' }],
