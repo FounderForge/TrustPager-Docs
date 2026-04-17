@@ -61,6 +61,24 @@ export const SCHEDULED_EVENT_TYPES: ResourceGroup = {
         { name: 'enrollment_offset_minutes', type: 'number', required: false, description: 'How far before the event to start the queue (0 = at event time, 1440 = 1 day before)', in: 'body' },
         { name: 'sort_order', type: 'number', required: false, description: 'Display order in the dropdown', in: 'body' },
         { name: 'is_active', type: 'boolean', required: false, description: 'Whether this type appears in the dropdown (default true)', in: 'body' },
+        { name: 'is_bookable', type: 'boolean', required: false, description: 'If true, customers can book this type publicly', in: 'body' },
+        { name: 'slug', type: 'string', required: false, description: 'URL-friendly slug for public booking page (auto-generated from name if omitted)', in: 'body' },
+        { name: 'buffer_before_minutes', type: 'number', required: false, description: 'Buffer time before booking (minutes)', in: 'body' },
+        { name: 'buffer_after_minutes', type: 'number', required: false, description: 'Buffer time after booking (minutes)', in: 'body' },
+        { name: 'min_notice_hours', type: 'number', required: false, description: 'Minimum notice required (hours)', in: 'body' },
+        { name: 'max_advance_days', type: 'number', required: false, description: 'Max days in advance to book', in: 'body' },
+        { name: 'slot_interval_minutes', type: 'number', required: false, description: 'Time slot interval (minutes)', in: 'body' },
+        { name: 'booking_pipeline_id', type: 'uuid', required: false, description: 'Pipeline for auto-created deals', in: 'body' },
+        { name: 'booking_stage_id', type: 'uuid', required: false, description: 'Stage for auto-created deals', in: 'body' },
+        { name: 'booking_auto_create_deal', type: 'boolean', required: false, description: 'Whether to auto-create a CRM deal when booked (default true)', in: 'body' },
+        { name: 'booking_lead_source', type: 'string', required: false, description: 'Lead source for auto-created deals (default "booking")', in: 'body' },
+        { name: 'booking_deal_name_template', type: 'string', required: false, description: 'Deal name template. Variables: {event_type}, {customer_name}, {date}, {time}', in: 'body' },
+        { name: 'booking_assigned_user_ids', type: 'array', required: false, description: 'Team member UUIDs to assign to deals and check calendar availability', in: 'body' },
+        { name: 'booking_default_tags', type: 'array', required: false, description: 'Tags auto-applied to deals. Array of {name, color} objects.', in: 'body' },
+        { name: 'booking_default_products', type: 'array', required: false, description: 'Products auto-attached to deals. Array of {id, quantity} objects.', in: 'body' },
+        { name: 'booking_confirmation_message', type: 'string', required: false, description: 'Custom confirmation message shown after booking', in: 'body' },
+        { name: 'booking_deal_behavior', type: 'string', required: false, description: 'How bookings interact with CRM deals: "create" (always new), "update_or_create" (match existing or create), "never_create" (match only). Default: "create"', in: 'body' },
+        { name: 'booking_notifications', type: 'object', required: false, description: 'Booking notifications. Object with keys: pre_meeting, meeting_start, late, no_show, rebooking. Each key is an array of { offset_minutes? (pre_meeting/rebooking), channels: ["email"|"sms"], recipients: "booker"|"booker_and_attendees"|"team"|"all", email_subject, email_body, sms_body, label }. Template vars: {booker_name}, {event_type}, {date}, {time}, {meet_link}, {duration}, {rebook_link}', in: 'body' },
       ],
       requestExample: `curl -X POST \\
   "${API_BASE_URL}/scheduled-event-types" \\
@@ -70,21 +88,28 @@ export const SCHEDULED_EVENT_TYPES: ResourceGroup = {
     "name": "Site Visit",
     "icon": "map-pin",
     "color": "emerald",
-    "event_queue_id": "b2c3d4e5-...",
-    "enrollment_offset_minutes": 1440
+    "is_bookable": true,
+    "default_duration_minutes": 30,
+    "booking_deal_behavior": "update_or_create",
+    "booking_notifications": {
+      "pre_meeting": [
+        { "offset_minutes": 1440, "channels": ["email"], "recipients": "booker", "email_subject": "See you tomorrow!", "email_body": "Hi {booker_name}, your meeting is tomorrow at {time}.", "label": "24hr reminder" }
+      ]
+    }
   }'`,
       responseExample: `{
   "data": {
     "id": "a1b2c3d4-...",
     "name": "Site Visit",
-    "description": null,
     "icon": "map-pin",
     "color": "emerald",
-    "event_queue_id": "b2c3d4e5-...",
-    "enrollment_offset_minutes": 1440,
-    "is_meeting": false,
-    "default_duration_minutes": null,
-    "sort_order": null,
+    "is_bookable": true,
+    "slug": "site-visit",
+    "default_duration_minutes": 30,
+    "booking_deal_behavior": "update_or_create",
+    "booking_notifications": {
+      "pre_meeting": [{ "offset_minutes": 1440, "channels": ["email"], "recipients": "booker", "email_subject": "See you tomorrow!", "email_body": "Hi {booker_name}, your meeting is tomorrow at {time}.", "label": "24hr reminder" }]
+    },
     "is_active": true,
     "created_at": "2026-03-23T10:00:00Z",
     "updated_at": "2026-03-23T10:00:00Z"
