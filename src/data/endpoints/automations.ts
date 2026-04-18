@@ -52,7 +52,7 @@ export const AUTOMATIONS: ResourceGroup = {
       isWrite: true,
       params: [
         { name: 'name', type: 'string', required: true, description: 'Automation name', in: 'body' },
-        { name: 'trigger_type', type: 'string', required: true, description: 'Trigger type. Examples: stage_changed, form_submitted, call_analyzed, sms_received, email_received, checkout_completed', in: 'body' },
+        { name: 'trigger_type', type: 'string', required: true, description: 'Trigger type. Common values: stage_changed, form_submitted, call_analyzed, sms_received, email_received, checkout_completed. CRM entity triggers (fired by Portal API on CRUD): contact_created, contact_updated, customer_created, customer_updated, deal_created, deal_updated. ENTITY AXIS RULES: contact_type lives on contacts (use contact_created/updated); account_type lives on customers (use customer_created/updated); opportunity_type lives on deals (use deal_created/updated). Update triggers include _changed_fields and _previous_values in trigger data for field-level condition matching.', in: 'body' },
         { name: 'stage_id', type: 'uuid', required: false, description: 'Pipeline stage UUID. Required when trigger_type is "stage_changed". Single source of truth for stage matching.', in: 'body' },
         { name: 'description', type: 'string', required: false, description: 'Description', in: 'body' },
         { name: 'enabled', type: 'boolean', required: false, description: 'Whether enabled (default: false)', in: 'body' },

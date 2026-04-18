@@ -62,5 +62,55 @@ export const EVENT_QUEUES: ResourceGroup = {
   "meta": { "credits_remaining": 9490 }
 }`,
     },
+    {
+      method: 'POST',
+      path: '/event-queues/:id/bulk-enroll',
+      description: `Enrol contacts into an event queue in bulk. Requires EXACTLY ONE of three mutually exclusive targeting modes:
+
+- contact_ids -- explicit list of contact UUIDs (max 500)
+- contact_filter -- filter by contact-level fields (individual-person fields: contact_type, source, email, first_name, last_name, job_title, city, state, country)
+- customer_filter -- filter by company/customer-level fields (account_type, industry, is_customer, is_supplier, city, state, country) -- resolves to all contacts linked to matching customers
+
+ENTITY AXIS DISTINCTION: contact_type lives on crm_contacts (use contact_filter). account_type lives on crm_customers (use customer_filter). opportunity_type lives on crm_deals (not filterable here -- use automations with deal triggers instead).
+
+Idempotent by default: contacts already enrolled with a pending step are skipped (set skip_if_already_enrolled: false to override). Capped at 500 contacts per call; if the filter would match more, has_more: true is returned and you should call again to page through.`,
+      scopes: ['automations:write'],
+      isWrite: true,
+      params: [
+        { name: 'id', type: 'uuid', required: true, description: 'Event queue ID', in: 'path' },
+        { name: 'contact_ids', type: 'string[]', required: false, description: 'Explicit list of contact UUIDs (max 500). Mutually exclusive with contact_filter and customer_filter.', in: 'body' },
+        { name: 'contact_filter', type: 'object', required: false, description: 'Filter by contact-level fields. Supported: contact_type, source, email, first_name, last_name, job_title, city, state, country. Values can be a single value or an array (IN). Example: { "contact_type": ["Referrer", "Lawyer"] }', in: 'body' },
+        { name: 'customer_filter', type: 'object', required: false, description: 'Filter by customer/company-level fields -- resolves to all contacts linked to matching customers. Supported: account_type, industry, is_customer, is_supplier, city, state, country. Example: { "account_type": "Accounting Firm" }', in: 'body' },
+        { name: 'enrollment_time', type: 'string', required: false, description: 'ISO timestamp to use as the anchor for step delay calculations (default: now). Useful for backdating enrolments.', in: 'body' },
+        { name: 'skip_if_already_enrolled', type: 'boolean', required: false, description: 'Default true. When true, contacts that already have a pending enrolment in this queue are skipped. Set false to force re-enrolment.', in: 'body' },
+      ],
+      requestExample: `# Enrol by contact_type (contact-level field)
+curl -X POST \\
+  "${API_BASE_URL}/event-queues/QUEUE_ID/bulk-enroll" \\
+  -H "Authorization: Bearer YOUR_API_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "contact_filter": { "contact_type": ["Referrer", "Lawyer"] }
+  }'
+
+# Enrol all contacts linked to accounting firms (customer-level field)
+curl -X POST \\
+  "${API_BASE_URL}/event-queues/QUEUE_ID/bulk-enroll" \\
+  -H "Authorization: Bearer YOUR_API_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "customer_filter": { "account_type": "Accounting Firm", "is_customer": true }
+  }'`,
+      responseExample: `{
+  "data": {
+    "enrolled": 47,
+    "skipped": 3,
+    "failed": 0,
+    "enrollment_ids": ["uuid1", "uuid2", "..."],
+    "has_more": false
+  },
+  "meta": { "credits_remaining": 9440, "url": "https://app.trustpager.com/auto/event-queues/QUEUE_ID" }
+}`,
+    },
   ],
 };
