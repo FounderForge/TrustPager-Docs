@@ -78,20 +78,54 @@ export const FORMS: ResourceGroup = {
     {
       method: 'POST',
       path: '/forms/send',
-      description: 'Send a form to a recipient via email. Costs 3 credits. Link to a deal to enable CRM Variable Injection on submission. Notification cascade: notify_emails (this call) -> template notifyEmails -> workspace form_completion_notify_emails -> sender fallback.',
+      description: 'Send a form to a recipient via email. Costs 3 credits. At least one of deal_id, contact_id, or customer_id is required to link the submission to a CRM entity. CRM Variable Injection fires on submission when any linkage is set -- deal.* wirings are skipped if no deal_id is provided, but contact.* and account.* wirings fire against the submission-level contact/customer. Notification cascade: notify_emails (this call) -> template notifyEmails -> workspace form_completion_notify_emails -> sender fallback.',
       scopes: ['forms:send'],
       isWrite: true,
       params: [
         { name: 'template_id', type: 'uuid', required: true, description: 'Form template ID', in: 'body' },
         { name: 'recipient_email', type: 'string', required: true, description: 'Recipient email address', in: 'body' },
         { name: 'recipient_name', type: 'string', required: true, description: 'Recipient full name', in: 'body' },
-        { name: 'deal_id', type: 'uuid', required: false, description: 'Link to a deal - enables CRM Variable Injection on submission', in: 'body' },
-        { name: 'contact_id', type: 'uuid', required: false, description: 'Link to a contact', in: 'body' },
-        { name: 'customer_id', type: 'uuid', required: false, description: 'Link to a customer account', in: 'body' },
+        { name: 'deal_id', type: 'uuid', required: false, description: 'Link to an opportunity. Preferred when the form is opportunity-scoped. Enables all CRM variable wirings including deal.* fields.', in: 'body' },
+        { name: 'contact_id', type: 'uuid', required: false, description: 'Link to a contact. Use for standalone client-profile forms where no opportunity exists. contact.* and account.* wirings still fire.', in: 'body' },
+        { name: 'customer_id', type: 'uuid', required: false, description: 'Link to a customer (account). account.* wirings fire even without a deal_id.', in: 'body' },
         { name: 'personal_message', type: 'string', required: false, description: 'Personal message included in the email', in: 'body' },
         { name: 'expires_in_days', type: 'number', required: false, description: 'Days before the form link expires', in: 'body' },
         { name: 'notify_emails', type: 'string[]', required: false, description: 'Email addresses to notify when this form is completed. Overrides template-level notifyEmails for this specific submission. Falls back to template notifyEmails, then workspace form_completion_notify_emails, then the sending user.', in: 'body' },
       ],
+    },
+    {
+      method: 'POST',
+      path: '/forms/templates/:id/wiring',
+      description: 'Bulk-update CRM variable wiring on a form template\'s fields in one atomic call. Optionally creates new workspace custom fields on company_settings before applying mappings -- useful for wiring AI-generated templates whose fields need new CRM targets. Fields not listed in mappings are untouched. Pass crm_variable: null to clear an existing wiring. Requires forms:write scope.',
+      scopes: ['forms:write'],
+      isWrite: true,
+      params: [
+        { name: 'id', type: 'uuid', required: true, description: 'Form template ID', in: 'path' },
+        { name: 'mappings', type: 'object[]', required: false, description: 'Array of { field_id (uuid, required), crm_variable (string or null to clear), crm_variable_mode ("write" | "overwrite", default "overwrite") }. At least one of mappings or create_custom_fields must be provided.', in: 'body' },
+        { name: 'create_custom_fields', type: 'object[]', required: false, description: 'Array of { label (string), type ("text"|"textarea"|"dropdown"|"number"|"datetime"|"checkbox"), entity ("deal"|"account"|"contact"), options (string[], required for dropdown) }. New fields are persisted to company_settings.custom_fields before mappings are applied, so you can immediately wire to them.', in: 'body' },
+      ],
+      requestExample: JSON.stringify({
+        mappings: [
+          { field_id: 'uuid-field-1', crm_variable: 'contact.first_name', crm_variable_mode: 'overwrite' },
+          { field_id: 'uuid-field-2', crm_variable: 'account.tax_number', crm_variable_mode: 'write' },
+          { field_id: 'uuid-field-3', crm_variable: 'contact.metadata.marital_status', crm_variable_mode: 'overwrite' },
+        ],
+        create_custom_fields: [
+          { label: 'Marital Status', type: 'dropdown', entity: 'contact', options: ['Single', 'Married', 'De facto', 'Divorced', 'Widowed'] },
+        ],
+      }, null, 2),
+      responseExample: JSON.stringify({
+        data: {
+          updated_fields: [
+            { id: 'uuid-field-1', label: 'First Name', type: 'text', content: { crm_variable: 'contact.first_name', crm_variable_mode: 'overwrite' } },
+            { id: 'uuid-field-2', label: 'ABN', type: 'text', content: { crm_variable: 'account.tax_number', crm_variable_mode: 'write' } },
+            { id: 'uuid-field-3', label: 'Marital Status', type: 'select', content: { crm_variable: 'contact.metadata.marital_status', crm_variable_mode: 'overwrite' } },
+          ],
+          created_custom_fields: [{ entity: 'contact', id: 'marital_status', label: 'Marital Status', type: 'dropdown', variable: 'contact.metadata.marital_status' }],
+          stats: { fields_updated: 3, custom_fields_created: 1 },
+        },
+        meta: { credits_remaining: 9490 },
+      }, null, 2),
     },
     { method: 'GET', path: '/forms/folders', description: 'List form template folders.', scopes: ['forms:read'], isWrite: false },
     { method: 'POST', path: '/forms/folders', description: 'Create a form template folder. name is required.', scopes: ['forms:write'], isWrite: true, params: [{ name: 'name', type: 'string', required: true, description: 'Folder name', in: 'body' }] },
