@@ -13,7 +13,7 @@ export const EVENT_SCHEDULES: ResourceGroup = {
       method: 'GET',
       path: '/event-schedules',
       description: 'List all event schedules for the workspace.',
-      scopes: ['automations:read'],
+      scopes: ['schedules:read'],
       isWrite: false,
       params: [
         { name: 'limit', type: 'number', required: false, description: 'Items per page (default 25, max 100)', in: 'query' },
@@ -50,7 +50,7 @@ export const EVENT_SCHEDULES: ResourceGroup = {
       method: 'GET',
       path: '/event-schedules/:id',
       description: 'Retrieve a single event schedule.',
-      scopes: ['automations:read'],
+      scopes: ['schedules:read'],
       isWrite: false,
       params: [
         { name: 'id', type: 'uuid', required: true, description: 'Event schedule ID', in: 'path' },
@@ -107,7 +107,7 @@ Common patterns:
 - deals: { "status": "open", "stale_days": 14, "pipeline_id": "uuid", "stage_ids": ["uuid"], "limit": 200 }
 
 Optionally set end_at (ISO timestamp) to stop firing after a date, or max_runs (integer) to auto-deactivate after N fires.`,
-      scopes: ['automations:write'],
+      scopes: ['schedules:write'],
       isWrite: true,
       params: [
         { name: 'name', type: 'string', required: true, description: 'Schedule name', in: 'body' },
@@ -158,7 +158,7 @@ Optionally set end_at (ISO timestamp) to stop firing after a date, or max_runs (
       method: 'PATCH',
       path: '/event-schedules/:id',
       description: 'Partial update — modify name, description, is_active, cron_expression, timezone, audience_type, audience_filter, automation_id, end_at, or max_runs. Changing cron_expression or timezone automatically recomputes next_run_at.',
-      scopes: ['automations:write'],
+      scopes: ['schedules:write'],
       isWrite: true,
       params: [
         { name: 'id', type: 'uuid', required: true, description: 'Event schedule ID', in: 'path' },
@@ -203,7 +203,7 @@ Optionally set end_at (ISO timestamp) to stop firing after a date, or max_runs (
       method: 'DELETE',
       path: '/event-schedules/:id',
       description: 'Permanently delete an event schedule. The linked automation is NOT deleted. This cannot be undone.',
-      scopes: ['automations:delete'],
+      scopes: ['schedules:delete'],
       isWrite: true,
       params: [
         { name: 'id', type: 'uuid', required: true, description: 'Event schedule ID', in: 'path' },
@@ -217,7 +217,7 @@ Optionally set end_at (ISO timestamp) to stop firing after a date, or max_runs (
       method: 'POST',
       path: '/event-schedules/preview-cron',
       description: 'Validate a cron expression and preview the next N fire times in a specified timezone. Does NOT create any schedule. Use to confirm a pattern before saving.',
-      scopes: ['automations:read'],
+      scopes: ['schedules:read'],
       isWrite: false,
       params: [
         { name: 'cron_expression', type: 'string', required: true, description: 'Standard 5-field cron expression to validate', in: 'body' },
@@ -250,7 +250,7 @@ Optionally set end_at (ISO timestamp) to stop firing after a date, or max_runs (
       method: 'POST',
       path: '/event-schedules/:id/fire-now',
       description: 'Manually fire an event schedule immediately. Resolves the current audience and triggers one automation run per row. Does NOT advance next_run_at, increment run_count, or respect end_at/max_runs limits. Useful for testing, ad-hoc sends, or recovering from a missed fire.',
-      scopes: ['automations:write'],
+      scopes: ['schedules:write'],
       isWrite: true,
       params: [
         { name: 'id', type: 'uuid', required: true, description: 'Event schedule ID', in: 'path' },
@@ -274,7 +274,7 @@ Optionally set end_at (ISO timestamp) to stop firing after a date, or max_runs (
       method: 'GET',
       path: '/event-schedules/:id/audience-preview',
       description: 'Preview the audience a schedule WOULD resolve to right now -- returns the total count and a configurable sample of trigger_data rows, without firing anything. Use before enabling a schedule to verify the filter targets the right rows.',
-      scopes: ['automations:read'],
+      scopes: ['schedules:read'],
       isWrite: false,
       params: [
         { name: 'id', type: 'uuid', required: true, description: 'Event schedule ID', in: 'path' },
@@ -305,7 +305,7 @@ Optionally set end_at (ISO timestamp) to stop firing after a date, or max_runs (
       method: 'GET',
       path: '/event-schedules/:id/runs',
       description: 'List historical fire records for a schedule. Shows audience_size, runs_triggered, runs_failed, status (completed/partial/failed), and timing. Use to verify schedules are firing, debug failures, or audit history. Supports cursor pagination ordered by fired_at descending.',
-      scopes: ['automations:read'],
+      scopes: ['schedules:read'],
       isWrite: false,
       params: [
         { name: 'id', type: 'uuid', required: true, description: 'Event schedule ID', in: 'path' },
