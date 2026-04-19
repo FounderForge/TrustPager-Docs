@@ -84,16 +84,26 @@ export const AUTO_SCHEDULES: ResourceGroup = {
     {
       method: 'POST',
       path: '/auto-schedules',
-      description: `Create a new auto schedule. Required fields: name, cron_expression, audience_type, automation_id.
+      description: `Create a new auto schedule. Required fields: name, audience_type, automation_id, and exactly one schedule input (see below).
 
-**Cron expression** is standard 5-field syntax: "min hour day-of-month month day-of-week".
-Common patterns:
+**Specify the schedule in one of two ways:**
+
+**Option A -- Structured (recommended for AI agents):** Provide time_of_day ("HH:MM", e.g. "08:00") plus optional days_of_week (array of ints 0-6, where 0=Sunday and 6=Saturday) and timezone. The server derives the cron expression automatically.
+- Example: time_of_day "08:00", days_of_week [1,2,3,4,5], timezone "Australia/Melbourne" -- stores cron "0 8 * * 1,2,3,4,5"
+
+**Option B -- Raw cron:** Provide cron_expression (standard 5-field syntax) and timezone. Use this for patterns that time_of_day cannot express, such as every-N-minutes, twice-daily, or monthly schedules.
+- Example: cron_expression "0 9,17 * * *", timezone "Australia/Sydney" -- fires 9am and 5pm daily
+
+If both are provided, cron_expression wins. Cron is the canonical stored form -- the response always includes cron_expression regardless of which input option was used.
+
+**Common cron patterns:**
 - "*/15 * * * *" -- every 15 minutes
 - "0 * * * *" -- every hour
 - "0 9 * * *" -- daily at 9am
 - "0 9 * * 1-5" -- weekdays at 9am
 - "0 9 * * 1" -- every Monday at 9am
 - "0 9,17 * * *" -- 9am and 5pm daily
+- "0 9 1 * *" -- 1st of every month at 9am
 
 **audience_type** controls who receives a run:
 - "users" -- one run per staff member (with optional role/user_ids filter)
@@ -112,17 +122,36 @@ Optionally set end_at (ISO timestamp) to stop firing after a date, or max_runs (
       isWrite: true,
       params: [
         { name: 'name', type: 'string', required: true, description: 'Schedule name', in: 'body' },
-        { name: 'cron_expression', type: 'string', required: true, description: 'Standard 5-field cron expression', in: 'body' },
         { name: 'audience_type', type: 'string', required: true, description: 'One of: users, tasks_by_assignee, contacts, deals', in: 'body' },
         { name: 'automation_id', type: 'uuid', required: true, description: 'UUID of the automation to fire. Must belong to this workspace.', in: 'body' },
+        { name: 'time_of_day', type: 'string', required: false, description: 'Schedule time in "HH:MM" format (e.g. "08:00"). Use with optional days_of_week and timezone. Server derives cron_expression automatically. Required if cron_expression is not provided.', in: 'body' },
+        { name: 'days_of_week', type: 'array', required: false, description: 'Array of integers 0-6 (0=Sunday, 6=Saturday). Used with time_of_day. Omit or pass empty array for daily. Example: [1,2,3,4,5] for weekdays.', in: 'body' },
+        { name: 'cron_expression', type: 'string', required: false, description: 'Standard 5-field cron expression. Use for patterns time_of_day cannot express (every-N-minutes, twice-daily, monthly, etc.). If both time_of_day and cron_expression are provided, cron_expression wins.', in: 'body' },
+        { name: 'timezone', type: 'string', required: false, description: 'IANA timezone, e.g. "Australia/Sydney" (default). Used with both input options.', in: 'body' },
         { name: 'description', type: 'string', required: false, description: 'Optional description', in: 'body' },
         { name: 'is_active', type: 'boolean', required: false, description: 'Whether the schedule fires automatically (default true)', in: 'body' },
-        { name: 'timezone', type: 'string', required: false, description: 'IANA timezone, e.g. "Australia/Sydney" (default)', in: 'body' },
         { name: 'audience_filter', type: 'object', required: false, description: 'Audience-specific filter JSON (see description above)', in: 'body' },
         { name: 'end_at', type: 'string', required: false, description: 'ISO timestamp after which the schedule stops firing', in: 'body' },
         { name: 'max_runs', type: 'number', required: false, description: 'Auto-deactivate after firing this many times', in: 'body' },
       ],
-      requestExample: `curl -X POST \\
+      requestExample: `# Option A -- structured (AI-agent-friendly)
+curl -X POST \\
+  "${API_BASE_URL}/auto-schedules" \\
+  -H "Authorization: Bearer YOUR_API_KEY" \\
+  -H "Content-Type: application/json" \\
+  -H "Idempotency-Key: unique-key-here" \\
+  -d '{
+    "name": "Morning Task Digest",
+    "time_of_day": "08:00",
+    "days_of_week": [1, 2, 3, 4, 5],
+    "timezone": "Australia/Melbourne",
+    "audience_type": "tasks_by_assignee",
+    "audience_filter": {},
+    "automation_id": "YOUR_AUTOMATION_ID"
+  }'
+
+# Option B -- raw cron (for complex patterns)
+curl -X POST \\
   "${API_BASE_URL}/auto-schedules" \\
   -H "Authorization: Bearer YOUR_API_KEY" \\
   -H "Content-Type: application/json" \\
@@ -158,7 +187,7 @@ Optionally set end_at (ISO timestamp) to stop firing after a date, or max_runs (
     {
       method: 'PATCH',
       path: '/auto-schedules/:id',
-      description: 'Partial update -- modify name, description, is_active, cron_expression, timezone, audience_type, audience_filter, automation_id, end_at, or max_runs. Changing cron_expression or timezone automatically recomputes next_run_at.',
+      description: 'Partial update -- modify any field. Accepts the same two schedule-input options as POST: either time_of_day (+ optional days_of_week) or cron_expression. If cron_expression is provided it takes precedence. Changing either schedule input or timezone automatically recomputes next_run_at.',
       scopes: ['schedules:write'],
       isWrite: true,
       params: [
@@ -166,7 +195,9 @@ Optionally set end_at (ISO timestamp) to stop firing after a date, or max_runs (
         { name: 'name', type: 'string', required: false, description: 'Schedule name', in: 'body' },
         { name: 'description', type: 'string', required: false, description: 'Schedule description', in: 'body' },
         { name: 'is_active', type: 'boolean', required: false, description: 'Enable or disable the schedule', in: 'body' },
-        { name: 'cron_expression', type: 'string', required: false, description: '5-field cron expression', in: 'body' },
+        { name: 'time_of_day', type: 'string', required: false, description: 'Update the firing time using "HH:MM" format. Server re-derives cron_expression. Use with optional days_of_week.', in: 'body' },
+        { name: 'days_of_week', type: 'array', required: false, description: 'Array of integers 0-6. Used with time_of_day to update which days the schedule fires.', in: 'body' },
+        { name: 'cron_expression', type: 'string', required: false, description: '5-field cron expression. Takes precedence over time_of_day if both are provided.', in: 'body' },
         { name: 'timezone', type: 'string', required: false, description: 'IANA timezone', in: 'body' },
         { name: 'audience_type', type: 'string', required: false, description: 'One of: users, tasks_by_assignee, contacts, deals', in: 'body' },
         { name: 'audience_filter', type: 'object', required: false, description: 'Audience-specific filter JSON', in: 'body' },
