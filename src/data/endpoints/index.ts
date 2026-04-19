@@ -13,6 +13,8 @@ export { TASKS } from './tasks.js';
 export { WORK_ORDERS } from './work-orders.js';
 export { EVENT_QUEUES } from './event-queues.js';
 export { EVENT_SCHEDULES } from './event-schedules.js';
+export { AUTO_QUEUES } from './auto-queues.js';
+export { AUTO_SCHEDULES } from './auto-schedules.js';
 export { SMS } from './sms.js';
 export { PHONE } from './phone.js';
 export { VOICE_AGENTS } from './voice-agents.js';
@@ -59,6 +61,8 @@ import { TASKS } from './tasks.js';
 import { WORK_ORDERS } from './work-orders.js';
 import { EVENT_QUEUES } from './event-queues.js';
 import { EVENT_SCHEDULES } from './event-schedules.js';
+import { AUTO_QUEUES } from './auto-queues.js';
+import { AUTO_SCHEDULES } from './auto-schedules.js';
 import { SMS } from './sms.js';
 import { PHONE } from './phone.js';
 import { VOICE_AGENTS } from './voice-agents.js';
@@ -104,6 +108,8 @@ export const RESOURCES: ResourceGroup[] = [
   AUTOMATIONS,
   EVENT_QUEUES,
   EVENT_SCHEDULES,
+  AUTO_QUEUES,
+  AUTO_SCHEDULES,
   SCHEDULED_EVENT_TYPES,
   SCHEDULING_AVAILABILITY,
   SCHEDULING_BOOKINGS,

@@ -57,8 +57,8 @@ export const API_CATEGORIES: NavCategory[] = [
     description: 'Automations, event queues, webhooks, and AI features',
     items: [
       { id: 'automations', label: 'Automations', icon: 'Zap' },
-      { id: 'event-queues', label: 'Event Queues', icon: 'ListOrdered' },
-      { id: 'event-schedules', label: 'Event Schedules', icon: 'Clock' },
+      { id: 'auto-queues', label: 'Auto Queues', icon: 'ListOrdered' },
+      { id: 'auto-schedules', label: 'Auto Schedules', icon: 'Clock' },
       { id: 'webhooks', label: 'Webhooks', icon: 'Webhook' },
       { id: 'ai', label: 'AI', icon: 'Brain' },
       { id: 'voices', label: 'Voices', icon: 'Mic' },
