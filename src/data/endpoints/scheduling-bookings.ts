@@ -244,5 +244,30 @@ export const SCHEDULING_BOOKINGS: ResourceGroup = {
         { name: 'id', type: 'string', required: true, description: 'Booking UUID', in: 'path' },
       ],
     },
+    {
+      method: 'POST',
+      path: '/scheduling-bookings/:id/notetaker',
+      description: 'Attach the TrustPager Notetaker (Recall.ai bot) to an existing confirmed booking. The bot joins 60 seconds before the meeting start time, transcribes with speaker attribution, and writes the transcript to the linked CRM deal. Idempotent -- safe to call multiple times (returns already_scheduled: true if already registered). Requires: (1) TrustPager Notetaker enabled in company settings, (2) booking must have a google_meet_link, (3) booking must not be cancelled. Credits: 23 credits per recorded minute, billed after the meeting ends.',
+      scopes: ['company:write'],
+      isWrite: true,
+      params: [
+        { name: 'id', type: 'string', required: true, description: 'Booking UUID. Must have a google_meet_link and status must not be cancelled.', in: 'path' },
+      ],
+      requestExample: `curl -X POST \\
+  "${API_BASE_URL}/scheduling-bookings/b1c2d3e4-.../notetaker" \\
+  -H "Authorization: Bearer YOUR_API_KEY"`,
+      responseExample: `{
+  "data": {
+    "success": true,
+    "bot_id": "b50591e6-ce65-43b1-b6e6-64093067c0f0",
+    "already_scheduled": false,
+    "message": "TrustPager Notetaker scheduled. It will join the meeting 60 seconds before the start time."
+  },
+  "meta": {
+    "credits_remaining": 53827,
+    "url": "https://app.trustpager.com/tools/scheduling"
+  }
+}`,
+    },
   ],
 };
