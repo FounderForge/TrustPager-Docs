@@ -28,6 +28,7 @@ export { WEBSITES } from './websites.js';
 export { ORDER_FORMS } from './order-forms.js';
 export { FILES } from './files.js';
 export { NOTEPADS } from './notepads.js';
+export { REPORTS } from './reports.js';
 export { COMPANY } from './company.js';
 export { CRM_TEMPLATES } from './crm-templates.js';
 export { INTEGRATIONS } from './integrations.js';
@@ -77,6 +78,7 @@ import { WEBSITES } from './websites.js';
 import { ORDER_FORMS } from './order-forms.js';
 import { FILES } from './files.js';
 import { NOTEPADS } from './notepads.js';
+import { REPORTS } from './reports.js';
 import { COMPANY } from './company.js';
 import { CRM_TEMPLATES } from './crm-templates.js';
 import { INTEGRATIONS } from './integrations.js';
@@ -130,6 +132,7 @@ export const RESOURCES: ResourceGroup[] = [
   ORDER_FORMS,
   FILES,
   NOTEPADS,
+  REPORTS,
   KNOWLEDGE,
   COMPANY,
   CRM_TEMPLATES,
