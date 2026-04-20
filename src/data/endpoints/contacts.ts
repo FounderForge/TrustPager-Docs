@@ -90,12 +90,12 @@ export const CONTACTS: ResourceGroup = {
     {
       method: 'POST',
       path: '/contacts',
-      description: 'Create a new contact. first_name is required.',
+      description: 'Create a new contact. first_name is required; last_name is optional. Contacts without a last name render cleanly in automation templates via {{contact.display_name}} and {{contact.greeting}}. Empty or whitespace-only last_name values are stored as NULL.',
       scopes: ['contacts:write'],
       isWrite: true,
       params: [
-        { name: 'first_name', type: 'string', required: true, description: 'Contact first name', in: 'body' },
-        { name: 'last_name', type: 'string', required: false, description: 'Contact last name', in: 'body' },
+        { name: 'first_name', type: 'string', required: true, description: 'Contact first name. Trimmed on save.', in: 'body' },
+        { name: 'last_name', type: 'string', required: false, description: 'Contact last name (optional). Empty or whitespace-only values are stored as NULL. In merge templates, prefer {{contact.display_name}} (falls back to first name when no last name) and {{contact.greeting}} ("Hi Paul" or "Hi there") over raw {{contact.last_name}}.', in: 'body' },
         { name: 'email', type: 'string', required: false, description: 'Email address', in: 'body' },
         { name: 'phone', type: 'string', required: false, description: 'Mobile number in E.164 format (e.g. +61412345678). MUST be a mobile number -- landlines will be rejected with a 400 error. Use the landline field for fixed-line numbers.', in: 'body' },
         { name: 'landline', type: 'string', required: false, description: 'Landline/fixed-line number in E.164 format (e.g. +61299991234)', in: 'body' },
@@ -115,26 +115,24 @@ export const CONTACTS: ResourceGroup = {
   -H "Authorization: Bearer YOUR_API_KEY" \\
   -H "Content-Type: application/json" \\
   -d '{
-    "first_name": "Jane",
-    "last_name": "Doe",
-    "email": "jane@example.com",
+    "first_name": "Paul",
+    "email": "paul@example.com",
     "phone": "+61412345678",
-    "landline": "+61299991234",
     "source": "api"
   }'`,
       responseExample: `{
   "data": {
     "id": "new-uuid-...",
     "public_id": "C-002",
-    "first_name": "Jane",
-    "last_name": "Doe",
-    "email": "jane@example.com",
+    "first_name": "Paul",
+    "last_name": null,
+    "email": "paul@example.com",
     "phone": "+61412345678",
-    "landline": "+61299991234",
+    "landline": null,
     "job_title": null,
     "source": "api",
-    "created_at": "2026-03-23T10:00:00Z",
-    "updated_at": "2026-03-23T10:00:00Z"
+    "created_at": "2026-04-20T08:00:00Z",
+    "updated_at": "2026-04-20T08:00:00Z"
   },
   "meta": { "credits_remaining": 9499 }
 }`,
@@ -147,8 +145,8 @@ export const CONTACTS: ResourceGroup = {
       isWrite: true,
       params: [
         { name: 'id', type: 'uuid', required: true, description: 'Contact ID', in: 'path' },
-        { name: 'first_name', type: 'string', required: false, description: 'First name', in: 'body' },
-        { name: 'last_name', type: 'string', required: false, description: 'Last name', in: 'body' },
+        { name: 'first_name', type: 'string', required: false, description: 'First name. Trimmed on save.', in: 'body' },
+        { name: 'last_name', type: 'string', required: false, description: 'Last name. Send "" or null to clear a previously set surname -- empty/whitespace values are stored as NULL.', in: 'body' },
         { name: 'email', type: 'string', required: false, description: 'Email', in: 'body' },
         { name: 'phone', type: 'string', required: false, description: 'Mobile number in E.164 format. Landlines will be rejected -- use the landline field.', in: 'body' },
         { name: 'landline', type: 'string', required: false, description: 'Landline/fixed-line number in E.164 format. Set to null to clear.', in: 'body' },
