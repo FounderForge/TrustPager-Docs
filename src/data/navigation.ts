@@ -50,6 +50,7 @@ export const API_CATEGORIES: NavCategory[] = [
       { id: 'forms', label: 'Forms', icon: 'FormInput' },
       { id: 'files', label: 'Files', icon: 'FolderOpen' },
       { id: 'notepads', label: 'Notepads', icon: 'StickyNote' },
+      { id: 'training', label: 'Learning Hub', icon: 'GraduationCap' },
     ],
   },
   {
