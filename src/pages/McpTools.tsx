@@ -154,7 +154,7 @@ const TOOL_CATEGORIES = [
     ],
   },
   {
-    label: 'Knowledge Base',
+    label: 'AI Knowledge',
     tools: [
       'list_knowledge', 'get_knowledge', 'create_knowledge', 'update_knowledge', 'delete_knowledge',
       'search_knowledge',

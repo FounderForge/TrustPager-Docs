@@ -6,8 +6,8 @@ import { type ResourceGroup } from './types.js';
 
 export const KNOWLEDGE: ResourceGroup = {
   id: 'knowledge',
-  label: 'Knowledge Base',
-  description: 'Manage company knowledge base entries with semantic search powered by Voyage AI embeddings. Use for policies, FAQs, agent instructions, and product documentation.',
+  label: 'AI Knowledge',
+  description: 'Manage company AI Knowledge entries with semantic search powered by Voyage AI embeddings. Use for policies, FAQs, agent instructions, and product documentation.',
   endpoints: [
     {
       method: 'GET',
