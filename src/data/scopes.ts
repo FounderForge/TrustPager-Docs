@@ -109,6 +109,15 @@ export const SCOPE_GROUPS: ScopeGroup[] = [
     ],
   },
   {
+    label: 'Finance',
+    description: 'Invoice and payment status visibility -- gate behind Finance role for deal revenue privacy',
+    admin: false,
+    scopes: [
+      { key: 'invoices:read', label: 'Invoices (Read)' },
+      { key: 'invoices:write', label: 'Invoices (Write)' },
+    ],
+  },
+  {
     label: 'Admin Only',
     description: 'Company settings, billing, users, and infrastructure -- restrict to admins',
     admin: true,

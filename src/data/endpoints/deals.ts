@@ -12,7 +12,7 @@ export const DEALS: ResourceGroup = {
     {
       method: 'GET',
       path: '/deals',
-      description: 'List all deals with cursor-based pagination. Supports search, status, contact, customer, pipeline, stage, and date filters. Always includes pipeline placements.',
+      description: 'List all deals with cursor-based pagination. Supports search, status, contact, customer, pipeline, stage, and date filters. Always includes pipeline placements. When using expand=products, payment_status on each product is stripped unless the caller has invoices:read scope.',
       scopes: ['deals:read'],
       isWrite: false,
       params: [
@@ -205,15 +205,34 @@ export const DEALS: ResourceGroup = {
     {
       method: 'GET',
       path: '/deals/:id/products',
-      description: 'List products attached to a deal with pricing details.',
+      description: 'List products attached to a deal with pricing and payment status. payment_status is only included in the response when the caller has invoices:read scope.',
       scopes: ['deals:read'],
       isWrite: false,
-      params: [{ name: 'id', type: 'uuid', required: true, description: 'Deal ID', in: 'path' }],
+      params: [
+        { name: 'id', type: 'uuid', required: true, description: 'Deal ID', in: 'path' },
+      ],
+      responseExample: `{
+  "data": [
+    {
+      "id": "deal-product-uuid",
+      "product_id": "product-uuid",
+      "quantity": 2,
+      "unit_price": 950,
+      "discount_percent": 10,
+      "deposit_percent": null,
+      "payment_status": "unpaid",
+      "sort_order": 0,
+      "crm_products": { "id": "product-uuid", "name": "Silver Package", "price": 1000, "currency": "AUD" }
+    }
+  ],
+  "pagination": { "limit": 25, "has_more": false, "next_cursor": null, "prev_cursor": null },
+  "meta": { "credits_remaining": 9499 }
+}`,
     },
     {
       method: 'POST',
       path: '/deals/:id/products',
-      description: 'Add a product to a deal. product_id is required.',
+      description: 'Add a product to a deal. product_id is required. Optionally set payment_status (requires invoices:write scope). Valid payment_status values: unpaid (default), deposit_invoiced, invoiced, paid.',
       scopes: ['deals:write'],
       isWrite: true,
       params: [
@@ -222,17 +241,24 @@ export const DEALS: ResourceGroup = {
         { name: 'quantity', type: 'number', required: false, description: 'Quantity (default: 1)', in: 'body' },
         { name: 'unit_price', type: 'number', required: false, description: 'Override price', in: 'body' },
         { name: 'discount_percent', type: 'number', required: false, description: 'Discount %', in: 'body' },
+        { name: 'deposit_percent', type: 'number', required: false, description: 'Deposit %', in: 'body' },
+        { name: 'payment_status', type: 'string', required: false, description: 'Payment lifecycle stage. Requires invoices:write scope. Values: unpaid (default), deposit_invoiced, invoiced, paid.', in: 'body' },
       ],
     },
     {
       method: 'PATCH',
       path: '/deals/:id/products/:dealProductId',
-      description: 'Update a deal product (quantity, price, discount).',
+      description: 'Update a deal product. Supports quantity, price, discount, deposit, and payment_status. Setting payment_status requires invoices:write scope -- returns 403 otherwise. Valid payment_status values: unpaid, deposit_invoiced, invoiced, paid.',
       scopes: ['deals:write'],
       isWrite: true,
       params: [
         { name: 'id', type: 'uuid', required: true, description: 'Deal ID', in: 'path' },
         { name: 'dealProductId', type: 'uuid', required: true, description: 'Deal product ID', in: 'path' },
+        { name: 'quantity', type: 'number', required: false, description: 'New quantity', in: 'body' },
+        { name: 'unit_price', type: 'number', required: false, description: 'New unit price', in: 'body' },
+        { name: 'discount_percent', type: 'number', required: false, description: 'New discount %', in: 'body' },
+        { name: 'deposit_percent', type: 'number', required: false, description: 'New deposit %', in: 'body' },
+        { name: 'payment_status', type: 'string', required: false, description: 'Payment lifecycle stage. Requires invoices:write scope. Values: unpaid, deposit_invoiced, invoiced, paid.', in: 'body' },
       ],
     },
     {
