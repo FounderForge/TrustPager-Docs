@@ -9,13 +9,14 @@ export const TRANSCRIPTS: ResourceGroup = {
   label: 'Transcripts',
   description: 'View call transcripts and AI coaching results. Coaching results are accessed under /transcripts/coaching.',
   endpoints: [
-    { method: 'GET', path: '/transcripts', description: 'List all transcripts with optional filters for type, source, transcription_status, date range, and participant email. Each record includes transcription_status (not_applicable, pending, complete).', scopes: ['calls:read'], isWrite: false, params: [
+    { method: 'GET', path: '/transcripts', description: 'List all transcripts with optional filters for type, source, transcription_status, date range, participant email, or booking_id. Each record includes transcription_status (not_applicable, pending, complete) and booking_id (populated for TrustPager Notetaker recordings, links the transcript to a scheduling_bookings row).', scopes: ['calls:read'], isWrite: false, params: [
       { name: 'type', type: 'string', required: false, description: 'Filter by type (call, meeting)', in: 'query' },
-      { name: 'source', type: 'string', required: false, description: 'Filter by source (retell, zoom, manual, etc.)', in: 'query' },
+      { name: 'source', type: 'string', required: false, description: 'Filter by source (retell, zoom, recall, manual, etc.). Use "recall" for TrustPager Notetaker recordings.', in: 'query' },
       { name: 'transcription_status', type: 'string', required: false, description: 'Filter by transcription status: not_applicable, pending, or complete. Use complete to find transcripts with text ready for analysis.', in: 'query' },
       { name: 'occurred_after', type: 'string', required: false, description: 'ISO date filter', in: 'query' },
       { name: 'occurred_before', type: 'string', required: false, description: 'ISO date filter', in: 'query' },
       { name: 'participant_email', type: 'string', required: false, description: 'Filter by participant email. Returns transcripts where any participant object has this email.', in: 'query' },
+      { name: 'booking_id', type: 'uuid', required: false, description: 'Filter by scheduling booking UUID. Returns the transcript recorded during that specific booking via TrustPager Notetaker.', in: 'query' },
       { name: 'limit', type: 'number', required: false, description: 'Max results (1-100, default 25)', in: 'query' },
       { name: 'cursor', type: 'string', required: false, description: 'Cursor for next page', in: 'query' },
     ] },

@@ -7,7 +7,7 @@ import { type ResourceGroup, API_BASE_URL } from './types.js';
 export const SCHEDULING_BOOKINGS: ResourceGroup = {
   id: 'scheduling-bookings',
   label: 'Scheduling Bookings',
-  description: 'Create, manage, and check availability for bookings. AI-agent-friendly: human-readable responses, self-correcting errors with alternatives, nearest-slot suggestions.',
+  description: 'Create, manage, and check availability for bookings. Bookings link to deals via deal_id and surface in the Meetings card on the opportunity page. Scheduler bookings are separate from the deal next_action_* fields, which are for ad-hoc reminders only. AI-agent-friendly: human-readable responses, self-correcting errors with alternatives, nearest-slot suggestions.',
   endpoints: [
     {
       method: 'GET',
@@ -113,7 +113,7 @@ export const SCHEDULING_BOOKINGS: ResourceGroup = {
     {
       method: 'POST',
       path: '/scheduling-bookings/:id/cancel',
-      description: 'Cancel a booking. Updates status, removes Google Calendar event (notifies all attendees), cancels pending reminders, clears linked deal next action.',
+      description: 'Cancel a booking. Updates status, removes Google Calendar event (notifies all attendees), and cancels pending reminders. Does not affect deal next_action fields (bookings and next_action are independent).',
       scopes: ['company:write'],
       isWrite: true,
       params: [
