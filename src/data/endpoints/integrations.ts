@@ -11,7 +11,18 @@ export const INTEGRATIONS: ResourceGroup = {
   endpoints: [
     { method: 'GET', path: '/integrations', description: 'List all integrations.', scopes: ['integrations:read'], isWrite: false },
     { method: 'GET', path: '/integrations/:id', description: 'Retrieve an integration.', scopes: ['integrations:read'], isWrite: false, params: [{ name: 'id', type: 'uuid', required: true, description: 'Integration ID', in: 'path' }] },
-    { method: 'POST', path: '/integrations/:id/query', description: 'Query data from an integration (e.g. list invoices from Xero).', scopes: ['integrations:read'], isWrite: false, params: [{ name: 'id', type: 'uuid', required: true, description: 'Integration ID', in: 'path' }, { name: 'query_type', type: 'string', required: true, description: 'Query type', in: 'body' }, { name: 'params', type: 'object', required: false, description: 'Query parameters', in: 'body' }] },
+    {
+      method: 'POST',
+      path: '/integrations/:id/query',
+      description: 'Query data from an integration (read-only). Supported Xero query_types: xero_contacts (params: page?, search?), xero_contact_detail (params: contact_id), xero_accounts (params: type?), xero_tax_rates (params: status?), xero_invoices (params: page?, statuses?, date_from?, date_to?), xero_invoices_by_contact (params: contact_id, statuses?), xero_profit_and_loss (params: from_date?, to_date?, periods?, timeframe?, tracking_category_id?, tracking_option_id?, standard_layout?, payments_only?), xero_balance_sheet (params: date?, periods?, timeframe?, tracking_option_id_1?, tracking_option_id_2?, standard_layout?, payments_only?), xero_aged_receivables (params: contact_id REQUIRED, date?, from_date?, to_date?, periods?, timeframe? -- per-contact Xero report; returns Xero report structure), xero_aged_payables (params: contact_id REQUIRED, date?, from_date?, to_date?, periods?, timeframe? -- per-contact Xero report), xero_aged_receivables_summary (params: date? -- aggregated across all contacts by paging open AUTHORISED ACCREC invoices; returns {as_at, totals:{total, current, days_1_30, days_31_60, days_61_90, days_90_plus}, contacts:[{contact_id, contact_name, total_outstanding, current, days_1_30, days_31_60, days_61_90, days_90_plus, invoice_count}]} sorted desc by total_outstanding), xero_aged_payables_summary (params: date? -- same shape as receivables summary but for ACCPAY). All date params accept both snake_case (from_date, to_date) and camelCase (fromDate, toDate). Other platforms: Slack (slack_channels, slack_users), Facebook (facebook_pages, facebook_leadgen_forms, facebook_ad_accounts), Calcom (calcom_event_types, calcom_bookings), Zoom (zoom_users, zoom_meetings), Portant (portant_templates), ActiveCampaign (activecampaign_lists, activecampaign_tags, activecampaign_automations).',
+      scopes: ['integrations:read'],
+      isWrite: false,
+      params: [
+        { name: 'id', type: 'uuid', required: true, description: 'Integration ID', in: 'path' },
+        { name: 'query_type', type: 'string', required: true, description: 'Query type (see description for full list per platform)', in: 'body' },
+        { name: 'params', type: 'object', required: false, description: 'Query-specific parameters. See description for each query_type\'s accepted params.', in: 'body' },
+      ],
+    },
     {
       method: 'POST',
       path: '/integrations/:id/action',
