@@ -145,7 +145,7 @@ export const DEALS: ResourceGroup = {
     {
       method: 'POST',
       path: '/deals/:id/move',
-      description: 'Move a deal to a pipeline stage. If the deal is not in the pipeline, it will be added. If it is in a different pipeline, it will be moved. When the stage actually changes, any stage_changed automations configured for the target stage fire automatically (fire-and-forget). Set skip_automations=true to suppress this, e.g. for bulk moves or when the caller handles automations separately.',
+      description: 'Move a deal to a pipeline stage. If the deal is not in the pipeline, it will be added. If it is in a different pipeline, it will be moved. When the stage actually changes, stage_changed automations fire automatically. Use skip_automations=true to suppress all automation triggers, or pass skip_action_ids with an array of action UUIDs to suppress only specific actions within automations (the automation still runs and is logged, but those actions are bypassed and recorded in the run\'s skipped_action_ids field).',
       scopes: ['deals:write'],
       isWrite: true,
       params: [
@@ -153,19 +153,52 @@ export const DEALS: ResourceGroup = {
         { name: 'pipeline_id', type: 'uuid', required: true, description: 'Target pipeline ID', in: 'body' },
         { name: 'stage_id', type: 'uuid', required: true, description: 'Target stage ID', in: 'body' },
         { name: 'position', type: 'number', required: false, description: 'Position within stage (default 0)', in: 'body' },
-        { name: 'skip_automations', type: 'boolean', required: false, description: 'Set true to suppress stage_changed automation triggers. Default false.', in: 'body' },
+        { name: 'skip_automations', type: 'boolean', required: false, description: 'Set true to suppress ALL stage_changed automation triggers. Default false. Use skip_action_ids for per-action control.', in: 'body' },
+        { name: 'skip_action_ids', type: 'uuid[]', required: false, description: 'Array of automation action UUIDs to suppress on this move. The automation still fires but these specific actions are bypassed and logged in the run record. Use list_automation_actions to find action IDs.', in: 'body' },
       ],
       requestExample: `curl -X POST \\
   "${API_BASE_URL}/deals/deal-uuid/move" \\
   -H "Authorization: Bearer YOUR_API_KEY" \\
   -H "Content-Type: application/json" \\
-  -d '{ "pipeline_id": "pipe-uuid", "stage_id": "stage-uuid", "skip_automations": false }'`,
+  -d '{ "pipeline_id": "pipe-uuid", "stage_id": "stage-uuid", "skip_action_ids": ["action-uuid-to-skip"] }'`,
       responseExample: `{
-  "id": "placement-uuid",
-  "deal_id": "deal-uuid",
-  "pipeline_id": "pipe-uuid",
-  "stage_id": "stage-uuid",
-  "position": 0,
+  "data": {
+    "id": "placement-uuid",
+    "deal_id": "deal-uuid",
+    "pipeline_id": "pipe-uuid",
+    "stage_id": "stage-uuid",
+    "position": 0
+  },
+  "meta": { "credits_remaining": 9499 }
+}`,
+    },
+    {
+      method: 'POST',
+      path: '/deals/:id/add-card',
+      description: 'Add an opportunity card to a pipeline WITHOUT removing existing cards in other pipelines. Enables a deal to appear in multiple pipelines simultaneously (dual/multi placement). If the deal already has a card in the target pipeline, its stage is updated. Stage_changed automations fire on new placements or stage changes. Supports skip_automations and skip_action_ids for fine-grained automation control.',
+      scopes: ['deals:write'],
+      isWrite: true,
+      params: [
+        { name: 'id', type: 'uuid', required: true, description: 'Deal ID', in: 'path' },
+        { name: 'pipeline_id', type: 'uuid', required: true, description: 'Target pipeline ID', in: 'body' },
+        { name: 'stage_id', type: 'uuid', required: true, description: 'Target stage ID', in: 'body' },
+        { name: 'position', type: 'number', required: false, description: 'Position within stage (default 0)', in: 'body' },
+        { name: 'skip_automations', type: 'boolean', required: false, description: 'Set true to suppress ALL stage_changed automation triggers. Default false.', in: 'body' },
+        { name: 'skip_action_ids', type: 'uuid[]', required: false, description: 'Array of automation action UUIDs to suppress on this card add. Automations still fire but these actions are bypassed and logged.', in: 'body' },
+      ],
+      requestExample: `curl -X POST \\
+  "${API_BASE_URL}/deals/deal-uuid/add-card" \\
+  -H "Authorization: Bearer YOUR_API_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{ "pipeline_id": "pipe-uuid", "stage_id": "stage-uuid" }'`,
+      responseExample: `{
+  "data": {
+    "id": "placement-uuid",
+    "deal_id": "deal-uuid",
+    "pipeline_id": "pipe-uuid",
+    "stage_id": "stage-uuid",
+    "position": 0
+  },
   "meta": { "credits_remaining": 9499 }
 }`,
     },
@@ -388,20 +421,21 @@ export const DEALS: ResourceGroup = {
     {
       method: 'POST',
       path: '/deals/bulk-move',
-      description: 'Move up to 100 deals to a pipeline stage in a single request. Set skip_automations=true to suppress stage_changed automation triggers (recommended for bulk moves). Returns a count of moved records and any IDs that failed.',
+      description: 'Move up to 100 deals to a pipeline stage in a single request. Set skip_automations=true to suppress all stage_changed automation triggers (recommended for bulk moves to avoid flooding contacts). Alternatively, pass skip_action_ids to suppress only specific automation actions across all deals in the batch. Returns a count of moved records and any IDs that failed.',
       scopes: ['deals:write'],
       isWrite: true,
       params: [
         { name: 'ids', type: 'uuid[]', required: true, description: 'Array of deal UUIDs to move (max 100)', in: 'body' },
         { name: 'pipeline_id', type: 'uuid', required: true, description: 'Target pipeline UUID', in: 'body' },
         { name: 'stage_id', type: 'uuid', required: true, description: 'Target stage UUID within the pipeline', in: 'body' },
-        { name: 'skip_automations', type: 'boolean', required: false, description: 'Suppress stage_changed automation triggers (default false). Strongly recommended for bulk moves.', in: 'body' },
+        { name: 'skip_automations', type: 'boolean', required: false, description: 'Suppress ALL stage_changed automation triggers (default false). Strongly recommended for bulk moves.', in: 'body' },
+        { name: 'skip_action_ids', type: 'uuid[]', required: false, description: 'Array of automation action UUIDs to suppress across all deals in this bulk move. Automations still fire but these actions are bypassed on every deal.', in: 'body' },
       ],
       requestExample: `curl -X POST \\
   "${API_BASE_URL}/deals/bulk-move" \\
   -H "Authorization: Bearer YOUR_API_KEY" \\
   -H "Content-Type: application/json" \\
-  -d '{"ids":["uuid-1","uuid-2"],"pipeline_id":"pipe-uuid","stage_id":"stage-uuid","skip_automations":true}'`,
+  -d '{"ids":["uuid-1","uuid-2"],"pipeline_id":"pipe-uuid","stage_id":"stage-uuid","skip_action_ids":["email-action-uuid"]}'`,
       responseExample: `{
   "data": { "success": true, "moved": 2 },
   "meta": { "credits_remaining": 9440 }
