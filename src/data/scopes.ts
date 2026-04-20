@@ -62,6 +62,7 @@ export const SCOPE_GROUPS: ScopeGroup[] = [
       { key: 'documents:write', label: 'Documents (Write)' },
       { key: 'notepads:read', label: 'Notepads (Read)' },
       { key: 'notepads:write', label: 'Notepads (Write)' },
+      { key: 'notepads:delete', label: 'Notepads (Delete)' },
       { key: 'forms:read', label: 'Forms (Read)' },
       { key: 'forms:write', label: 'Forms (Write)' },
       { key: 'forms:send', label: 'Forms (Send)' },
