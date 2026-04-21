@@ -51,7 +51,7 @@ export const CUSTOMERS: ResourceGroup = {
     {
       method: 'POST',
       path: '/customers',
-      description: 'Create a new customer. name is required.',
+      description: 'Create a new customer. name is required. Set skip_automations: true to suppress the customer_created trigger -- recommended for historical imports.',
       scopes: ['customers:write'],
       isWrite: true,
       params: [
@@ -63,6 +63,7 @@ export const CUSTOMERS: ResourceGroup = {
         { name: 'website', type: 'string', required: false, description: 'Website URL', in: 'body' },
         { name: 'notes', type: 'string', required: false, description: 'Notes', in: 'body' },
         { name: 'metadata', type: 'object', required: false, description: 'Custom field values as { field_id: value } pairs.', in: 'body' },
+        { name: 'skip_automations', type: 'boolean', required: false, description: 'Set true to suppress the customer_created trigger. Use for historical imports. Default false.', in: 'body' },
       ],
       requestExample: `curl -X POST \\
   "${API_BASE_URL}/customers" \\
@@ -130,6 +131,40 @@ export const CUSTOMERS: ResourceGroup = {
       scopes: ['customers:read', 'activities:read'],
       isWrite: false,
       params: [{ name: 'id', type: 'uuid', required: true, description: 'Customer ID', in: 'path' }],
+    },
+    {
+      method: 'POST',
+      path: '/customers/bulk-create',
+      description: 'Create up to 100 customers in a single request. Built for historical migrations and bulk imports. Set skip_automations: true to suppress customer_created triggers across all records. Returns a created array and an errors array.',
+      scopes: ['customers:write'],
+      isWrite: true,
+      params: [
+        { name: 'records', type: 'object[]', required: true, description: 'Array of customer objects (max 100). Each requires name plus any optional customer fields (email, phone, landline, industry, website, notes, metadata, etc.).', in: 'body' },
+        { name: 'skip_automations', type: 'boolean', required: false, description: 'Set true to suppress customer_created triggers across all records. Strongly recommended for historical imports.', in: 'body' },
+      ],
+      requestExample: `curl -X POST \\
+  "${API_BASE_URL}/customers/bulk-create" \\
+  -H "Authorization: Bearer YOUR_API_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "skip_automations": true,
+    "records": [
+      { "name": "Acme Corp", "email": "info@acme.com", "landline": "+61290001234" },
+      { "name": "Globex Inc", "email": "contact@globex.com" }
+    ]
+  }'`,
+      responseExample: `{
+  "data": {
+    "created": [
+      { "index": 0, "id": "cust-uuid-1", "name": "Acme Corp", ... },
+      { "index": 1, "id": "cust-uuid-2", "name": "Globex Inc", ... }
+    ],
+    "errors": [],
+    "created_count": 2,
+    "error_count": 0
+  },
+  "meta": { "credits_remaining": 9480 }
+}`,
     },
     {
       method: 'POST',

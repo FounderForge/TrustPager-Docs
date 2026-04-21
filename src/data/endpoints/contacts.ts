@@ -90,7 +90,7 @@ export const CONTACTS: ResourceGroup = {
     {
       method: 'POST',
       path: '/contacts',
-      description: 'Create a new contact. first_name is required; last_name is optional. Contacts without a last name render cleanly in automation templates via {{contact.display_name}} and {{contact.greeting}}. Empty or whitespace-only last_name values are stored as NULL.',
+      description: 'Create a new contact. first_name is required; last_name is optional. Contacts without a last name render cleanly in automation templates via {{contact.display_name}} and {{contact.greeting}}. Empty or whitespace-only last_name values are stored as NULL. Set skip_automations: true to suppress the contact_created trigger -- recommended for historical imports.',
       scopes: ['contacts:write'],
       isWrite: true,
       params: [
@@ -109,6 +109,7 @@ export const CONTACTS: ResourceGroup = {
         { name: 'state', type: 'string', required: false, description: 'State/province', in: 'body' },
         { name: 'postal_code', type: 'string', required: false, description: 'Postal/zip code', in: 'body' },
         { name: 'country', type: 'string', required: false, description: 'Country (default: Australia)', in: 'body' },
+        { name: 'skip_automations', type: 'boolean', required: false, description: 'Set true to suppress the contact_created trigger. Use for historical imports. Default false.', in: 'body' },
       ],
       requestExample: `curl -X POST \\
   "${API_BASE_URL}/contacts" \\
@@ -253,6 +254,40 @@ export const CONTACTS: ResourceGroup = {
     }
   ],
   "meta": { "credits_remaining": 9490 }
+}`,
+    },
+    {
+      method: 'POST',
+      path: '/contacts/bulk-create',
+      description: 'Create up to 100 contacts in a single request. Built for historical migrations and bulk imports. Each record accepts the same fields as POST /contacts (first_name required). Set skip_automations: true to suppress contact_created triggers across all records. Returns a created array and an errors array.',
+      scopes: ['contacts:write'],
+      isWrite: true,
+      params: [
+        { name: 'records', type: 'object[]', required: true, description: 'Array of contact objects (max 100). Each requires first_name plus any optional contact fields (last_name, email, phone, landline, job_title, notes, metadata, source, date_of_birth, etc.).', in: 'body' },
+        { name: 'skip_automations', type: 'boolean', required: false, description: 'Set true to suppress contact_created triggers across all records. Strongly recommended for historical imports.', in: 'body' },
+      ],
+      requestExample: `curl -X POST \\
+  "${API_BASE_URL}/contacts/bulk-create" \\
+  -H "Authorization: Bearer YOUR_API_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "skip_automations": true,
+    "records": [
+      { "first_name": "Alice", "last_name": "Smith", "email": "alice@example.com" },
+      { "first_name": "Bob", "last_name": "Jones", "phone": "+61412345678" }
+    ]
+  }'`,
+      responseExample: `{
+  "data": {
+    "created": [
+      { "index": 0, "id": "contact-uuid-1", "first_name": "Alice", ... },
+      { "index": 1, "id": "contact-uuid-2", "first_name": "Bob", ... }
+    ],
+    "errors": [],
+    "created_count": 2,
+    "error_count": 0
+  },
+  "meta": { "credits_remaining": 9480 }
 }`,
     },
     {

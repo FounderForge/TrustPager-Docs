@@ -74,7 +74,7 @@ export const DEALS: ResourceGroup = {
     {
       method: 'POST',
       path: '/deals',
-      description: 'Create a new deal. name is required.',
+      description: 'Create a new deal. name is required. Set skip_automations: true to suppress the deal_created trigger -- recommended for historical imports to avoid spamming contacts with automation emails.',
       scopes: ['deals:write'],
       isWrite: true,
       params: [
@@ -89,6 +89,7 @@ export const DEALS: ResourceGroup = {
         { name: 'tags', type: 'object[]', required: false, description: 'Tags. Each tag is {name: string, color?: string} (hex color, default "#3b82f6"). Plain strings are also accepted and auto-converted. Example: [{"name":"hot-lead","color":"#ef4444"}]', in: 'body' },
         { name: 'notes', type: 'string', required: false, description: 'Notes', in: 'body' },
         { name: 'metadata', type: 'object', required: false, description: 'Custom field values as { field_id: value } pairs.', in: 'body' },
+        { name: 'skip_automations', type: 'boolean', required: false, description: 'Set true to suppress the deal_created trigger. Use for historical imports so old deals do not trigger automation emails. Default false.', in: 'body' },
       ],
       requestExample: `curl -X POST \\
   "${API_BASE_URL}/deals" \\
@@ -424,6 +425,44 @@ export const DEALS: ResourceGroup = {
       scopes: ['ai:use'],
       isWrite: true,
       params: [{ name: 'id', type: 'uuid', required: true, description: 'Deal ID', in: 'path' }],
+    },
+    {
+      method: 'POST',
+      path: '/deals/bulk-create',
+      description: 'Create up to 100 deals in a single request. Built for historical migrations and bulk data loads. Top-level pipeline_id/stage_id act as defaults inherited by each record unless overridden. Set skip_automations: true (strongly recommended for imports) to suppress deal_created triggers across all records. Returns a created array and an errors array so partial successes can be recovered from without duplicating work on retry.',
+      scopes: ['deals:write'],
+      isWrite: true,
+      params: [
+        { name: 'records', type: 'object[]', required: true, description: 'Array of deal objects (max 100). Each requires name plus any optional deal fields (contact_id, customer_id, pipeline_id, stage_id, status, probability, expected_close_date, notes, tags, metadata, etc.).', in: 'body' },
+        { name: 'pipeline_id', type: 'uuid', required: false, description: 'Default pipeline UUID applied to every record unless the record sets its own.', in: 'body' },
+        { name: 'stage_id', type: 'uuid', required: false, description: 'Default stage UUID applied to every record unless the record sets its own.', in: 'body' },
+        { name: 'skip_automations', type: 'boolean', required: false, description: 'Set true to suppress deal_created triggers across all records. Strongly recommended for historical imports.', in: 'body' },
+      ],
+      requestExample: `curl -X POST \\
+  "${API_BASE_URL}/deals/bulk-create" \\
+  -H "Authorization: Bearer YOUR_API_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "pipeline_id": "pipe-uuid",
+    "stage_id": "stage-uuid",
+    "skip_automations": true,
+    "records": [
+      { "name": "Deal A", "contact_id": "contact-uuid-1", "probability": 80 },
+      { "name": "Deal B", "contact_id": "contact-uuid-2", "probability": 50 }
+    ]
+  }'`,
+      responseExample: `{
+  "data": {
+    "created": [
+      { "index": 0, "id": "deal-uuid-1", "name": "Deal A", ... },
+      { "index": 1, "id": "deal-uuid-2", "name": "Deal B", ... }
+    ],
+    "errors": [],
+    "created_count": 2,
+    "error_count": 0
+  },
+  "meta": { "credits_remaining": 9480 }
+}`,
     },
     {
       method: 'POST',
