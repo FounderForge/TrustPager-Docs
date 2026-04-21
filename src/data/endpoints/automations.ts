@@ -219,7 +219,7 @@ export const AUTOMATIONS: ResourceGroup = {
       isWrite: true,
       params: [
         { name: 'id', type: 'uuid', required: true, description: 'Automation ID', in: 'path' },
-        { name: 'action_type', type: 'string', required: true, description: 'Action type (send_custom_email, send_gmail_email, send_sms, trigger_voice_call, call_webhook, add_tasks, create_lead, move_deal, attach_to_event_queue, remove_from_event_queue, apply_tags, remove_tags, assign_user, send_document, send_for_signing, send_form, slack_send_message, trigger_automation, etc.)', in: 'body' },
+        { name: 'action_type', type: 'string', required: true, description: 'Action type (send_custom_email, send_gmail_email, send_sms, trigger_voice_call, call_webhook, add_tasks, create_lead, move_deal, attach_to_event_queue, remove_from_event_queue, apply_tags, remove_tags, assign_user, set_custom_field, send_document, send_for_signing, send_form, slack_send_message, trigger_automation, etc.)', in: 'body' },
         { name: 'sequence', type: 'number', required: true, description: 'Execution order', in: 'body' },
         {
           name: 'config',
@@ -236,7 +236,8 @@ create_lead: { pipeline_id, stage_id }
 move_deal: { pipeline_id, stage_id, pipeline_name?, stage_name? } - moves the triggering deal to the specified stage
 apply_tags: { tags: [{ name, color? }] } - merges tags onto the deal. Deduplicates by name. Color falls back to tag palette or #6b7280.
 remove_tags: { tags: [{ name }] } - removes tags from the deal by name (case-insensitive).
-assign_user: { user_id } - assigns a team member as primary deal owner. Aliases: assign_deal_user, set_deal_owner. Demotes any existing primary assignee. Use GET /company/users to find user UUIDs.`,
+assign_user: { user_id } - assigns a team member as primary deal owner. Aliases: assign_deal_user, set_deal_owner. Demotes any existing primary assignee. Use GET /company/users to find user UUIDs.
+set_custom_field (UI: "Set CRM Field") - writes one or more CRM fields in a single action. Multi-write shape: { writes: [{ target_entity: "contact"|"customer"|"deal", crm_variable: string, value: any, mode?: "write"|"overwrite" }] }. crm_variable is the full dot-path e.g. "contact.relationship_started_at", "account.tax_number", "deal.probability", "contact.metadata.cf_abc123". mode "write" only sets the field when currently empty. Special value tokens: {{today}} = YYYY-MM-DD in company timezone, {{now}} = full ISO datetime. Legacy single-field shape { target_entity, crm_variable, value, mode } and older { target_entity, field_id, value } still work. Newly writable built-in fields: contact.relationship_started_at, contact.landline, contact.contact_type, contact.timezone, account.relationship_started_at, account.landline, account.account_type, account.timezone, deal.probability, deal.expected_close_date, deal.actual_close_date.`,
           in: 'body',
         },
       ],
