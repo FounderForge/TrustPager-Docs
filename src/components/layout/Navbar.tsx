@@ -52,7 +52,7 @@ export function Navbar() {
           {/* CTA + mobile toggle */}
           <div className="flex items-center gap-3">
             <a
-              href="https://app.trustpager.com/admin/company-management"
+              href="https://app.trustpager.com/settings/api"
               target="_blank"
               rel="noopener noreferrer"
               className="hidden sm:inline-flex items-center gap-1.5 px-4 py-2 text-white text-sm font-medium rounded-lg hover:opacity-90 transition-opacity"
@@ -94,7 +94,7 @@ export function Navbar() {
               );
             })}
             <a
-              href="https://app.trustpager.com/admin/company-management"
+              href="https://app.trustpager.com/settings/api"
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-2 px-3 py-2.5 mt-2 bg-teal-50 text-teal-700 text-sm font-medium rounded-lg"
