@@ -14,6 +14,7 @@ const McpTools = lazy(() => import('@/pages/McpTools'));
 const McpExamples = lazy(() => import('@/pages/McpExamples'));
 const Errors = lazy(() => import('@/pages/Errors'));
 const Changelog = lazy(() => import('@/pages/Changelog'));
+const TemplateVariables = lazy(() => import('@/pages/TemplateVariables'));
 
 function LoadingSpinner() {
   return (
@@ -41,6 +42,7 @@ function App() {
             <Route path="/mcp/examples" element={<McpExamples />} />
             <Route path="/errors" element={<Errors />} />
             <Route path="/changelog" element={<Changelog />} />
+            <Route path="/template-variables" element={<TemplateVariables />} />
           </Routes>
         </Suspense>
       </main>

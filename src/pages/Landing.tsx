@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { Code2, Key, Zap, BookOpen, ArrowRight, Globe, Webhook, Shield } from 'lucide-react';
+import { Code2, Key, Zap, Braces, ArrowRight, Globe, Webhook, Shield } from 'lucide-react';
 import { API_BASE_URL } from '@/data/endpoints';
 
 const QUICK_LINKS = [
@@ -26,11 +26,11 @@ const QUICK_LINKS = [
     color: 'from-amber-500 to-orange-500',
   },
   {
-    title: 'Quick Start',
-    description: 'Get up and running in under 5 minutes.',
-    icon: BookOpen,
-    href: '/quickstart',
-    color: 'from-green-500 to-emerald-600',
+    title: 'Template Variables',
+    description: 'Complete reference for {{variable}} tokens available in automation actions — emails, tasks, SMS, webhooks, and documents.',
+    icon: Braces,
+    href: '/template-variables',
+    color: 'from-violet-500 to-purple-600',
   },
 ];
 
