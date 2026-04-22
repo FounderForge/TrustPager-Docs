@@ -30,7 +30,7 @@ const QUICK_LINKS = [
     description: 'Complete reference for {{variable}} tokens available in automation actions — emails, tasks, SMS, webhooks, and documents.',
     icon: Braces,
     href: '/template-variables',
-    color: 'from-sky-500 to-blue-600',
+    color: '#45a3d4',
   },
 ];
 
@@ -120,7 +120,10 @@ function Landing() {
               className="group bg-white rounded-xl border border-gray-200 p-6 hover:shadow-lg transition-all hover:-translate-y-0.5"
             >
               <div className="flex items-start gap-4">
-                <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${color} flex items-center justify-center shrink-0`}>
+                <div
+                  className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0${color.startsWith('#') ? '' : ` bg-gradient-to-br ${color}`}`}
+                  style={color.startsWith('#') ? { background: color } : undefined}
+                >
                   <Icon className="w-5 h-5 text-white" />
                 </div>
                 <div>
