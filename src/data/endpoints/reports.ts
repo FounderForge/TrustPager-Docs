@@ -103,11 +103,11 @@ export const REPORTS: ResourceGroup = {
       scopes: ['deals:read'], isWrite: true,
       params: [
         { name: 'id', type: 'uuid', required: true, description: 'Card UUID.', in: 'path' },
-        { name: 'title', type: 'string', required: false, in: 'body' },
-        { name: 'visualization_type', type: 'string', required: false, in: 'body' },
-        { name: 'query_spec', type: 'object', required: false, in: 'body' },
-        { name: 'size', type: 'string', required: false, in: 'body' },
-        { name: 'position', type: 'number', required: false, in: 'body' },
+        { name: 'title', type: 'string', required: false, description: 'Card title.', in: 'body' },
+        { name: 'visualization_type', type: 'string', required: false, description: 'Visualization type (bar, line, pie, etc.).', in: 'body' },
+        { name: 'query_spec', type: 'object', required: false, description: 'Query specification object.', in: 'body' },
+        { name: 'size', type: 'string', required: false, description: 'Card size (sm, md, lg).', in: 'body' },
+        { name: 'position', type: 'number', required: false, description: 'Sort order position.', in: 'body' },
       ],
     },
     {

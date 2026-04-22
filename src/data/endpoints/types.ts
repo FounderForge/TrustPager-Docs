@@ -19,6 +19,9 @@ export interface Endpoint {
   params?: EndpointParam[];
   requestExample?: string;
   responseExample?: string;
+  response?: Record<string, any>;
+  example?: Record<string, any>;
+  notes?: string[];
 }
 
 export interface ResourceGroup {
