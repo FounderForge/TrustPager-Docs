@@ -30,7 +30,7 @@ const QUICK_LINKS = [
     description: 'Complete reference for {{variable}} tokens available in automation actions — emails, tasks, SMS, webhooks, and documents.',
     icon: Braces,
     href: '/template-variables',
-    color: 'from-violet-500 to-purple-600',
+    color: 'from-sky-500 to-blue-600',
   },
 ];
 
