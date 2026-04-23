@@ -47,6 +47,7 @@ export { EMAIL_CAMPAIGNS } from './email-campaigns.js';
 export { AGENT_PROPOSALS } from './agent-proposals.js';
 export { LEAD_GEN } from './lead-gen.js';
 export { TRAINING } from './training.js';
+export { SCHEDULED_COMMUNICATIONS } from './scheduled-communications.js';
 
 import { type ResourceGroup } from './types.js';
 import { SEARCH } from './search.js';
@@ -97,6 +98,7 @@ import { EMAIL_CAMPAIGNS } from './email-campaigns.js';
 import { AGENT_PROPOSALS } from './agent-proposals.js';
 import { LEAD_GEN } from './lead-gen.js';
 import { TRAINING } from './training.js';
+import { SCHEDULED_COMMUNICATIONS } from './scheduled-communications.js';
 
 export const RESOURCES: ResourceGroup[] = [
   SEARCH,
@@ -147,6 +149,7 @@ export const RESOURCES: ResourceGroup[] = [
   AGENT_PROPOSALS,
   LEAD_GEN,
   TRAINING,
+  SCHEDULED_COMMUNICATIONS,
 ];
 
 /** Look up a resource group by its id (URL slug) */

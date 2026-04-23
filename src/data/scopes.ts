@@ -96,6 +96,9 @@ export const SCOPE_GROUPS: ScopeGroup[] = [
       { key: 'voices:delete', label: 'Voices (Delete)' },
       { key: 'service-requests:read', label: 'Service Requests (Read)' },
       { key: 'service-requests:write', label: 'Service Requests (Write)' },
+      { key: 'dispatcher:read', label: 'Dispatcher (Read)' },
+      { key: 'dispatcher:write', label: 'Dispatcher (Write)' },
+      { key: 'dispatcher:delete', label: 'Dispatcher (Delete)' },
     ],
   },
   {
