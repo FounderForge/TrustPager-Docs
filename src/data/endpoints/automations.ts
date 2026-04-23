@@ -131,7 +131,7 @@ export const AUTOMATIONS: ResourceGroup = {
     {
       method: 'POST',
       path: '/automations/:id/trigger',
-      description: 'Manually trigger an automation with optional test data.',
+      description: 'Manually trigger an automation with optional test data. Returns a normalized run response with inline action_results[].',
       scopes: ['automations:trigger'],
       isWrite: true,
       params: [
@@ -143,6 +143,34 @@ export const AUTOMATIONS: ResourceGroup = {
   -H "Authorization: Bearer YOUR_API_KEY" \\
   -H "Content-Type: application/json" \\
   -d '{ "trigger_data": { "deal_id": "deal-uuid", "contact_id": "contact-uuid" } }'`,
+      responseExample: `{
+  "data": {
+    "run_id": "run-uuid-...",
+    "automation_id": "auto-uuid-...",
+    "status": "completed",
+    "trigger_type": "api",
+    "started_at": "2026-04-24T05:00:00Z",
+    "completed_at": "2026-04-24T05:00:01Z",
+    "duration_ms": 1240,
+    "actions_total": 2,
+    "actions_executed": 2,
+    "actions_failed": 0,
+    "actions_skipped": 0,
+    "truncated": false,
+    "action_results": [
+      {
+        "action_id": "action-uuid-...",
+        "action_type": "send_gmail_email",
+        "sequence": 1,
+        "status": "success",
+        "duration_ms": 820,
+        "request": { "subject": "Following up", "body": "Hi John..." },
+        "response": { "messageId": "msg-abc" },
+        "error": null
+      }
+    ]
+  }
+}`,
     },
     {
       method: 'GET',
@@ -155,10 +183,39 @@ export const AUTOMATIONS: ResourceGroup = {
     {
       method: 'GET',
       path: '/automations/runs/:runId',
-      description: 'Get details of a specific automation run including action results.',
+      description: 'Get details of a specific run. Returns normalized shape: run_id, status, actions_total, actions_executed, actions_failed, actions_skipped, action_results[] (per-step outcomes with action_type, status, request, response, error, duration_ms), truncated flag.',
       scopes: ['automations:read'],
       isWrite: false,
       params: [{ name: 'runId', type: 'uuid', required: true, description: 'Run ID', in: 'path' }],
+      responseExample: `{
+  "data": {
+    "run_id": "run-uuid-...",
+    "automation_id": "auto-uuid-...",
+    "status": "completed",
+    "trigger_type": "stage_changed",
+    "started_at": "2026-04-24T05:00:00Z",
+    "completed_at": "2026-04-24T05:00:02Z",
+    "duration_ms": 1850,
+    "actions_total": 3,
+    "actions_executed": 3,
+    "actions_failed": 0,
+    "actions_skipped": 0,
+    "truncated": false,
+    "action_results": [
+      {
+        "action_id": "action-uuid-1",
+        "action_type": "send_gmail_email",
+        "sequence": 1,
+        "status": "success",
+        "duration_ms": 900,
+        "request": { "subject": "Welcome!", "recipient_target": "contact" },
+        "response": { "messageId": "msg-xyz" },
+        "error": null
+      }
+    ],
+    "trigger_data": { "deal_id": "deal-uuid", "stage_id": "stage-uuid" }
+  }
+}`,
     },
     {
       method: 'GET',
