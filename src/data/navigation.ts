@@ -66,6 +66,13 @@ export const API_CATEGORIES: NavCategory[] = [
     ],
   },
   {
+    label: 'Trust Signals',
+    description: 'Public B2B reputation profiles, verified reviews, case studies, and anonymous image uploads',
+    items: [
+      { id: 'signals', label: 'Trust Signals', icon: 'Shield' },
+    ],
+  },
+  {
     label: 'Lead Generation',
     description: 'Search Google Maps for business leads, save search configs, and import into CRM',
     items: [
