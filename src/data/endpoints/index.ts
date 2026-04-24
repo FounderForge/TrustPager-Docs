@@ -130,7 +130,7 @@ export const RESOURCES: ResourceGroup[] = [
   SMS,
   PHONE,
   VOICE_AGENTS,
-  VOICE_AGENT_KBS,
+  VOICE_AGENT_KBS,  // Agent Knowledge Bases
   TEXT_AGENTS,
   TRANSCRIPTS,
   DOCUMENT_TEMPLATES,
