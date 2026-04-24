@@ -25,3 +25,13 @@ dist-ssr
 
 # Graphify knowledge graph output
 graphify-out/
+
+# AI-readable artifacts generated at build time from src/data/endpoints/*
+# (see scripts/generate-ai-docs.ts)
+public/llms.txt
+public/llms-full.txt
+public/openapi.json
+public/api-index.json
+public/robots.txt
+public/sitemap.xml
+public/api/
