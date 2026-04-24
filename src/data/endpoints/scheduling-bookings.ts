@@ -1,13 +1,13 @@
 import { type ResourceGroup, API_BASE_URL } from './types.js';
 
 // =============================================================================
-// SCHEDULING BOOKINGS (8 endpoints)
+// SCHEDULING BOOKINGS (10 endpoints)
 // =============================================================================
 
 export const SCHEDULING_BOOKINGS: ResourceGroup = {
   id: 'scheduling-bookings',
   label: 'Scheduling Bookings',
-  description: 'Create, manage, and check availability for bookings. Bookings link to deals via deal_id and surface in the Meetings card on the opportunity page. Scheduler bookings are separate from the deal next_action_* fields, which are for ad-hoc reminders only. AI-agent-friendly: human-readable responses, self-correcting errors with alternatives, nearest-slot suggestions.',
+  description: 'Create, manage, and check availability for bookings. Bookings link to deals via deal_id and surface in the Meetings card on the opportunity page. Scheduler bookings are separate from the deal next_action_* fields, which are for ad-hoc reminders only. AI-agent-friendly: human-readable responses, self-correcting errors with alternatives, nearest-slot suggestions. Includes voice-optimised endpoints (text/plain responses) designed for Retell AI voice agents.',
   endpoints: [
     {
       method: 'GET',
@@ -268,6 +268,66 @@ export const SCHEDULING_BOOKINGS: ResourceGroup = {
     "url": "https://app.trustpager.com/tools/scheduling"
   }
 }`,
+    },
+    {
+      method: 'POST',
+      path: '/scheduling/voice/:event_type_id/slots',
+      description: 'Voice-agent slot picker. Returns text/plain — a human-readable listing of available slots with a header block showing event type name, duration, host names, and description. Designed to be consumed verbatim by a Retell AI voice agent as a custom tool response. The AI never sees raw JSON or date ranges — just readable text it can speak directly. Slots are tagged with exact booking keys (slot:"YYYY-MM-DD HH:MM") for use in the /book endpoint.',
+      scopes: ['scheduling:read'],
+      isWrite: false,
+      params: [
+        { name: 'event_type_id', type: 'uuid', required: true, description: 'Event type UUID in the URL path', in: 'path' },
+        { name: 'preferred_day', type: 'string', required: false, description: 'Natural-language day preference: "monday", "tomorrow", "asap", "this week", or YYYY-MM-DD. Past dates auto-advance to next occurrence of that weekday. Default: "asap".', in: 'body' },
+        { name: 'preferred_time', type: 'string', required: false, description: 'Time preference: "morning", "afternoon", "evening", "around 2pm", "14:00", or omit for any time.', in: 'body' },
+        { name: 'state', type: 'string', required: false, description: 'Customer state/territory (e.g. "NSW", "VIC", "QLD"). Used to auto-resolve timezone. Also accepted from Retell call dynamic variables.', in: 'body' },
+        { name: 'timezone', type: 'string', required: false, description: 'IANA timezone override (e.g. "Australia/Perth"). Fallback if state is not provided. Default: Australia/Sydney.', in: 'body' },
+      ],
+      requestExample: `curl -X POST \\
+  "${API_BASE_URL}/scheduling/voice/{event_type_id}/slots" \\
+  -H "Authorization: Bearer YOUR_API_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{ "preferred_day": "monday", "preferred_time": "morning", "state": "NSW" }'`,
+      responseExample: `Offering: Free Consultation (30 min)
+Host: Jane Smith
+Description: A complimentary session to discuss your needs.
+
+Monday 04/27: 9:00 AM [slot:2026-04-27 09:00], 9:30 AM [slot:2026-04-27 09:30], 10:00 AM [slot:2026-04-27 10:00]
+Monday 05/04: 9:00 AM [slot:2026-05-04 09:00], 9:30 AM [slot:2026-05-04 09:30]
+
+To book, pass the exact slot value (e.g. slot:"2026-04-28 09:00") with the caller's name and email.`,
+    },
+    {
+      method: 'POST',
+      path: '/scheduling/voice/:event_type_id/book',
+      description: 'Voice-agent booking confirmation. Returns text/plain — a plain English sentence the AI reads to the caller to confirm the appointment. On success, includes event type name, duration, formatted start/end time, host names, description, Google Meet link, and booking ID. On failure, always returns HTTP 200 with a bolded warning the AI must not ignore — prevents the AI from falsely confirming a booking that failed. Supports Retell custom tool format: {"call":{...},"name":"tool_name","args":{...}}.',
+      scopes: ['scheduling:write'],
+      isWrite: true,
+      params: [
+        { name: 'event_type_id', type: 'uuid', required: true, description: 'Event type UUID in the URL path', in: 'path' },
+        { name: 'slot', type: 'string', required: true, description: 'Exact slot value from the /slots response, e.g. "2026-04-28 10:45". Unsubstituted Retell template variables ({{...}}) are detected and rejected with a fix message.', in: 'body' },
+        { name: 'name', type: 'string', required: true, description: 'Caller full name. Unsubstituted template variables rejected.', in: 'body' },
+        { name: 'email', type: 'string', required: true, description: 'Caller email for confirmation. Unsubstituted template variables rejected.', in: 'body' },
+        { name: 'phone', type: 'string', required: false, description: 'Caller phone number (mobile, E.164 format)', in: 'body' },
+        { name: 'notes', type: 'string', required: false, description: 'Any notes the caller provided', in: 'body' },
+        { name: 'state', type: 'string', required: false, description: 'Customer state for timezone resolution (e.g. "VIC")', in: 'body' },
+        { name: 'timezone', type: 'string', required: false, description: 'IANA timezone override. Default: Australia/Sydney.', in: 'body' },
+      ],
+      requestExample: `curl -X POST \\
+  "${API_BASE_URL}/scheduling/voice/{event_type_id}/book" \\
+  -H "Authorization: Bearer YOUR_API_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "slot": "2026-04-28 10:00",
+    "name": "Sarah Jones",
+    "email": "sarah@example.com",
+    "phone": "+61412345678",
+    "state": "NSW"
+  }'`,
+      responseExample: `Booked! Sarah Jones's Free Consultation (30 min) is confirmed for Monday, 28 April 2026 at 10:00 AM, ending at 10:30 AM. A confirmation has been sent to sarah@example.com.
+Host: Jane Smith
+Description: A complimentary session to discuss your needs.
+Video link: https://meet.google.com/abc-defg-hij
+Booking ID: b1c2d3e4-f5a6-...`,
     },
   ],
 };
