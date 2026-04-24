@@ -50,6 +50,7 @@ export { TRAINING } from './training.js';
 export { SCHEDULED_COMMUNICATIONS } from './scheduled-communications.js';
 export { SCHEMAS } from './schemas.js';
 export { SIGNALS } from './signals.js';
+export { VOICE_AGENT_KBS } from './voice-agent-kbs.js';
 
 import { type ResourceGroup } from './types.js';
 import { SEARCH } from './search.js';
@@ -103,6 +104,7 @@ import { TRAINING } from './training.js';
 import { SCHEDULED_COMMUNICATIONS } from './scheduled-communications.js';
 import { SCHEMAS } from './schemas.js';
 import { SIGNALS } from './signals.js';
+import { VOICE_AGENT_KBS } from './voice-agent-kbs.js';
 
 export const RESOURCES: ResourceGroup[] = [
   SEARCH,
@@ -128,6 +130,7 @@ export const RESOURCES: ResourceGroup[] = [
   SMS,
   PHONE,
   VOICE_AGENTS,
+  VOICE_AGENT_KBS,
   TEXT_AGENTS,
   TRANSCRIPTS,
   DOCUMENT_TEMPLATES,

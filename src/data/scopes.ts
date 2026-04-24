@@ -51,6 +51,9 @@ export const SCOPE_GROUPS: ScopeGroup[] = [
       { key: 'calls:read', label: 'Calls & Transcripts (Read)' },
       { key: 'calls:initiate', label: 'Calls (Initiate)' },
       { key: 'voice-agents:read', label: 'Voice/Text Agents (Read)' },
+      { key: 'voice-kbs:read', label: 'Voice Agent Knowledge Bases (Read)' },
+      { key: 'voice-kbs:write', label: 'Voice Agent Knowledge Bases (Write)' },
+      { key: 'voice-kbs:delete', label: 'Voice Agent Knowledge Bases (Delete)' },
     ],
   },
   {
