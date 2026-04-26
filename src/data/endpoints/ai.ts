@@ -46,6 +46,28 @@ export const AI: ResourceGroup = {
         meta: { credits_remaining: 9200 },
       }, null, 2),
     },
+    {
+      method: 'POST',
+      path: '/ai/upscale-image',
+      description: 'Upscale an image using AI (Runware imageUpscale). Multiplies the source image dimensions by the given factor (2x, 3x, or 4x). Accepts any public http(s) image URL -- including URLs returned by generate-image or edit-image. The upscaled result is automatically saved to R2 and company files. Costs the same credits as generate-image (ai_image feature cost). Requires scope: ai:use.',
+      scopes: ['ai:use'],
+      isWrite: true,
+      params: [
+        { name: 'image_url', type: 'string', required: true, description: 'Public http(s) URL of the image to upscale.', in: 'body' },
+        { name: 'upscale_factor', type: 'number', required: false, description: 'Multiplication factor: 2, 3, or 4. Default 2. A 1024x1024 source at 2x becomes 2048x2048.', in: 'body' },
+        { name: 'output_format', type: 'string', required: false, description: 'Output format: "PNG" (default, lossless), "WEBP" (recommended -- ~10x smaller than PNG at same quality), "JPEG". Use WEBP if you plan to pass the result to optimize_image -- it stays within the 3 MB optimizer ceiling.', in: 'body' },
+      ],
+      responseExample: JSON.stringify({
+        data: {
+          image_url: 'https://cdn.trustpager.com/files/company-id/images/upscaled.png',
+          cdn_url: 'https://cdn.trustpager.com/files/company-id/images/upscaled.png',
+          image_id: 'uuid',
+          upscale_factor: 2,
+          source_image_url: 'https://example.com/source.png',
+        },
+        meta: { credits_remaining: 9150 },
+      }, null, 2),
+    },
     { method: 'POST', path: '/ai/generate-speech', description: 'Convert text to speech audio using ElevenLabs. Uploads the audio to R2 and saves to company files. Returns an audio URL, duration, file size, and credits charged. Costs 50 credits per 100 characters (minimum 50 credits). Voice resolution order: workspace voices by name -> workspace default -> platform voices -> presets (jessica/rachel/adam/sam) -> raw ElevenLabs voice ID. Optionally returns timed transcript segments (sentences, phrases, or words) for animation timing (e.g. Remotion video sync).', scopes: ['ai:use'], isWrite: true, params: [{ name: 'text', type: 'string', required: true, description: 'Text to convert to speech (2-5000 characters)', in: 'body' }, { name: 'voice', type: 'string', required: false, description: 'Voice name, preset (jessica/rachel/adam/sam), or raw ElevenLabs voice ID. Default: jessica.', in: 'body' }, { name: 'model', type: 'string', required: false, description: 'ElevenLabs model: eleven_multilingual_v2 (default), eleven_monolingual_v1, eleven_turbo_v2_5', in: 'body' }, { name: 'stability', type: 'number', required: false, description: 'Voice stability 0-1 (default 0.6). Higher = more consistent, lower = more expressive.', in: 'body' }, { name: 'similarity_boost', type: 'number', required: false, description: 'Voice clarity/similarity 0-1 (default 0.75)', in: 'body' }, { name: 'style', type: 'number', required: false, description: 'Speaking style intensity 0-1 (default 0.4)', in: 'body' }, { name: 'output_format', type: 'string', required: false, description: 'Audio output format (default: mp3_44100_128)', in: 'body' }, { name: 'name', type: 'string', required: false, description: 'Custom file name for the audio (auto-generated if omitted)', in: 'body' }, { name: 'transcript', type: 'string', required: false, description: 'Request timed transcript segments alongside audio. Values: "none" (default, no transcript), "sentences" (sentence-level timestamps), "phrases" (comma/clause-level timestamps), "words" (word-level timestamps). When set (not "none"), response includes transcript array of {text, start, end, frame_start, frame_end} objects and transcript_mode. frame_start/frame_end are at 30fps for Remotion animation.', in: 'body' }] },
     {
       method: 'POST',
