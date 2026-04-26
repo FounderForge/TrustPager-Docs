@@ -109,5 +109,33 @@ export const FILES: ResourceGroup = {
         { name: 'name', type: 'string', required: true, description: 'Folder name', in: 'body' },
       ],
     },
+    {
+      method: 'POST',
+      path: '/images/optimize',
+      description: 'Generate web-optimized WebP variants (mobile 640px, tablet 1024px, desktop 1920px) from an existing image file or a public image URL. RECOMMENDED WORKFLOW: generate an image with POST /ai/generate-image (returns lossless PNG) then call this endpoint to produce lean WebP variants ready for web delivery. Pass file_id to optimize an existing company_files entry -- variants are persisted to R2 and website_images rows are created, and the original file\'s is_optimized_image metadata is updated. Pass image_url for ad-hoc optimization of an external image -- variants are uploaded to R2 but no website_images rows are written. Idempotent: re-optimizing a file_id replaces previous variants. Costs credits when the platform prices the "image_optimize" feature; otherwise free.',
+      scopes: ['files:write'],
+      isWrite: true,
+      params: [
+        { name: 'file_id', type: 'uuid', required: false, description: 'UUID of an existing company_files row (preferred). The original image is fetched from its R2 URL, three WebP variants are generated, persisted, and the original\'s is_optimized_image metadata is updated. Provide this OR image_url -- not both.', in: 'body' },
+        { name: 'image_url', type: 'string', required: false, description: 'Public http(s) URL of an image to optimize ad-hoc. Variants are uploaded to R2 and returned, but no website_images rows are written (no company_files entry to link to). Use file_id when possible. Provide this OR file_id -- not both.', in: 'body' },
+        { name: 'variants', type: 'string[]', required: false, description: 'Subset of variants to generate. Default: all three -- ["mobile", "tablet", "desktop"]. Pass a subset to skip unneeded sizes.', in: 'body' },
+        { name: 'quality', type: 'number', required: false, description: 'WebP quality override 1-100. When set, applies the same value to all requested variants (overrides per-variant defaults: mobile=80, tablet=85, desktop=90).', in: 'body' },
+      ],
+      responseExample: JSON.stringify({
+        data: {
+          file_id: 'uuid-of-original-file-or-null',
+          source: 'file',
+          variants: {
+            mobile: { url: 'https://cdn.trustpager.com/.../optimized/image_mobile_1234.webp', width: 640, height: 480, size: 28432 },
+            tablet: { url: 'https://cdn.trustpager.com/.../optimized/image_tablet_1234.webp', width: 1024, height: 768, size: 58912 },
+            desktop: { url: 'https://cdn.trustpager.com/.../optimized/image_desktop_1234.webp', width: 1920, height: 1440, size: 112048 },
+          },
+          savings: { original_bytes: 2048000, total_variant_bytes: 199392, saved_percent: 90 },
+          metadata: { original_width: 2048, original_height: 1536, format: 'png' },
+          duration_ms: 1840,
+        },
+        meta: { credits_remaining: 9800 },
+      }, null, 2),
+    },
   ],
 };
