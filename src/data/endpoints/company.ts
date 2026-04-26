@@ -112,7 +112,7 @@ export const COMPANY: ResourceGroup = {
       { name: 'lost_reasons', type: 'string[]', required: false, description: 'Available reasons when marking a deal lost', in: 'body' },
       { name: 'won_reasons', type: 'string[]', required: false, description: 'Available reasons when marking a deal won', in: 'body' },
       { name: 'form_completion_notify_emails', type: 'string[]', required: false, description: 'Workspace-wide default email addresses notified when any form is completed. Falls back to the sending user if empty.', in: 'body' },
-      { name: 'custom_fields', type: 'object', required: false, description: 'Custom field definitions keyed by entity: { deal: [...], account: [...], contact: [...] }', in: 'body' },
+      { name: 'custom_fields', type: 'object', required: false, description: 'Custom field definitions keyed by entity: { deal: [...], account: [...], contact: [...] }. Each field: { id, label, type, options?, show_on_detail, show_in_table, required?, fill_with_ai?, hidden? }. Supported types: text, textarea, number, datetime, checkbox, dropdown (requires options[]), url (renders as clickable link with open-in-new-tab icon -- use for Drive folders, portal links, signed agreement URLs).', in: 'body' },
       { name: 'needs_analysis_config', type: 'object', required: false, description: 'Discovery/needs-analysis question definitions shown during deal qualification. Structure: { questions: [{ key, label, type, show_on_detail, show_in_table, ai_fill }] }. Pass { questions: [] } to clear all questions. Configurable in Settings > CRM > Needs Analysis.', in: 'body' },
     ] },
     {
