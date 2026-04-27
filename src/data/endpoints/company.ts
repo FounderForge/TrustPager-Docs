@@ -10,7 +10,7 @@ export const COMPANY: ResourceGroup = {
   description: 'View and manage company settings, users, and CRM configuration.',
   endpoints: [
     { method: 'GET', path: '/company', description: 'Retrieve company details including slug for public-facing URLs.', scopes: ['company:read'], isWrite: false },
-    { method: 'PATCH', path: '/company', description: 'Update company settings. Writable fields include: name, slug, description, contact_name, contact_email, phone, logo_url, primary_color, secondary_color, address, timezone, industry, website_url, abn, email_handle.', scopes: ['company:write'], isWrite: true, params: [{ name: 'slug', type: 'string', required: false, description: 'URL-friendly slug for public pages (forms, signing, bookings). Auto-generated from name on company creation.', in: 'body' }] },
+    { method: 'PATCH', path: '/company', description: 'Update company settings. Writable fields include: name, slug, description, contact_name, contact_email, phone, logo_url, primary_color, secondary_color, address, timezone, industry, website_url, abn. (The workspace from-address — formerly exposed as email_handle — is now managed via the email_config endpoints.)', scopes: ['company:write'], isWrite: true, params: [{ name: 'slug', type: 'string', required: false, description: 'URL-friendly slug for public pages (forms, signing, bookings). Auto-generated from name on company creation.', in: 'body' }] },
     {
       method: 'GET', path: '/company/users',
       description: 'List all team members. Returns membership role, status, and workspace-enriched profile fields (full_name, email, phone, job_title, department). Workspace-scoped fields from company_user_settings take priority over global user profile values.',
