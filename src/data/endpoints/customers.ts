@@ -74,7 +74,7 @@ export const CUSTOMERS: ResourceGroup = {
     {
       method: 'PATCH',
       path: '/customers/:id',
-      description: 'Update an existing customer. Only include fields you want to change.',
+      description: 'Update an existing customer. Only include fields you want to change. Every successful PATCH emits a field-level audit row to crm_field_change_log (viewable at /data/crm-logs with the crm_audit:read scope).',
       scopes: ['customers:write'],
       isWrite: true,
       params: [

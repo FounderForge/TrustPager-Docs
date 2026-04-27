@@ -147,7 +147,7 @@ export const CONTACTS: ResourceGroup = {
     {
       method: 'PATCH',
       path: '/contacts/:id',
-      description: 'Update an existing contact. Only include fields you want to change.',
+      description: 'Update an existing contact. Only include fields you want to change. Every successful PATCH emits a field-level audit row to crm_field_change_log (viewable at /data/crm-logs with the crm_audit:read scope).',
       scopes: ['contacts:write'],
       isWrite: true,
       params: [

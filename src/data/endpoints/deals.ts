@@ -107,7 +107,7 @@ export const DEALS: ResourceGroup = {
     {
       method: 'PATCH',
       path: '/deals/:id',
-      description: 'Update an existing deal. Only include fields you want to change.',
+      description: 'Update an existing deal. Only include fields you want to change. Every successful PATCH emits a field-level audit row to crm_field_change_log (viewable at /data/crm-logs with the crm_audit:read scope).',
       scopes: ['deals:write'],
       isWrite: true,
       params: [

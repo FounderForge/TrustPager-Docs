@@ -141,6 +141,7 @@ export const SCOPE_GROUPS: ScopeGroup[] = [
       { key: 'phone:write', label: 'Phone Numbers (Write)' },
       { key: 'email-config:write', label: 'Email Config (Write)' },
       { key: 'voice-agents:write', label: 'Voice/Text Agents (Write)' },
+      { key: 'crm_audit:read', label: 'CRM Field Audit Log (Read)' },
     ],
   },
 ];
