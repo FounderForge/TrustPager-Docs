@@ -25,6 +25,8 @@ export const CONTACTS: ResourceGroup = {
         { name: 'cursor', type: 'string', required: false, description: 'Cursor for next page', in: 'query' },
         { name: 'fields', type: 'string', required: false, description: 'Comma-separated list of fields to return', in: 'query' },
         { name: 'expand', type: 'string', required: false, description: 'Comma-separated expansions: employers', in: 'query' },
+        { name: 'email_unsubscribed', type: 'boolean', required: false, description: 'Filter to contacts who have opted out of email. true = opted out only, false = opted in only. Omit for all contacts.', in: 'query' },
+        { name: 'sms_unsubscribed', type: 'boolean', required: false, description: 'Filter to contacts who have opted out of SMS. true = opted out only, false = opted in only. Omit for all contacts.', in: 'query' },
       ],
       requestExample: `curl -X GET \\
   "${API_BASE_URL}/contacts?search=John&limit=10" \\
@@ -42,6 +44,8 @@ export const CONTACTS: ResourceGroup = {
       "date_of_birth": "1985-06-15",
       "job_title": "Director",
       "source": "website",
+      "email_unsubscribed": false,
+      "sms_unsubscribed": false,
       "created_at": "2026-01-15T10:30:00Z",
       "updated_at": "2026-03-20T14:00:00Z"
     }
@@ -81,6 +85,8 @@ export const CONTACTS: ResourceGroup = {
     "date_of_birth": "1985-06-15",
     "job_title": "Director",
     "source": "website",
+    "email_unsubscribed": false,
+    "sms_unsubscribed": false,
     "created_at": "2026-01-15T10:30:00Z",
     "updated_at": "2026-03-20T14:00:00Z"
   },
@@ -154,7 +160,27 @@ export const CONTACTS: ResourceGroup = {
         { name: 'date_of_birth', type: 'string', required: false, description: 'Date of birth in YYYY-MM-DD format. Set to null to clear.', in: 'body' },
         { name: 'notes', type: 'string', required: false, description: 'Notes', in: 'body' },
         { name: 'metadata', type: 'object', required: false, description: 'Custom field values as { field_id: value } pairs. Replaces entire metadata object.', in: 'body' },
+        { name: 'email_unsubscribed', type: 'boolean', required: false, description: 'Set true to mark contact as opted out of email. Set false to re-subscribe. This flag is also updated automatically on hard bounce, spam complaint, or unsubscribe link click.', in: 'body' },
+        { name: 'sms_unsubscribed', type: 'boolean', required: false, description: 'Set true to mark contact as opted out of SMS. Set false to re-subscribe. This flag is also updated automatically when the contact texts STOP (opt out) or START (opt in).', in: 'body' },
       ],
+      requestExample: `curl -X PATCH \\
+  "${API_BASE_URL}/contacts/a1b2c3d4-..." \\
+  -H "Authorization: Bearer YOUR_API_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{ "sms_unsubscribed": false }'`,
+      responseExample: `{
+  "data": {
+    "id": "a1b2c3d4-...",
+    "first_name": "John",
+    "last_name": "Smith",
+    "email": "john@example.com",
+    "phone": "+61412345678",
+    "email_unsubscribed": false,
+    "sms_unsubscribed": false,
+    "updated_at": "2026-04-27T12:00:00Z"
+  },
+  "meta": { "credits_remaining": 9498 }
+}`,
     },
     {
       method: 'DELETE',
