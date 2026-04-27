@@ -276,7 +276,7 @@ export const AUTOMATIONS: ResourceGroup = {
       isWrite: true,
       params: [
         { name: 'id', type: 'uuid', required: true, description: 'Automation ID', in: 'path' },
-        { name: 'action_type', type: 'string', required: true, description: 'Action type (send_custom_email, send_gmail_email, send_sms, trigger_voice_call, call_webhook, add_tasks, create_lead, move_deal, attach_to_event_queue, remove_from_event_queue, apply_tags, remove_tags, assign_user, set_custom_field, send_document, send_for_signing, send_form, slack_send_message, trigger_automation, etc.)', in: 'body' },
+        { name: 'action_type', type: 'string', required: true, description: 'Action type (send_custom_email, send_gmail_email, send_sms, voice_outbound_call, call_webhook, add_tasks, create_lead, move_deal, attach_to_event_queue, remove_from_event_queue, apply_tags, remove_tags, assign_user, set_custom_field, send_document, send_for_signing, send_form, slack_send_message, trigger_automation, etc.)', in: 'body' },
         { name: 'sequence', type: 'number', required: true, description: 'Execution order', in: 'body' },
         {
           name: 'config',
@@ -286,7 +286,7 @@ export const AUTOMATIONS: ResourceGroup = {
 send_custom_email: { greeting, customMessage, showReplyButton?, recipient_target?, replyEmail? }
 send_gmail_email: { subject, body, recipient_target, sender_mode? } -- body accepts plain text or rich HTML. To embed a clickable image: <a href="URL"><img src="IMAGE_URL" alt="Alt" style="max-width:100%;height:auto;" /></a>. sender_mode: "company" (workspace Gmail from /settings/email) or "assignee" (deal primary assignee personal Gmail). recipient_target: "contact", "account_customer", or "account_supplier". subject and body support {{variable}} placeholders. Gmail signature is auto-appended.
 send_sms: { phone_number_id, message_body }
-trigger_voice_call: { voice_agent_id }
+voice_outbound_call: { voice_agent_outbound_config_id, recipient_target?, variable_mappings?, respect_business_hours? }
 add_tasks: { tasks: [{ title, category?, due_offset_days? }] }
 call_webhook: { url, method? }
 create_lead: { pipeline_id, stage_id }
@@ -360,6 +360,23 @@ set_custom_field (UI: "Set CRM Field") - writes one or more CRM fields in a sing
         { name: 'id', type: 'uuid', required: true, description: 'Automation ID', in: 'path' },
         { name: 'actionId', type: 'uuid', required: true, description: 'Action ID', in: 'path' },
       ],
+    },
+    {
+      method: 'POST',
+      path: '/automations/:id/actions/:actionId/execute',
+      description: 'Execute a single action in isolation, skipping all other actions in the chain. Reuses the full executor pipeline: variable substitution, recipient resolution, business-hours scheduling. Use for testing one action against real config (e.g. voice_outbound_call dialling a number) or retrying a single failing step without re-firing the entire automation. Cost is the same as the underlying action (e.g. voice_agent_minute credits for voice_outbound_call). Requires automations-trigger:trigger scope.',
+      scopes: ['automations:write'],
+      isWrite: true,
+      params: [
+        { name: 'id', type: 'uuid', required: true, description: 'Automation ID', in: 'path' },
+        { name: 'actionId', type: 'uuid', required: true, description: 'Action ID', in: 'path' },
+        { name: 'trigger_data', type: 'object', required: false, description: 'Optional trigger context for variable substitution. Provide fields the action references via {{variable}} placeholders -- e.g. { contact: { first_name: "Jane", phone: "+61400000001" } }.', in: 'body' },
+      ],
+      requestExample: `curl -X POST \\
+  "${API_BASE_URL}/automations/auto-uuid/actions/action-uuid/execute" \\
+  -H "Authorization: Bearer YOUR_API_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{ "trigger_data": { "contact": { "first_name": "Jane", "phone": "+61400000001" } } }'`,
     },
   ],
 };
