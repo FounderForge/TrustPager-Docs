@@ -41,11 +41,17 @@ function Authentication() {
             This is used by MCP integrations (e.g., Claude for Enterprise).
           </p>
           <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 text-sm text-gray-700">
-            <p className="font-medium mb-2">OAuth Endpoints:</p>
+            <p className="font-medium mb-2">OAuth Endpoints (replace <code className="bg-gray-200 px-1 py-0.5 rounded">&lt;slug&gt;</code> with your workspace slug):</p>
             <ul className="space-y-1 font-mono text-xs">
-              <li><strong>Authorize:</strong> /functions/v1/oauth-authorize</li>
-              <li><strong>Token:</strong> /functions/v1/oauth-token</li>
+              <li><strong>MCP Server:</strong> https://mcp.trustpager.com/&lt;slug&gt;/mcp</li>
+              <li><strong>Authorize:</strong> https://mcp.trustpager.com/&lt;slug&gt;/authorize</li>
+              <li><strong>Token:</strong> https://mcp.trustpager.com/&lt;slug&gt;/token</li>
+              <li><strong>Register:</strong> https://mcp.trustpager.com/&lt;slug&gt;/register</li>
             </ul>
+            <p className="mt-3 text-gray-500">
+              Your workspace slug appears in the MCP Server URL shown in Settings &rarr; API Keys after creating an OAuth client.
+              Tokens issued for one workspace are rejected if used against a different workspace URL.
+            </p>
           </div>
         </section>
 

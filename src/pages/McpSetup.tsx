@@ -69,10 +69,11 @@ function McpSetup() {
             <li>Click Connect and log into TrustPager to authorize access</li>
           </ol>
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm text-blue-800 mt-4">
-            <strong>Multi-workspace:</strong> Each workspace has a unique MCP URL with a{' '}
-            <code className="bg-blue-100 px-1 py-0.5 rounded">?company=slug</code> parameter.
+            <strong>Multi-workspace:</strong> Each workspace has a unique MCP URL at{' '}
+            <code className="bg-blue-100 px-1 py-0.5 rounded">https://mcp.trustpager.com/&lt;slug&gt;/mcp</code>.
             To connect multiple workspaces, create an OAuth client in each workspace and add each as a
-            separate custom connector in Claude.ai. The server validates that each token matches its workspace.
+            separate custom connector in Claude.ai. The server enforces that each token can only access
+            its own workspace -- tokens issued for a different slug are rejected with a 403.
           </div>
         </section>
 
