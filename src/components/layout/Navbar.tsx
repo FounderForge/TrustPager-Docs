@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Code2, Key, Zap, Braces, Menu, X } from 'lucide-react';
+import { Code2, Key, Zap, Braces, Menu, X, BookOpen } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const NAV_LINKS = [
+  { label: 'Articles', href: '/articles', icon: BookOpen },
   { label: 'API Reference', href: '/api', icon: Code2 },
   { label: 'MCP', href: '/mcp/setup', icon: Zap },
   { label: 'Auth', href: '/authentication', icon: Key },
