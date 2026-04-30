@@ -253,11 +253,11 @@ export const EMAIL: ResourceGroup = {
     {
       method: 'POST',
       path: '/email/configs',
-      description: 'Create an email configuration. Requires from_email, from_name, and staff_email. Shape validation is enforced: from_email must be on @mail.trustpager.net (error code INVALID_FROM_EMAIL otherwise); gmail_sender_alias must already exist as a "Send mail as" address on the connected Gmail account assigned to this workspace (ALIAS_NOT_CONNECTED otherwise). See GET /email/capabilities for available send_as_aliases.',
+      description: 'Create an email configuration. Requires from_email_handle, from_name, and staff_email. Pass the local-part only as from_email_handle (e.g. "support") -- the server composes the full address as support@mail.trustpager.net. Passing the legacy from_email field returns error code FROM_EMAIL_NOT_WRITABLE. Invalid handles return INVALID_FROM_EMAIL_HANDLE. gmail_sender_alias must already exist as a "Send mail as" address on the connected Gmail account assigned to this workspace (ALIAS_NOT_CONNECTED otherwise). See GET /email/capabilities for available send_as_aliases.',
       scopes: ['email-config:write'],
       isWrite: true,
       params: [
-        { name: 'from_email', type: 'string', required: true, description: 'Postmark sender address. MUST end with @mail.trustpager.net (e.g. "support@mail.trustpager.net"). External addresses are rejected with error code INVALID_FROM_EMAIL.', in: 'body' },
+        { name: 'from_email_handle', type: 'string', required: true, description: 'Local-part of the Postmark sender address (e.g. "support"). The server appends @mail.trustpager.net. Must be 1-64 lowercase chars (a-z, 0-9, dot, underscore, hyphen), starting with a letter or digit. Error code INVALID_FROM_EMAIL_HANDLE if validation fails. Passing the old from_email field returns FROM_EMAIL_NOT_WRITABLE.', in: 'body' },
         { name: 'from_name', type: 'string', required: true, description: 'Sender display name', in: 'body' },
         { name: 'staff_email', type: 'string', required: true, description: 'Staff notification email', in: 'body' },
         { name: 'config_name', type: 'string', required: false, description: 'Config display name', in: 'body' },
@@ -271,12 +271,12 @@ export const EMAIL: ResourceGroup = {
     {
       method: 'PATCH',
       path: '/email/configs/:id',
-      description: 'Partial update of an email configuration. Same shape validation as POST: from_email must be @mail.trustpager.net (INVALID_FROM_EMAIL), gmail_sender_alias must be a registered send-as alias for the connected user (ALIAS_NOT_CONNECTED, GMAIL_NOT_CONNECTED, GMAIL_USER_REQUIRED).',
+      description: 'Partial update of an email configuration. Same shape validation as POST: pass from_email_handle (local-part only) to change the Postmark sender address; passing from_email returns FROM_EMAIL_NOT_WRITABLE. gmail_sender_alias must be a registered send-as alias for the connected user (ALIAS_NOT_CONNECTED, GMAIL_NOT_CONNECTED, GMAIL_USER_REQUIRED).',
       scopes: ['email-config:write'],
       isWrite: true,
       params: [
         { name: 'id', type: 'uuid', required: true, description: 'Email config ID', in: 'path' },
-        { name: 'from_email', type: 'string', required: false, description: 'Postmark sender address. Must end with @mail.trustpager.net. Error code INVALID_FROM_EMAIL if validation fails.', in: 'body' },
+        { name: 'from_email_handle', type: 'string', required: false, description: 'Local-part of the Postmark sender address (e.g. "support"). Server appends @mail.trustpager.net. Error code INVALID_FROM_EMAIL_HANDLE if regex fails. Passing from_email returns FROM_EMAIL_NOT_WRITABLE.', in: 'body' },
         { name: 'from_name', type: 'string', required: false, description: 'Sender display name', in: 'body' },
         { name: 'staff_email', type: 'string', required: false, description: 'Staff notification email', in: 'body' },
         { name: 'config_name', type: 'string', required: false, description: 'Config display name', in: 'body' },
