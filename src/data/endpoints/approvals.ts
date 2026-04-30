@@ -80,5 +80,19 @@ export const APPROVALS: ResourceGroup = {
       requestExample: `{ "reason": "Duplicate contact already exists" }`,
       responseExample: `{ "approval_id": "f1a2b3c4-...", "status": "rejected" }`,
     },
+    {
+      method: 'POST',
+      path: '/approvals/:id/assign',
+      description: 'Reassign the primary or secondary reviewer for a pending approval. Useful for routing approvals to the right team member. Only works on approvals with status "pending". Requires the approvals:reassign scope.',
+      scopes: ['approvals:reassign'],
+      isWrite: true,
+      params: [
+        { name: 'id', type: 'string', required: true, description: 'Approval UUID', in: 'path' },
+        { name: 'primary_assignee_id', type: 'string', required: true, description: 'User UUID of the new primary reviewer. Must be a member of the company.', in: 'body' },
+        { name: 'secondary_assignee_id', type: 'string', required: false, description: 'User UUID of secondary reviewer. Pass null to clear. Must be a member of the company if provided.', in: 'body' },
+      ],
+      requestExample: `{ "primary_assignee_id": "user-uuid", "secondary_assignee_id": null }`,
+      responseExample: `{ "id": "f1a2b3c4-...", "primary_assignee_id": "user-uuid", "secondary_assignee_id": null, "status": "pending", "success": true }`,
+    },
   ],
 };

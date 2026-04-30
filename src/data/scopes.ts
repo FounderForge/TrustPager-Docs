@@ -103,6 +103,7 @@ export const SCOPE_GROUPS: ScopeGroup[] = [
       { key: 'automations:write', label: 'Automations (Write)' },
       { key: 'automations-trigger:trigger', label: 'Automations (Trigger)' },
       { key: 'approvals:read', label: 'Approvals (Read)' },
+      { key: 'approvals:reassign', label: 'Approvals (Reassign)' },
       { key: 'approvals:write', label: 'Approvals (Write)' },
       { key: 'schedules:read', label: 'Event Schedules (Read)' },
       { key: 'schedules:write', label: 'Event Schedules (Write)' },
