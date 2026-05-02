@@ -52,6 +52,7 @@ export { SCHEMAS } from './schemas.js';
 export { SIGNALS } from './signals.js';
 export { VOICE_AGENT_KBS } from './voice-agent-kbs.js';
 export { CRM_EXPORT } from './crm-export.js';
+export { SPREADSHEETS } from './spreadsheets.js';
 
 import { type ResourceGroup } from './types.js';
 import { SEARCH } from './search.js';
@@ -107,6 +108,7 @@ import { SCHEMAS } from './schemas.js';
 import { SIGNALS } from './signals.js';
 import { VOICE_AGENT_KBS } from './voice-agent-kbs.js';
 import { CRM_EXPORT } from './crm-export.js';
+import { SPREADSHEETS } from './spreadsheets.js';
 
 export const RESOURCES: ResourceGroup[] = [
   SEARCH,
@@ -143,6 +145,7 @@ export const RESOURCES: ResourceGroup[] = [
   ORDER_FORMS,
   FILES,
   NOTEPADS,
+  SPREADSHEETS,
   REPORTS,
   KNOWLEDGE,
   COMPANY,
