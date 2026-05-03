@@ -62,7 +62,7 @@ export const CUSTOMERS: ResourceGroup = {
         { name: 'industry', type: 'string', required: false, description: 'Industry sector', in: 'body' },
         { name: 'website', type: 'string', required: false, description: 'Website URL', in: 'body' },
         { name: 'notes', type: 'string', required: false, description: 'Notes', in: 'body' },
-        { name: 'metadata', type: 'object', required: false, description: 'Custom field values as { field_id: value } pairs.', in: 'body' },
+        { name: 'metadata', type: 'object', required: false, description: 'Custom field values as { field_id: value } pairs. Use GET /crm-settings to discover available custom fields. Reserved key: "quick_links" stores per-company Quick Link URLs as { <type-uuid>: <url> } -- define types via PATCH /company/crm-settings. UUID-shaped keys at metadata root are rejected (400).', in: 'body' },
         { name: 'skip_automations', type: 'boolean', required: false, description: 'Set true to suppress the customer_created trigger. Use for historical imports. Default false.', in: 'body' },
       ],
       requestExample: `curl -X POST \\
@@ -86,7 +86,7 @@ export const CUSTOMERS: ResourceGroup = {
         { name: 'industry', type: 'string', required: false, description: 'Industry sector', in: 'body' },
         { name: 'website', type: 'string', required: false, description: 'Website URL', in: 'body' },
         { name: 'notes', type: 'string', required: false, description: 'Notes', in: 'body' },
-        { name: 'metadata', type: 'object', required: false, description: 'Custom field values as { field_id: value } pairs. Replaces entire metadata object.', in: 'body' },
+        { name: 'metadata', type: 'object', required: false, description: 'Custom field values as { field_id: value } pairs. Replaces entire metadata object -- read first with GET /customers/:id and merge locally. Reserved key: "quick_links" stores per-company Quick Link URLs as { <type-uuid>: <url> }. UUID-shaped keys at metadata root are rejected (400).', in: 'body' },
       ],
     },
     {

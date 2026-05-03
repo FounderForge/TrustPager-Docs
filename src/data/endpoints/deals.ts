@@ -88,7 +88,7 @@ export const DEALS: ResourceGroup = {
         { name: 'lead_source', type: 'string', required: false, description: 'Lead source', in: 'body' },
         { name: 'tags', type: 'object[]', required: false, description: 'Tags. Each tag is {name: string, color?: string} (hex color, default "#3b82f6"). Plain strings are also accepted and auto-converted. Example: [{"name":"hot-lead","color":"#ef4444"}]', in: 'body' },
         { name: 'notes', type: 'string', required: false, description: 'Notes', in: 'body' },
-        { name: 'metadata', type: 'object', required: false, description: 'Custom field values as { field_id: value } pairs.', in: 'body' },
+        { name: 'metadata', type: 'object', required: false, description: 'Custom field values as { field_id: value } pairs. Use GET /crm-settings to discover available custom fields. Reserved key: "quick_links" stores per-deal Quick Link URLs as { <type-uuid>: <url> } -- define types via PATCH /company/crm-settings. UUID-shaped keys at metadata root are rejected (400).', in: 'body' },
         { name: 'skip_automations', type: 'boolean', required: false, description: 'Set true to suppress the deal_created trigger. Use for historical imports so old deals do not trigger automation emails. Default false.', in: 'body' },
       ],
       requestExample: `curl -X POST \\
@@ -121,7 +121,7 @@ export const DEALS: ResourceGroup = {
         { name: 'lead_source', type: 'string', required: false, description: 'Lead source', in: 'body' },
         { name: 'tags', type: 'object[]', required: false, description: 'Tags. Each tag is {name: string, color?: string}. Plain strings are also accepted. Replaces entire tags array.', in: 'body' },
         { name: 'notes', type: 'string', required: false, description: 'Notes', in: 'body' },
-        { name: 'metadata', type: 'object', required: false, description: 'Custom field values as { field_id: value } pairs. Replaces entire metadata object.', in: 'body' },
+        { name: 'metadata', type: 'object', required: false, description: 'Custom field values as { field_id: value } pairs. Replaces entire metadata object -- read first with GET /deals/:id and merge locally. Reserved key: "quick_links" stores per-deal Quick Link URLs as { <type-uuid>: <url> }. UUID-shaped keys at metadata root are rejected (400).', in: 'body' },
       ],
     },
     {
