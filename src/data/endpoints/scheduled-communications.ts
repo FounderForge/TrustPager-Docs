@@ -68,7 +68,7 @@ export const SCHEDULED_COMMUNICATIONS: ResourceGroup = {
       params: [
         { name: 'channel', type: 'string', required: true, description: 'Channel: email, sms, or voice_call', in: 'body' },
         { name: 'scheduled_for', type: 'string', required: true, description: 'ISO 8601 dispatch time. Must not be more than 1 minute in the past.', in: 'body' },
-        { name: 'payload', type: 'object', required: true, description: 'Channel-specific payload. email: {to_email, subject, html_body, [from_email, sender_user_id, mode, contact_id, deal_id, customer_id, cc, to_name]}. sms: {phone_number_id, to_number, message_body}. voice_call: {voice_agent_outbound_config_id, to_number, [dynamic_variables, metadata]}.', in: 'body' },
+        { name: 'payload', type: 'object', required: true, description: 'Channel-specific payload. email: {to_email, subject, html_body, [from_email, sender_user_id, mode, contact_id, deal_id, customer_id, cc, to_name]}. sms: {phone_number_id, to_number, message_body}. voice_call: {voice_agent_outbound_config_id, to_number, [dynamic_variables, metadata, follow_ups]}. The follow_ups object enables multi-attempt voice cadence: {max_attempts (integer, total including first), follow_up_delays (array of hours between each retry -- decimal allowed, e.g. 0.5 for 30 min), voice_agent_outbound_config_id (uuid), to_number (E.164), [respect_business_hours, dynamic_variables, contact_id, customer_id, deal_id]}.', in: 'body' },
         { name: 'timezone', type: 'string', required: false, description: 'IANA timezone for business-hours evaluation (e.g. "Australia/Sydney"). Falls back to company default if omitted.', in: 'body' },
         { name: 'respect_business_hours', type: 'boolean', required: false, description: 'If true, hold delivery until callee is within business hours. Default false.', in: 'body' },
         { name: 'contact_id', type: 'uuid', required: false, description: 'Link to a contact UUID for timeline logging', in: 'body' },
@@ -112,6 +112,32 @@ curl -X POST \\
       "to_number": "+61412345678",
       "dynamic_variables": { "contact_name": "Sarah", "deal_name": "Website Project" }
     }
+  }'
+
+# Schedule a voice call with multi-attempt cadence (3 attempts: now, +2h, +24h)
+curl -X POST \\
+  "${API_BASE_URL}/scheduled-communications" \\
+  -H "Authorization: Bearer YOUR_API_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "channel": "voice_call",
+    "scheduled_for": "2026-05-05T10:00:00Z",
+    "timezone": "Australia/Brisbane",
+    "respect_business_hours": true,
+    "contact_id": "contact-uuid...",
+    "payload": {
+      "voice_agent_outbound_config_id": "config-uuid...",
+      "to_number": "+61412345678",
+      "dynamic_variables": { "contact_name": "Sarah" },
+      "follow_ups": {
+        "max_attempts": 3,
+        "follow_up_delays": [2, 24],
+        "voice_agent_outbound_config_id": "config-uuid...",
+        "to_number": "+61412345678",
+        "respect_business_hours": true,
+        "contact_id": "contact-uuid..."
+      }
+    }
   }'`,
       responseExample: `{
   "data": {
@@ -136,6 +162,7 @@ curl -X POST \\
         'When respect_business_hours=true, the scheduler defers rows outside Mon-Fri 9-5 in the callee\'s timezone (configurable per company).',
         'The scheduler tick runs every minute. Expect up to 1 minute of latency after scheduled_for.',
         'Rows retry with exponential backoff: email/SMS up to 3 attempts, voice_call up to 2.',
+        'Voice cadence (multi-attempt): include a follow_ups object in the voice_call payload to automatically schedule retries. follow_up_delays is an array of hours between each attempt (supports decimals: 0.5 = 30 min). The cadence stops early if the call connects and the contact speaks for 10+ seconds (real conversation detected). Retries are queued as new pending rows in the dispatcher.',
       ],
     },
     {
