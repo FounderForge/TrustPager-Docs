@@ -12,7 +12,7 @@ export const SCHEDULING_BOOKINGS: ResourceGroup = {
     {
       method: 'GET',
       path: '/scheduling-bookings',
-      description: 'List bookings with filters. Returns upcoming/past bookings sorted by start time.',
+      description: 'List bookings with filters. Returns upcoming/past bookings sorted by start time. Includes management_token and management_token_expires_at for each booking (null on bookings created before self-service management was introduced).',
       scopes: ['company:read'],
       isWrite: false,
       params: [
@@ -39,7 +39,9 @@ export const SCHEDULING_BOOKINGS: ResourceGroup = {
       "booker_phone": "+61412345678",
       "status": "confirmed",
       "deal_id": "d1e2f3g4-...",
-      "contact_id": "c1d2e3f4-..."
+      "contact_id": "c1d2e3f4-...",
+      "management_token": "f7a3c891-4d52-4b1e-9e80-abc123def456",
+      "management_token_expires_at": "2026-03-26T09:15:00+11:00"
     }
   ],
   "pagination": { "limit": 25, "has_more": false }
@@ -48,12 +50,33 @@ export const SCHEDULING_BOOKINGS: ResourceGroup = {
     {
       method: 'GET',
       path: '/scheduling-bookings/:id',
-      description: 'Get a single booking by ID with full details including linked event type name.',
+      description: 'Get a single booking by ID with full details including linked event type name. Returns management_token (UUID used to construct the self-service management URL: https://app.trustpager.com/book/{company_slug}/manage/{management_token}) and management_token_expires_at (set to 24 hours after the booking end time; null on old bookings). The management token is NOT returned in create responses -- it is delivered to the booker only via the Google Calendar invite description and booking reminder emails using the {management_url} template variable.',
       scopes: ['company:read'],
       isWrite: false,
       params: [
         { name: 'id', type: 'string', required: true, description: 'Booking UUID', in: 'path' },
       ],
+      responseExample: `{
+  "data": {
+    "id": "a1b2c3d4-...",
+    "event_type_id": "e1f2g3h4-...",
+    "starts_at": "2026-03-25T09:00:00+11:00",
+    "ends_at": "2026-03-25T09:15:00+11:00",
+    "timezone": "Australia/Sydney",
+    "booker_name": "Sarah Johnson",
+    "booker_email": "sarah@example.com",
+    "booker_phone": "+61412345678",
+    "status": "confirmed",
+    "deal_id": "d1e2f3g4-...",
+    "contact_id": "c1d2e3f4-...",
+    "management_token": "f7a3c891-4d52-4b1e-9e80-abc123def456",
+    "management_token_expires_at": "2026-03-26T09:15:00+11:00",
+    "crm_scheduled_event_types": {
+      "name": "30 Minute Booking",
+      "default_duration_minutes": 30
+    }
+  }
+}`,
     },
     {
       method: 'POST',
