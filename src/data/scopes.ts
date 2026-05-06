@@ -125,13 +125,13 @@ export const SCOPE_GROUPS: ScopeGroup[] = [
     ],
   },
   {
-    label: 'Trust Signals',
-    description: 'Public trust profile, verified reviews, and case studies',
+    label: 'Reputation',
+    description: 'Public reputation profile, verified reviews, and case studies',
     admin: false,
     scopes: [
-      { key: 'signals:read', label: 'Trust Signals (Read)' },
-      { key: 'signals:write', label: 'Trust Signals (Write)' },
-      { key: 'signals:delete', label: 'Trust Signals (Delete)' },
+      { key: 'reputation:read', label: 'Reputation (Read)' },
+      { key: 'reputation:write', label: 'Reputation (Write)' },
+      { key: 'reputation:delete', label: 'Reputation (Delete)' },
     ],
   },
   {

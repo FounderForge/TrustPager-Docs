@@ -67,10 +67,10 @@ export const API_CATEGORIES: NavCategory[] = [
     ],
   },
   {
-    label: 'Trust Signals',
+    label: 'Reputation',
     description: 'Public B2B reputation profiles, verified reviews, case studies, and anonymous image uploads',
     items: [
-      { id: 'signals', label: 'Trust Signals', icon: 'Shield' },
+      { id: 'reputation', label: 'Reputation', icon: 'Shield' },
     ],
   },
   {

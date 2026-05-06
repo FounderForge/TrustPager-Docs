@@ -49,7 +49,7 @@ export { LEAD_GEN } from './lead-gen.js';
 export { TRAINING } from './training.js';
 export { SCHEDULED_COMMUNICATIONS } from './scheduled-communications.js';
 export { SCHEMAS } from './schemas.js';
-export { SIGNALS } from './signals.js';
+export { REPUTATION } from './reputation.js';
 export { VOICE_AGENT_KBS } from './voice-agent-kbs.js';
 export { CRM_EXPORT } from './crm-export.js';
 export { SPREADSHEETS } from './spreadsheets.js';
@@ -105,7 +105,7 @@ import { LEAD_GEN } from './lead-gen.js';
 import { TRAINING } from './training.js';
 import { SCHEDULED_COMMUNICATIONS } from './scheduled-communications.js';
 import { SCHEMAS } from './schemas.js';
-import { SIGNALS } from './signals.js';
+import { REPUTATION } from './reputation.js';
 import { VOICE_AGENT_KBS } from './voice-agent-kbs.js';
 import { CRM_EXPORT } from './crm-export.js';
 import { SPREADSHEETS } from './spreadsheets.js';
@@ -163,7 +163,7 @@ export const RESOURCES: ResourceGroup[] = [
   TRAINING,
   SCHEDULED_COMMUNICATIONS,
   SCHEMAS,
-  SIGNALS,
+  REPUTATION,
   CRM_EXPORT,
 ];
 
