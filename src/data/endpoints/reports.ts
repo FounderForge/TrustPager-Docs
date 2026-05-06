@@ -15,7 +15,7 @@ export const REPORTS: ResourceGroup = {
       scopes: ['deals:read'], isWrite: false,
       params: [
         { name: 'source', type: 'string', required: true, description: 'Data source. Currently "deals".', in: 'body' },
-        { name: 'measures', type: 'array', required: false, description: 'Array of { field, aggregation, alias }. Fields: id, value, products_total_value, probability. Aggregations: count, sum, avg, min, max.', in: 'body' },
+        { name: 'measures', type: 'array', required: false, description: 'Array of { field, aggregation, alias }. Fields: id, value, products_total_value. Aggregations: count, sum, avg, min, max.', in: 'body' },
         { name: 'dimensions', type: 'array', required: false, description: 'Group-by fields: status, pipeline_name, stage_name, assigned_user_name, lead_source, etc.', in: 'body' },
         { name: 'filters', type: 'array', required: false, description: 'Array of { field, operator, value/values }. Operators: eq, neq, gt, gte, lt, lte, in, not_in, like, is_null, is_not_null, contains.', in: 'body' },
         { name: 'time_dimension', type: 'object', required: false, description: '{ field: "deal_created_at"|"won_at"|"lost_at", granularity: "day"|"week"|"month"|"quarter"|"year" }', in: 'body' },

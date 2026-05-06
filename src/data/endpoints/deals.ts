@@ -42,8 +42,6 @@ export const DEALS: ResourceGroup = {
       "contact_id": "contact-uuid-...",
       "customer_id": "cust-uuid-...",
       "currency": "AUD",
-      "probability": 75,
-      "expected_close_date": "2026-04-30",
       "tags": ["web", "design"],
       "placements": [
         {
@@ -83,8 +81,6 @@ export const DEALS: ResourceGroup = {
         { name: 'customer_id', type: 'uuid', required: false, description: 'Customer ID', in: 'body' },
         { name: 'status', type: 'string', required: false, description: 'Deal status (open, won, lost)', in: 'body' },
         { name: 'currency', type: 'string', required: false, description: 'Currency code (default: AUD)', in: 'body' },
-        { name: 'probability', type: 'number', required: false, description: 'Win probability (0-100)', in: 'body' },
-        { name: 'expected_close_date', type: 'string', required: false, description: 'Expected close date (YYYY-MM-DD)', in: 'body' },
         { name: 'lead_source', type: 'string', required: false, description: 'Lead source', in: 'body' },
         { name: 'tags', type: 'object[]', required: false, description: 'Tags. Each tag is {name: string, color?: string} (hex color, default "#3b82f6"). Plain strings are also accepted and auto-converted. Example: [{"name":"hot-lead","color":"#ef4444"}]', in: 'body' },
         { name: 'notes', type: 'string', required: false, description: 'Notes', in: 'body' },
@@ -99,9 +95,7 @@ export const DEALS: ResourceGroup = {
     "name": "Website Redesign",
     "contact_id": "contact-uuid-...",
     "customer_id": "cust-uuid-...",
-    "currency": "AUD",
-    "probability": 75,
-    "expected_close_date": "2026-04-30"
+    "currency": "AUD"
   }'`,
     },
     {
@@ -116,8 +110,6 @@ export const DEALS: ResourceGroup = {
         { name: 'contact_id', type: 'uuid', required: false, description: 'Primary contact ID', in: 'body' },
         { name: 'customer_id', type: 'uuid', required: false, description: 'Customer ID', in: 'body' },
         { name: 'currency', type: 'string', required: false, description: 'Currency code', in: 'body' },
-        { name: 'probability', type: 'number', required: false, description: 'Win probability (0-100)', in: 'body' },
-        { name: 'expected_close_date', type: 'string', required: false, description: 'Expected close date (YYYY-MM-DD)', in: 'body' },
         { name: 'lead_source', type: 'string', required: false, description: 'Lead source', in: 'body' },
         { name: 'tags', type: 'object[]', required: false, description: 'Tags. Each tag is {name: string, color?: string}. Plain strings are also accepted. Replaces entire tags array.', in: 'body' },
         { name: 'notes', type: 'string', required: false, description: 'Notes', in: 'body' },
@@ -420,20 +412,12 @@ export const DEALS: ResourceGroup = {
     },
     {
       method: 'POST',
-      path: '/deals/:id/probability',
-      description: 'Use AI to calculate deal win probability based on deal data and history.',
-      scopes: ['ai:use'],
-      isWrite: true,
-      params: [{ name: 'id', type: 'uuid', required: true, description: 'Deal ID', in: 'path' }],
-    },
-    {
-      method: 'POST',
       path: '/deals/bulk-create',
       description: 'Create up to 100 deals in a single request. Built for historical migrations and bulk data loads. Top-level pipeline_id/stage_id act as defaults inherited by each record unless overridden. Set skip_automations: true (strongly recommended for imports) to suppress deal_created triggers across all records. Returns a created array and an errors array so partial successes can be recovered from without duplicating work on retry.',
       scopes: ['deals:write'],
       isWrite: true,
       params: [
-        { name: 'records', type: 'object[]', required: true, description: 'Array of deal objects (max 100). Each requires name plus any optional deal fields (contact_id, customer_id, pipeline_id, stage_id, status, probability, expected_close_date, notes, tags, metadata, etc.).', in: 'body' },
+        { name: 'records', type: 'object[]', required: true, description: 'Array of deal objects (max 100). Each requires name plus any optional deal fields (contact_id, customer_id, pipeline_id, stage_id, status, value, notes, tags, metadata, etc.).', in: 'body' },
         { name: 'pipeline_id', type: 'uuid', required: false, description: 'Default pipeline UUID applied to every record unless the record sets its own.', in: 'body' },
         { name: 'stage_id', type: 'uuid', required: false, description: 'Default stage UUID applied to every record unless the record sets its own.', in: 'body' },
         { name: 'skip_automations', type: 'boolean', required: false, description: 'Set true to suppress deal_created triggers across all records. Strongly recommended for historical imports.', in: 'body' },
@@ -447,8 +431,8 @@ export const DEALS: ResourceGroup = {
     "stage_id": "stage-uuid",
     "skip_automations": true,
     "records": [
-      { "name": "Deal A", "contact_id": "contact-uuid-1", "probability": 80 },
-      { "name": "Deal B", "contact_id": "contact-uuid-2", "probability": 50 }
+      { "name": "Deal A", "contact_id": "contact-uuid-1", "value": 1500 },
+      { "name": "Deal B", "contact_id": "contact-uuid-2", "value": 2000 }
     ]
   }'`,
       responseExample: `{

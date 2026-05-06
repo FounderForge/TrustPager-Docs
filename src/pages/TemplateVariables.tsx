@@ -88,10 +88,8 @@ const CORE_GROUPS: TokenGroup[] = [
       { token: '{{deal.value}}', description: 'Deal value (numeric).' },
       { token: '{{deal.currency}}', description: 'Currency code (e.g. AUD).' },
       { token: '{{deal.status}}', description: 'Deal status: open, won, or lost.' },
-      { token: '{{deal.probability}}', description: 'Win probability (0–100).' },
       { token: '{{deal.lead_source}}', description: 'Lead source label.' },
       { token: '{{deal.opportunity_type}}', description: 'Opportunity type (if configured).' },
-      { token: '{{deal.expected_close_date}}', description: 'Expected close date. Formatted as a human-readable string; use _iso suffix for raw value.', badge: 'Date' },
       { token: '{{deal.notes}}', description: 'Notes field on the deal.' },
       { token: '{{deal.timezone}}', description: 'Deal\'s configured timezone.' },
       { token: '{{deal.owner_id}}', description: 'UUID of the primary assigned team member. Falls back to deal.assigned_to, then null.', badge: 'UUID' },
@@ -310,11 +308,11 @@ function TemplateVariables() {
               </thead>
               <tbody className="divide-y divide-gray-100">
                 <tr>
-                  <td className="px-4 py-3"><code className="text-xs font-mono text-teal-700">{'{{deal.expected_close_date}}'}</code></td>
+                  <td className="px-4 py-3"><code className="text-xs font-mono text-teal-700">{'{{deal.actual_close_date}}'}</code></td>
                   <td className="px-4 py-3 text-gray-600">Wednesday, 30 April 2025 at 9:00 am AEST</td>
                 </tr>
                 <tr>
-                  <td className="px-4 py-3"><code className="text-xs font-mono text-teal-700">{'{{deal.expected_close_date_iso}}'}</code></td>
+                  <td className="px-4 py-3"><code className="text-xs font-mono text-teal-700">{'{{deal.actual_close_date_iso}}'}</code></td>
                   <td className="px-4 py-3 text-gray-600">2025-04-30T09:00:00.000Z</td>
                 </tr>
               </tbody>
