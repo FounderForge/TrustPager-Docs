@@ -318,6 +318,30 @@ export const CONTACTS: ResourceGroup = {
     },
     {
       method: 'POST',
+      path: '/contacts/voice/unsubscribe',
+      description: 'Voice-agent unsubscribe endpoint. Returns text/plain. Called by a Retell voice agent when a caller asks to opt out. Resolves the caller by phone number (from args.phone in the Retell call envelope, with fallback to from_number for inbound or to_number for outbound calls). Unsubscribes ALL contacts in the workspace that share the phone number (Spam Act compliance -- up to 20 matched contacts). Sets email_unsubscribed and sms_unsubscribed to true on each matched contact. Returns a plain-text confirmation string the agent reads aloud. On error the response body begins with "UNSUBSCRIBE NOT COMPLETED -- DO NOT TELL THE CALLER THEY HAVE BEEN REMOVED" so the agent script can instruct the agent to handle the failure gracefully without misleading the caller.',
+      scopes: ['contacts:write'],
+      isWrite: true,
+      params: [
+        { name: 'phone', type: 'string', required: false, description: 'Caller phone in E.164 or local format. If omitted, resolves from the Retell call envelope (from_number for inbound, to_number for outbound). Provide explicitly when testing outside a live Retell call.', in: 'body' },
+        { name: 'reason', type: 'string', required: false, description: 'Optional reason for the unsubscribe (e.g. "caller requested via voice agent"). Stored as a note on the contact.', in: 'body' },
+      ],
+      requestExample: `# Retell sends the full call envelope. The args wrapper is required.
+curl -X POST \\
+  "${API_BASE_URL}/contacts/voice/unsubscribe" \\
+  -H "Authorization: Bearer YOUR_API_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "call": { "from_number": "+61412345678" },
+    "name": "unsubscribe_caller",
+    "args": {
+      "reason": "caller requested via voice agent"
+    }
+  }'`,
+      responseExample: `Done! You have been removed from our contact list and will no longer receive calls, SMS, or emails from us.`,
+    },
+    {
+      method: 'POST',
       path: '/contacts/bulk-delete',
       description: 'Permanently delete up to 100 contacts in a single request. Returns a count of deleted records. Cannot be undone.',
       scopes: ['contacts:delete'],

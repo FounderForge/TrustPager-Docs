@@ -354,5 +354,43 @@ Description: A complimentary session to discuss your needs.
 Video link: https://meet.google.com/abc-defg-hij
 Booking ID: b1c2d3e4-f5a6-...`,
     },
+    {
+      method: 'POST',
+      path: '/scheduling/voice/cancel-booking',
+      description: 'Voice-agent booking cancellation. Returns text/plain. Resolves the caller by phone number (from args.phone, or Retell call envelope from_number/to_number as fallback), then cancels the matching upcoming booking. When the caller has multiple upcoming bookings, omit booking_selector on the first call to receive a numbered disambiguation list; re-fire with the caller\'s choice to execute the cancellation. Always returns HTTP 200 - failures begin with "BOOKING CANCELLATION FAILED:" and must not be read as confirmations.',
+      scopes: ['scheduling:write'],
+      isWrite: true,
+      params: [
+        { name: 'phone', type: 'string', required: false, description: 'Caller phone number (E.164 or AU local format). Falls back to Retell call envelope from_number (inbound) or to_number (outbound).', in: 'body' },
+        { name: 'booking_selector', type: 'string', required: false, description: 'Which booking to cancel when the caller has multiple upcoming. Accepts: 1-based integer index (from disambiguation list), booking UUID prefix, or partial event type name substring. Omit to auto-select when only one booking exists, or to trigger the disambiguation list when multiple exist.', in: 'body' },
+        { name: 'reason', type: 'string', required: false, description: 'Cancellation reason stored on the booking record.', in: 'body' },
+      ],
+      requestExample: `curl -X POST \\
+  "${API_BASE_URL}/scheduling/voice/cancel-booking" \\
+  -H "Authorization: Bearer YOUR_API_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{ "args": { "phone": "+61412345678", "booking_selector": "1", "reason": "caller request" } }'`,
+      responseExample: `Cancelled! Your Free Consultation (30 min) on Monday, 28 April 2026 at 10:00 AM has been cancelled.`,
+    },
+    {
+      method: 'POST',
+      path: '/scheduling/voice/reschedule-booking',
+      description: 'Voice-agent booking reschedule. Returns text/plain. Resolves the caller by phone, then moves an existing booking to a new slot. New booking is created first (slot-race protection), then the old booking is cancelled. If the old cancel fails, a rollback is attempted on the new booking. Uses the same two-shot disambiguation pattern as cancel-booking when multiple upcoming bookings exist. Always returns HTTP 200 - failures begin with "RESCHEDULE FAILED:".',
+      scopes: ['scheduling:write'],
+      isWrite: true,
+      params: [
+        { name: 'phone', type: 'string', required: false, description: 'Caller phone number (E.164 or AU local). Falls back to Retell call envelope.', in: 'body' },
+        { name: 'booking_selector', type: 'string', required: false, description: 'Which booking to reschedule. Same format as cancel-booking selector. Omit for auto-select or to trigger disambiguation.', in: 'body' },
+        { name: 'new_slot', type: 'string', required: true, description: 'New slot in "YYYY-MM-DD HH:MM" format, as returned by the /slots endpoint for this event type.', in: 'body' },
+        { name: 'timezone', type: 'string', required: false, description: 'IANA timezone name. Defaults to the event type configured timezone.', in: 'body' },
+      ],
+      requestExample: `curl -X POST \\
+  "${API_BASE_URL}/scheduling/voice/reschedule-booking" \\
+  -H "Authorization: Bearer YOUR_API_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{ "args": { "phone": "+61412345678", "new_slot": "2026-04-30 14:00", "timezone": "Australia/Brisbane" } }'`,
+      responseExample: `Rescheduled! Your Free Consultation is now confirmed for Wednesday, 30 April 2026 at 2:00 PM.
+The previous booking has been cancelled.`,
+    },
   ],
 };
