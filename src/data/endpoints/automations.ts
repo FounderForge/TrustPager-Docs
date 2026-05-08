@@ -285,7 +285,7 @@ export const AUTOMATIONS: ResourceGroup = {
           description: `Action configuration (varies by action_type). Key configs:
 send_custom_email: { greeting, customMessage, showReplyButton?, recipient_target?, replyEmail? }
 send_gmail_email: { subject, body, recipient_target, sender_mode?, email_config_id?, attachment_ids? } -- body accepts plain text or rich HTML. To embed a clickable image: <a href="URL"><img src="IMAGE_URL" alt="Alt" style="max-width:100%;height:auto;" /></a>. sender_mode: "company" (workspace Gmail from /settings/email) or "assignee" (deal primary assignee personal Gmail). recipient_target: "contact", "account_customer", or "account_supplier". email_config_id: UUID of a gmail-provider email_config to pin which alias sends (omit to use default). attachment_ids: array of crm_documents UUIDs to attach -- resolved server-side from the workspace file library, max 25 MB total. subject and body support {{variable}} placeholders. Gmail signature is auto-appended.
-send_sms: { phone_number_id, message_body }
+send_sms: { phone_number_id, message_body, recipient_target?, custom_recipient_phone? } -- recipient_target: "contact" (deal primary contact, default), "account_customer", or "custom". For a fixed external recipient (e.g. forward inbound SMS to a staff mobile that is not a TP user), set recipient_target: "custom" AND provide custom_recipient_phone in E.164 format. to_number_source is a legacy alias for recipient_target -- both work.
 voice_outbound_call: { voice_agent_outbound_config_id, recipient_target?, variable_mappings?, respect_business_hours? }
 add_tasks: { tasks: [{ title, category?, due_offset_days? }] }
 call_webhook: { url, method? }
