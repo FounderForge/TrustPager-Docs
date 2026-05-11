@@ -208,7 +208,7 @@ function llmsShort(): string {
   lines.push('# TrustPager');
   lines.push('');
   lines.push(
-    '> TrustPager is a CRM platform with a REST API and MCP server. This documentation site covers every public endpoint, authentication, scopes, MCP tools, error codes, template variables, and the changelog. The API base URL is `https://api.trustpager.com/v1`. Authentication is `Authorization: Bearer <api_key>` (one key per workspace).',
+    '> TrustPager is a CRM platform with a REST API and MCP server. This documentation site covers every public endpoint, authentication, scopes, MCP tools, error codes, template variables, and the changelog. The API base URL is `https://api.trustpager.com/functions/v1/api/v1`. Authentication is `Authorization: Bearer <api_key>` (one key per workspace).',
   );
   lines.push('');
   lines.push(

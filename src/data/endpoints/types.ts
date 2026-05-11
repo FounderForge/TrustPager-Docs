@@ -35,4 +35,4 @@ export interface ResourceGroup {
 // BASE URL
 // =============================================================================
 
-export const API_BASE_URL = 'https://api.trustpager.com/v1';
+export const API_BASE_URL = 'https://api.trustpager.com/functions/v1/api/v1';

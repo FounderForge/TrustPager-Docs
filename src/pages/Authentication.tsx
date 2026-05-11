@@ -24,7 +24,7 @@ function Authentication() {
           </p>
           <CodeBlock
             language="bash"
-            code={`curl -X GET "https://api.trustpager.com/v1/contacts" \\
+            code={`curl -X GET "https://api.trustpager.com/functions/v1/api/v1/contacts" \\
   -H "Authorization: Bearer tp_live_abc123..."`}
           />
 
