@@ -7,13 +7,53 @@
     <link rel="icon" type="image/png" sizes="16x16" href="https://app.trustpager.com/favicon-16x16.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="https://app.trustpager.com/apple-touch-icon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="TrustPager developer documentation: REST API reference, MCP server setup, authentication, scopes, template variables, error codes, and changelog. API base URL: https://api.trustpager.com/v1." />
+
+    <!-- AI / crawler discovery hints. Plain-text and JSON variants of the full reference. -->
+    <link rel="alternate" type="text/plain" title="LLM-friendly index (llmstxt.org)" href="/llms.txt" />
+    <link rel="alternate" type="text/plain" title="LLM-friendly full reference" href="/llms-full.txt" />
+    <link rel="alternate" type="application/json" title="OpenAPI 3.1 specification" href="/openapi.json" />
+    <link rel="alternate" type="application/json" title="Machine-readable API index" href="/api-index.json" />
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
     <title>TrustPager Developer Docs</title>
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "APIReference",
+        "name": "TrustPager API",
+        "description": "REST API for TrustPager CRM. Every workspace has a single API key with scoped permissions.",
+        "url": "https://docs.trustpager.com",
+        "documentation": "https://docs.trustpager.com/llms.txt",
+        "sameAs": [
+          "https://docs.trustpager.com/openapi.json",
+          "https://docs.trustpager.com/llms-full.txt"
+        ],
+        "publisher": {
+          "@type": "Organization",
+          "name": "TrustPager",
+          "url": "https://trustpager.com"
+        }
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>
+    <noscript>
+      <h1>TrustPager Developer Docs</h1>
+      <p>This site requires JavaScript for the interactive documentation viewer. For AI agents, scrapers, and JavaScript-disabled clients, all reference material is available as static files:</p>
+      <ul>
+        <li><a href="/llms.txt">/llms.txt</a> — compact index of every resource (llmstxt.org standard)</li>
+        <li><a href="/llms-full.txt">/llms-full.txt</a> — full reference with every endpoint, parameter, and scope inlined</li>
+        <li><a href="/openapi.json">/openapi.json</a> — OpenAPI 3.1 specification</li>
+        <li><a href="/api-index.json">/api-index.json</a> — machine-readable resource and endpoint index</li>
+        <li><a href="/sitemap.xml">/sitemap.xml</a> — full URL list including per-resource Markdown</li>
+      </ul>
+      <p>API base URL: <code>https://api.trustpager.com/v1</code>. Authentication: <code>Authorization: Bearer &lt;api_key&gt;</code> (one key per workspace).</p>
+    </noscript>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
