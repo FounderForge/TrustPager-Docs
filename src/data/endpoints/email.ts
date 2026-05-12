@@ -114,7 +114,7 @@ export const EMAIL: ResourceGroup = {
         { name: 'from_email', type: 'string', required: false, description: 'Send-as alias when mode is "personal". Must be a valid alias for the sender (use GET /email/capabilities to see available aliases). If omitted, auto-resolves to the user\'s workspace email if it is a valid alias.', in: 'body' },
         { name: 'contact_id', type: 'uuid', required: false, description: 'Link to contact. Auto-logs an outbound email activity on the contact timeline.', in: 'body' },
         { name: 'deal_id', type: 'uuid', required: false, description: 'Link to deal. Auto-logs an outbound email activity on the deal timeline.', in: 'body' },
-        { name: 'cc', type: 'string', required: false, description: 'CC recipients as comma-separated email addresses', in: 'body' },
+        { name: 'cc', type: 'string', required: false, description: 'CC recipients as comma-separated email addresses (e.g. "alice@example.com, bob@example.com"). Supported on both mode="company" (TrustPager Mail) and mode="personal" (Gmail). CC addresses are merged into the email thread\'s participant list.', in: 'body' },
         { name: 'customer_id', type: 'uuid', required: false, description: 'Link to customer', in: 'body' },
         { name: 'email_config_id', type: 'uuid', required: false, description: 'Email config to use (defaults to company default)', in: 'body' },
         { name: 'attachments', type: 'array', required: false, description: 'File attachments (Gmail only, max 25MB total). Array of objects with filename, mime_type, and content (base64-encoded file data).', in: 'body' },
