@@ -94,9 +94,9 @@ function QuickStart() {
             The API supports 30+ resource types. Here are the most common next steps:
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <Link to="/api/deals" className="bg-white border border-gray-200 rounded-lg p-4 hover:border-teal-300 transition-colors">
-              <h4 className="font-medium text-gray-900 mb-1">Deals</h4>
-              <p className="text-xs text-gray-500">Create and manage sales opportunities</p>
+            <Link to="/api/opportunities" className="bg-white border border-gray-200 rounded-lg p-4 hover:border-teal-300 transition-colors">
+              <h4 className="font-medium text-gray-900 mb-1">Opportunities</h4>
+              <p className="text-xs text-gray-500">Create and manage sales opportunities (legacy path: /api/deals)</p>
             </Link>
             <Link to="/api/automations" className="bg-white border border-gray-200 rounded-lg p-4 hover:border-teal-300 transition-colors">
               <h4 className="font-medium text-gray-900 mb-1">Automations</h4>

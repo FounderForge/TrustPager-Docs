@@ -13,7 +13,12 @@ function McpSetup() {
         <h1 className="text-3xl font-bold text-gray-900 mb-3">MCP Integration</h1>
         <p className="text-gray-600 mb-10">
           Connect AI agents like Claude, GPT, and others directly to your TrustPager CRM using the
-          Model Context Protocol (MCP). Over 180 tools available for full CRM management.
+          Model Context Protocol (MCP). Over 180 tools available for full CRM management, plus four
+          discovery primitives — <code className="text-sm bg-gray-100 px-1 py-0.5 rounded">get_ai_instructions</code>,{' '}
+          <code className="text-sm bg-gray-100 px-1 py-0.5 rounded">describe_resource</code>,{' '}
+          <code className="text-sm bg-gray-100 px-1 py-0.5 rounded">search_help_center</code>, and{' '}
+          <code className="text-sm bg-gray-100 px-1 py-0.5 rounded">create_service_request</code> — that
+          agents call at session start to learn the curated tool surface for any resource.
         </p>
 
         {/* What is MCP */}

@@ -27,14 +27,14 @@ export const SERVICE_REQUESTS: ResourceGroup = {
   "data": [
     {
       "id": "f112de7b-c7df-4193-bacd-2d43c31c1f11",
-      "title": "Add status filter to list_deals",
-      "description": "Cannot filter deals by status (won/lost/open).",
+      "title": "Add status filter to list_opportunities",
+      "description": "Cannot filter opportunities by status (won/lost/open).",
       "status": "pending",
       "context": {
         "source": "api",
         "category": "missing_filter",
         "priority": "high",
-        "affected_tools": ["list_deals"]
+        "affected_tools": ["list_opportunities"]
       },
       "related_ids": [],
       "notes": [],
@@ -63,15 +63,15 @@ export const SERVICE_REQUESTS: ResourceGroup = {
       responseExample: `{
   "data": {
     "id": "f112de7b-c7df-4193-bacd-2d43c31c1f11",
-    "title": "Add status filter to list_deals",
-    "description": "Cannot filter deals by status (won/lost/open). Had to fetch all deals and filter client-side.",
+    "title": "Add status filter to list_opportunities",
+    "description": "Cannot filter opportunities by status (won/lost/open). Had to fetch all opportunities and filter client-side.",
     "status": "pending",
     "context": {
       "source": "api",
       "category": "missing_filter",
       "priority": "medium",
-      "affected_tools": ["list_deals"],
-      "suggested_solution": "Add a status query parameter to GET /deals",
+      "affected_tools": ["list_opportunities"],
+      "suggested_solution": "Add a status query parameter to GET /opportunities",
       "use_case": "User asked for a report of won deals from last quarter"
     },
     "related_ids": [],
@@ -94,7 +94,7 @@ export const SERVICE_REQUESTS: ResourceGroup = {
         { name: 'title', type: 'string', required: true, description: 'Brief summary of the improvement needed (max 200 chars)', in: 'body' },
         { name: 'description', type: 'string', required: true, description: 'Detailed explanation: what you tried, what happened, what should happen instead (max 50000 chars)', in: 'body' },
         { name: 'category', type: 'string', required: false, description: 'Category: missing_tool, missing_field, missing_filter, better_errors, new_capability, workflow_improvement, documentation, bug_report, other', in: 'body' },
-        { name: 'affected_tools', type: 'string[]', required: false, description: 'Array of MCP tool names or API endpoints affected, e.g. ["list_deals", "GET /deals"]', in: 'body' },
+        { name: 'affected_tools', type: 'string[]', required: false, description: 'Array of MCP tool names or API endpoints affected, e.g. ["list_opportunities", "GET /opportunities"]', in: 'body' },
         { name: 'suggested_solution', type: 'string', required: false, description: 'What you wish existed from the API/MCP consumer perspective', in: 'body' },
         { name: 'use_case', type: 'string', required: false, description: 'The real-world user task that triggered this request', in: 'body' },
         { name: 'priority', type: 'string', required: false, description: 'Priority: low, medium, high, critical', in: 'body' },
@@ -104,11 +104,11 @@ export const SERVICE_REQUESTS: ResourceGroup = {
   -H "Authorization: Bearer tp_live_..." \\
   -H "Content-Type: application/json" \\
   -d '{
-    "title": "Add status filter to list_deals",
-    "description": "Cannot filter deals by status (won/lost/open). Had to fetch all deals and filter client-side.",
+    "title": "Add status filter to list_opportunities",
+    "description": "Cannot filter opportunities by status (won/lost/open). Had to fetch all opportunities and filter client-side.",
     "category": "missing_filter",
-    "affected_tools": ["list_deals"],
-    "suggested_solution": "Add a status query parameter to GET /deals",
+    "affected_tools": ["list_opportunities"],
+    "suggested_solution": "Add a status query parameter to GET /opportunities",
     "use_case": "User asked for a report of won deals from last quarter",
     "priority": "medium",
     "related_ids": ["a1b2c3d4-e5f6-7890-abcd-ef1234567890"]
@@ -116,14 +116,14 @@ export const SERVICE_REQUESTS: ResourceGroup = {
       responseExample: `{
   "data": {
     "id": "f112de7b-c7df-4193-bacd-2d43c31c1f11",
-    "title": "Add status filter to list_deals",
-    "description": "Cannot filter deals by status (won/lost/open)...",
+    "title": "Add status filter to list_opportunities",
+    "description": "Cannot filter opportunities by status (won/lost/open)...",
     "context": {
       "source": "api",
       "category": "missing_filter",
       "priority": "medium",
-      "affected_tools": ["list_deals"],
-      "suggested_solution": "Add a status query parameter to GET /deals",
+      "affected_tools": ["list_opportunities"],
+      "suggested_solution": "Add a status query parameter to GET /opportunities",
       "use_case": "User asked for a report of won deals from last quarter"
     },
     "status": "pending",
@@ -156,7 +156,7 @@ export const SERVICE_REQUESTS: ResourceGroup = {
       responseExample: `{
   "data": {
     "id": "f112de7b-c7df-4193-bacd-2d43c31c1f11",
-    "title": "Add status filter to list_deals",
+    "title": "Add status filter to list_opportunities",
     "notes": [
       {
         "id": "572f46fd-a78b-4115-8636-215cdd5c204a",
@@ -186,17 +186,17 @@ export const SERVICE_REQUESTS: ResourceGroup = {
   -H "Authorization: Bearer tp_live_..." \\
   -H "Content-Type: application/json" \\
   -d '{
-    "content": "Confirmed the filter parameter is missing. Now affects list_customers too. Escalating priority."
+    "content": "Confirmed the filter parameter is missing. Now affects list_companies too. Escalating priority."
   }'`,
       responseExample: `{
   "data": {
     "id": "f112de7b-c7df-4193-bacd-2d43c31c1f11",
-    "title": "Add status filter to list_deals",
+    "title": "Add status filter to list_opportunities",
     "notes": [
       {
         "id": "572f46fd-a78b-4115-8636-215cdd5c204a",
         "user_id": "771a4a38-3a5d-4a9b-98c3-e10879850c9d",
-        "content": "Confirmed the filter parameter is missing. Now affects list_customers too. Escalating priority.",
+        "content": "Confirmed the filter parameter is missing. Now affects list_companies too. Escalating priority.",
         "created_at": "2026-04-19T20:47:11.328Z",
         "edited_at": "2026-04-19T21:05:33.000Z"
       }

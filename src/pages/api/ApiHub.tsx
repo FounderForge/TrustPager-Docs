@@ -5,7 +5,7 @@ import { RESOURCES, API_BASE_URL } from '@/data/endpoints';
 function ApiHub() {
   // Group resources by category
   const categories = [
-    { label: 'CRM Core', ids: ['contacts', 'customers', 'deals', 'pipelines', 'products', 'supplier-products'] },
+    { label: 'CRM Core', ids: ['contacts', 'companies', 'opportunities', 'pipelines', 'products', 'supplier-products'] },
     { label: 'Tasks & Activities', ids: ['activities', 'tasks', 'work-orders'] },
     { label: 'Automation', ids: ['automations', 'event-queues'] },
     { label: 'Communication', ids: ['email', 'sms', 'phone', 'voice-agents', 'text-agents', 'transcripts'] },

@@ -13,11 +13,11 @@ export interface NavCategory {
 export const API_CATEGORIES: NavCategory[] = [
   {
     label: 'CRM Data',
-    description: 'Core CRM records — contacts, deals, pipelines, and products',
+    description: 'Core CRM records — contacts, companies, opportunities, pipelines, and products',
     items: [
       { id: 'contacts', label: 'Contacts', icon: 'Users' },
-      { id: 'customers', label: 'Customers', icon: 'Building2' },
-      { id: 'deals', label: 'Deals', icon: 'Handshake' },
+      { id: 'companies', label: 'Companies', icon: 'Building2' },
+      { id: 'opportunities', label: 'Opportunities', icon: 'Handshake' },
       { id: 'pipelines', label: 'Pipelines', icon: 'GitBranch' },
       { id: 'products', label: 'Products', icon: 'Package' },
       { id: 'supplier-catalog', label: 'Supplier Catalog', icon: 'Truck' },

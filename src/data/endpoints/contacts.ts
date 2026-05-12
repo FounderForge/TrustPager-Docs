@@ -7,18 +7,18 @@ import { type ResourceGroup, API_BASE_URL } from './types.js';
 export const CONTACTS: ResourceGroup = {
   id: 'contacts',
   label: 'Contacts',
-  description: 'Manage individual contacts (people) in the CRM. Supports search, filtering, sub-resources (deals, activities, employers), and AI enrichment.',
+  description: 'Manage individual contacts (people) in the CRM. Supports search, filtering, sub-resources (opportunities, activities, employers), and AI enrichment.',
   endpoints: [
     {
       method: 'GET',
       path: '/contacts',
-      description: 'List all contacts with cursor-based pagination. Supports search, source filter, and date range. Note: contacts do not have tags -- tags live on opportunities (deals) only.',
+      description: 'List all contacts with cursor-based pagination. Supports search, source filter, and date range. Note: contacts do not have tags -- tags live on opportunities only.',
       scopes: ['contacts:read'],
       isWrite: false,
       params: [
         { name: 'search', type: 'string', required: false, description: 'Search by first_name, last_name, email, phone (mobile), or landline', in: 'query' },
         { name: 'source', type: 'string', required: false, description: 'Filter by lead source', in: 'query' },
-        { name: 'customer_id', type: 'uuid', required: false, description: 'Filter contacts linked to a specific customer', in: 'query' },
+        { name: 'customer_id', type: 'uuid', required: false, description: 'Filter contacts linked to a specific company / account (param name preserved for backward compatibility)', in: 'query' },
         { name: 'created_after', type: 'string', required: false, description: 'ISO date, return contacts created after this date', in: 'query' },
         { name: 'created_before', type: 'string', required: false, description: 'ISO date, return contacts created before this date', in: 'query' },
         { name: 'limit', type: 'number', required: false, description: 'Max results per page (1-100, default 25)', in: 'query' },
@@ -210,8 +210,8 @@ export const CONTACTS: ResourceGroup = {
     },
     {
       method: 'GET',
-      path: '/contacts/:id/deals',
-      description: 'List all deals associated with a contact.',
+      path: '/contacts/:id/opportunities',
+      description: 'List all opportunities associated with a contact. Legacy alias: GET /contacts/:id/deals.',
       scopes: ['contacts:read', 'deals:read'],
       isWrite: false,
       params: [
@@ -231,7 +231,7 @@ export const CONTACTS: ResourceGroup = {
     {
       method: 'GET',
       path: '/contacts/:id/employers',
-      description: 'List customer (company) links for this contact.',
+      description: 'List company / account links for this contact.',
       scopes: ['contacts:read'],
       isWrite: false,
       params: [
@@ -241,23 +241,23 @@ export const CONTACTS: ResourceGroup = {
     {
       method: 'POST',
       path: '/contacts/:id/employers/:customerId',
-      description: 'Link a contact to a customer (employer relationship).',
+      description: 'Link a contact to a company / account (employer relationship). Path param name preserved for backward compatibility.',
       scopes: ['contacts:write'],
       isWrite: true,
       params: [
         { name: 'id', type: 'uuid', required: true, description: 'Contact ID', in: 'path' },
-        { name: 'customerId', type: 'uuid', required: true, description: 'Customer ID to link', in: 'path' },
+        { name: 'customerId', type: 'uuid', required: true, description: 'Company ID to link', in: 'path' },
       ],
     },
     {
       method: 'DELETE',
       path: '/contacts/:id/employers/:customerId',
-      description: 'Remove an employer link between a contact and customer.',
+      description: 'Remove an employer link between a contact and a company. Path param name preserved for backward compatibility.',
       scopes: ['contacts:write'],
       isWrite: true,
       params: [
         { name: 'id', type: 'uuid', required: true, description: 'Contact ID', in: 'path' },
-        { name: 'customerId', type: 'uuid', required: true, description: 'Customer ID to unlink', in: 'path' },
+        { name: 'customerId', type: 'uuid', required: true, description: 'Company ID to unlink', in: 'path' },
       ],
     },
     {

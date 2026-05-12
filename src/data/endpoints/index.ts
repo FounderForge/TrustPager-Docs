@@ -1,6 +1,10 @@
 export { type EndpointParam, type Endpoint, type ResourceGroup, API_BASE_URL } from './types.js';
 export { SEARCH } from './search.js';
 export { CONTACTS } from './contacts.js';
+// Canonical names (2026-05-13)
+export { COMPANIES } from './companies.js';
+export { OPPORTUNITIES } from './opportunities.js';
+// Legacy aliases (re-exported from the canonical files above) -- kept indefinitely.
 export { CUSTOMERS } from './customers.js';
 export { DEALS } from './deals.js';
 export { AUTOMATIONS } from './automations.js';
@@ -57,8 +61,8 @@ export { SPREADSHEETS } from './spreadsheets.js';
 import { type ResourceGroup } from './types.js';
 import { SEARCH } from './search.js';
 import { CONTACTS } from './contacts.js';
-import { CUSTOMERS } from './customers.js';
-import { DEALS } from './deals.js';
+import { COMPANIES } from './companies.js';
+import { OPPORTUNITIES } from './opportunities.js';
 import { AUTOMATIONS } from './automations.js';
 import { EMAIL } from './email.js';
 import { PIPELINES } from './pipelines.js';
@@ -110,11 +114,21 @@ import { VOICE_AGENT_KBS } from './voice-agent-kbs.js';
 import { CRM_EXPORT } from './crm-export.js';
 import { SPREADSHEETS } from './spreadsheets.js';
 
+// =============================================================================
+// RESOURCES -- ordered for the sidebar / API hub.
+//
+// 2026-05-13: COMPANIES + OPPORTUNITIES are the canonical entries (formerly
+// CUSTOMERS + DEALS). The legacy DEALS / CUSTOMERS exports above point at the
+// same ResourceGroup objects, so they're intentionally NOT listed here a
+// second time -- the sidebar would otherwise show two duplicate entries with
+// different labels for the same resource.
+// =============================================================================
+
 export const RESOURCES: ResourceGroup[] = [
   SEARCH,
   CONTACTS,
-  CUSTOMERS,
-  DEALS,
+  COMPANIES,
+  OPPORTUNITIES,
   PIPELINES,
   PRODUCTS,
   SUPPLIER_PRODUCTS,
@@ -167,7 +181,16 @@ export const RESOURCES: ResourceGroup[] = [
   CRM_EXPORT,
 ];
 
-/** Look up a resource group by its id (URL slug) */
+/**
+ * Look up a resource group by its id (URL slug).
+ *
+ * Accepts both canonical ids (opportunities, companies) and legacy aliases
+ * (deals, customers) so that bookmarked /api/deals and /api/customers URLs
+ * keep resolving to the same resource page.
+ */
 export function getResourceById(id: string): ResourceGroup | undefined {
+  // Legacy slug redirects -- map alias to canonical
+  if (id === 'deals') return RESOURCES.find(r => r.id === 'opportunities');
+  if (id === 'customers') return RESOURCES.find(r => r.id === 'companies');
   return RESOURCES.find(r => r.id === id);
 }

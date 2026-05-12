@@ -3,9 +3,9 @@ import { CodeBlock } from '@/components/docs/CodeBlock';
 
 const EXAMPLES = [
   {
-    title: 'Create a contact and add them to a deal',
-    description: 'Ask Claude to create a new contact and link them to an existing deal.',
-    prompt: '"Create a contact named Sarah Chen with email sarah@acme.com and add her to my Website Redesign deal"',
+    title: 'Create a contact and add them to an opportunity',
+    description: 'Ask Claude to create a new contact and link them to an existing opportunity.',
+    prompt: '"Create a contact named Sarah Chen with email sarah@acme.com and add her to my Website Redesign opportunity"',
     toolCalls: `// Claude will call these tools in sequence:
 
 // 1. Create the contact
@@ -15,19 +15,20 @@ create_contact({
   email: "sarah@acme.com"
 })
 
-// 2. Search for the deal
-search_deals({ query: "Website Redesign" })
+// 2. Search for the opportunity
+//    (legacy alias search_deals still works)
+search_opportunities({ query: "Website Redesign" })
 
-// 3. Add the contact to the deal
-add_deal_contact({
-  deal_id: "deal-uuid-...",
+// 3. Add the contact to the opportunity
+add_opportunity_contact({
+  opportunity_id: "opp-uuid-...",
   contact_id: "new-contact-uuid-..."
 })`,
   },
   {
     title: 'Set up an automation workflow',
-    description: 'Ask Claude to create an automation that sends a welcome email when a deal enters a pipeline.',
-    prompt: '"Create an automation called New Lead Welcome that sends a welcome email when a deal enters the Sales pipeline"',
+    description: 'Ask Claude to create an automation that sends a welcome email when an opportunity enters a pipeline.',
+    prompt: '"Create an automation called New Lead Welcome that sends a welcome email when an opportunity enters the Sales pipeline"',
     toolCalls: `// Claude will:
 
 // 1. Find the Sales pipeline
@@ -64,24 +65,24 @@ enable_automation({ automation_id: "auto-uuid-..." })`,
   {
     title: 'Get a sales pipeline summary',
     description: 'Ask Claude for a quick overview of your pipeline performance.',
-    prompt: '"Give me a summary of my Sales pipeline -- how many deals in each stage and total value?"',
+    prompt: '"Give me a summary of my Sales pipeline -- how many opportunities in each stage and total value?"',
     toolCalls: `// Claude will call:
 get_pipeline_summary({ pipeline_id: "pipe-uuid-..." })
 
-// Response includes deal counts, values per stage,
+// Response includes opportunity counts, values per stage,
 // and overall pipeline metrics`,
   },
   {
     title: 'Send a follow-up email',
-    description: 'Ask Claude to send an email to a contact with deal context.',
+    description: 'Ask Claude to send an email to a contact with opportunity context.',
     prompt: '"Send a follow-up email to John Smith about the Website Redesign proposal"',
     toolCalls: `// Claude will:
 
 // 1. Find the contact
 search_contacts({ query: "John Smith" })
 
-// 2. Find the deal
-search_deals({ query: "Website Redesign" })
+// 2. Find the opportunity (legacy: search_deals)
+search_opportunities({ query: "Website Redesign" })
 
 // 3. Send the email
 send_email({
@@ -90,8 +91,46 @@ send_email({
   subject: "Following up on Website Redesign Proposal",
   html_body: "<p>Hi John,</p><p>I wanted to follow up on the Website Redesign proposal we discussed...</p>",
   contact_id: "contact-uuid-...",
-  deal_id: "deal-uuid-..."
+  deal_id: "opp-uuid-..."
 })`,
+  },
+  {
+    title: 'Discover what an agent can do with an opportunity',
+    description: 'Use the tier-2 discovery primitive to ask the server which tools operate on a given resource. Returns the curated tool surface (primary CRUD, sub-resources, activities, workflows, field hints) instead of having the agent guess.',
+    prompt: '"What tools do you have for working with opportunities?"',
+    toolCalls: `// 1. Discover the tool surface for the resource
+//    (free, 0 credits, response is structured for the model)
+describe_resource({ resource: "opportunity" })
+
+// 2. Returned shape (abridged):
+//
+//    {
+//      "resource": "opportunity",
+//      "primary": ["create_opportunity", "get_opportunity",
+//                  "update_opportunity", "delete_opportunity",
+//                  "search_opportunities", "list_opportunities"],
+//      "sub_resources": {
+//        "products":     ["add_opportunity_product", ...],
+//        "contacts":     ["add_opportunity_contact", ...],
+//        "users":        ["assign_opportunity_user", ...],
+//        "activities":   ["get_opportunity_activities"],
+//        "tasks":        ["get_opportunity_tasks"],
+//        "work_orders":  ["get_opportunity_work_orders"],
+//        "files":        ["list_opportunity_files",
+//                         "add_opportunity_file",
+//                         "remove_opportunity_file"],
+//        "documents":    ["list_opportunity_documents", ...],
+//        "images":       ["list_opportunity_images", ...],
+//        "spreadsheets": ["list_opportunity_spreadsheets", ...],
+//        "invoices":     ["list_opportunity_invoices"]
+//      },
+//      "workflows": ["move_opportunity", "add_opportunity_card",
+//                    "bulk_create_opportunities",
+//                    "bulk_move_opportunities"],
+//      "field_hints": { "status": ["open","won","lost"], ... }
+//    }
+
+// 3. Now call the right tool from that list, no guessing.`,
   },
 ];
 

@@ -7,7 +7,7 @@ import { type ResourceGroup, API_BASE_URL } from './types.js';
 export const SCHEDULING_BOOKINGS: ResourceGroup = {
   id: 'scheduling-bookings',
   label: 'Scheduling Bookings',
-  description: 'Create, manage, and check availability for bookings. Bookings link to deals via deal_id and surface in the Meetings card on the opportunity page. Scheduler bookings are separate from the deal next_action_* fields, which are for ad-hoc reminders only. AI-agent-friendly: human-readable responses, self-correcting errors with alternatives, nearest-slot suggestions. Includes voice-optimised endpoints (text/plain responses) designed for Retell AI voice agents.',
+  description: 'Create, manage, and check availability for bookings. Bookings link to an opportunity via deal_id (field name preserved for backward compatibility) and surface in the Meetings card on the opportunity page. Scheduler bookings are separate from the opportunity\'s next_action_* fields, which are for ad-hoc reminders only. AI-agent-friendly: human-readable responses, self-correcting errors with alternatives, nearest-slot suggestions. Includes voice-optimised endpoints (text/plain responses) designed for Retell AI voice agents.',
   endpoints: [
     {
       method: 'GET',
@@ -81,7 +81,7 @@ export const SCHEDULING_BOOKINGS: ResourceGroup = {
     {
       method: 'POST',
       path: '/scheduling-bookings',
-      description: 'Create a booking. Auto-creates CRM deal + contact. Flat request body (no nested objects). On slot conflict, returns SLOT_UNAVAILABLE error with nearest alternatives. Accepts event type by ID, slug, or name.',
+      description: 'Create a booking. Auto-creates CRM opportunity + contact (response field names like deal_id are preserved for backward compatibility). Flat request body (no nested objects). On slot conflict, returns SLOT_UNAVAILABLE error with nearest alternatives. Accepts event type by ID, slug, or name.',
       scopes: ['company:write'],
       isWrite: true,
       params: [
@@ -138,7 +138,7 @@ export const SCHEDULING_BOOKINGS: ResourceGroup = {
     {
       method: 'POST',
       path: '/scheduling-bookings/:id/cancel',
-      description: 'Cancel a booking. Updates status, removes Google Calendar event (notifies all attendees), and cancels pending reminders. Does not affect deal next_action fields (bookings and next_action are independent).',
+      description: 'Cancel a booking. Updates status, removes Google Calendar event (notifies all attendees), and cancels pending reminders. Does not affect the opportunity\'s next_action fields (bookings and next_action are independent).',
       scopes: ['company:write'],
       isWrite: true,
       params: [
@@ -242,7 +242,7 @@ export const SCHEDULING_BOOKINGS: ResourceGroup = {
     {
       method: 'POST',
       path: '/scheduling-bookings/:id/mark-attended',
-      description: 'Mark a booking as attended. Sets status to "attended", clears linked deal next action, cancels pending reminders, and logs a CRM activity with full booking context.',
+      description: 'Mark a booking as attended. Sets status to "attended", clears the linked opportunity\'s next action, cancels pending reminders, and logs a CRM activity with full booking context.',
       scopes: ['company:write'],
       isWrite: true,
       params: [
@@ -272,7 +272,7 @@ export const SCHEDULING_BOOKINGS: ResourceGroup = {
     {
       method: 'POST',
       path: '/scheduling-bookings/:id/notetaker',
-      description: 'Attach the TrustPager Notetaker (Recall.ai bot) to an existing confirmed booking. The bot joins 60 seconds before the meeting start time, transcribes with speaker attribution, and writes the transcript to the linked CRM deal. Idempotent -- safe to call multiple times (returns already_scheduled: true if already registered). Requires: (1) TrustPager Notetaker enabled in company settings, (2) booking must have a google_meet_link, (3) booking must not be cancelled. Credits: 23 credits per recorded minute, billed after the meeting ends.',
+      description: 'Attach the TrustPager Notetaker to an existing confirmed booking. The bot joins 60 seconds before the meeting start time, transcribes with speaker attribution, and writes the transcript to the linked CRM opportunity. Idempotent -- safe to call multiple times (returns already_scheduled: true if already registered). Requires: (1) TrustPager Notetaker enabled in company settings, (2) booking must have a google_meet_link, (3) booking must not be cancelled. Credits: 23 credits per recorded minute, billed after the meeting ends.',
       scopes: ['company:write'],
       isWrite: true,
       params: [

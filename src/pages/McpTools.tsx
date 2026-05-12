@@ -1,10 +1,47 @@
 import { Helmet } from 'react-helmet-async';
 import { RESOURCES } from '@/data/endpoints';
 
+// =============================================================================
+// Discovery protocol (2026-05-13)
+//
+// The MCP server's static "Primitives" instruction blob has been replaced with
+// a 4-line stable header that points agents at the Discovery primitives below.
+// The first thing an agent should do at the start of a session is:
+//
+//   1. get_ai_instructions          -- load workspace-wide workflow guidance
+//   2. describe_resource("opportunity") etc. -- get the curated tool surface
+//   3. search_help_center           -- find a tutorial for "how do I X"
+//   4. create_service_request       -- file a gap when a tool is missing
+//
+// All four are free (0 credits) and idempotent.
+// =============================================================================
+const DISCOVERY_TOOLS = [
+  {
+    name: 'get_ai_instructions',
+    summary:
+      'Tier 1. Load the current workspace workflow guidance, correct tool sequences, and common mistakes. Call once per session and cache the result.',
+  },
+  {
+    name: 'describe_resource',
+    summary:
+      'Tier 2. Pass a resource name (opportunity, company, contact, file, document, image, task, booking, invoice, spreadsheet, notepad, form, automation, voice_agent, ...) and get the curated tool surface for that entity: primary CRUD, sub-resources, activities, workflows, field hints.',
+  },
+  {
+    name: 'search_help_center',
+    summary:
+      'Free-text search across the published help-center articles. Use this for any "how do I…" question before guessing tool names.',
+  },
+  {
+    name: 'create_service_request',
+    summary:
+      'File a gap (missing tool, missing field, missing filter, confusing error, bug) into the TrustPager triage queue. Include category, affected_tools, suggested_solution, and use_case.',
+  },
+];
+
 const TOOL_CATEGORIES = [
   {
-    label: 'Universal Search',
-    tools: ['search'],
+    label: 'Discovery (call these first)',
+    tools: ['get_ai_instructions', 'describe_resource', 'search_help_center', 'create_service_request', 'search'],
   },
   {
     label: 'Contacts',
@@ -15,21 +52,43 @@ const TOOL_CATEGORIES = [
     ],
   },
   {
-    label: 'Customers',
+    label: 'Companies (canonical) — formerly Customers',
     tools: [
+      // Canonical names
+      'search_companies', 'list_companies', 'get_company', 'create_company', 'update_company', 'delete_company',
+      'get_company_contacts', 'get_company_opportunities', 'get_company_activities',
+      'bulk_create_companies', 'bulk_update_companies', 'bulk_delete_companies',
+      // Legacy aliases (kept indefinitely)
       'search_customers', 'list_customers', 'get_customer', 'create_customer', 'update_customer', 'delete_customer',
       'get_customer_contacts', 'get_customer_deals', 'get_customer_activities',
+      'bulk_create_customers', 'bulk_update_customers', 'bulk_delete_customers',
     ],
   },
   {
-    label: 'Deals',
+    label: 'Opportunities (canonical) — formerly Deals',
     tools: [
+      // Canonical names
+      'search_opportunities', 'list_opportunities', 'get_opportunity', 'create_opportunity', 'update_opportunity', 'delete_opportunity', 'move_opportunity',
+      'add_opportunity_product', 'update_opportunity_product', 'remove_opportunity_product', 'get_opportunity_products', 'reorder_opportunity_products',
+      'list_opportunity_product_costs', 'create_opportunity_product_cost', 'update_opportunity_product_cost', 'delete_opportunity_product_cost',
+      'add_opportunity_contact', 'remove_opportunity_contact', 'list_opportunity_contacts',
+      'assign_opportunity_user', 'unassign_opportunity_user', 'list_opportunity_users',
+      'get_opportunity_activities', 'get_opportunity_tasks', 'get_opportunity_work_orders',
+      'bulk_create_opportunities', 'bulk_update_opportunities', 'bulk_delete_opportunities', 'bulk_move_opportunities',
+      // New 2026-05-13 attachment tools
+      'list_opportunity_files', 'add_opportunity_file', 'remove_opportunity_file',
+      'list_opportunity_documents', 'add_opportunity_document', 'remove_opportunity_document',
+      'list_opportunity_images', 'add_opportunity_image', 'remove_opportunity_image',
+      'list_opportunity_spreadsheets', 'add_opportunity_spreadsheet', 'remove_opportunity_spreadsheet',
+      'list_opportunity_invoices',
+      // Legacy aliases (kept indefinitely)
       'search_deals', 'list_deals', 'get_deal', 'create_deal', 'update_deal', 'delete_deal', 'move_deal',
       'add_deal_product', 'update_deal_product', 'remove_deal_product', 'get_deal_products', 'reorder_deal_products',
       'list_deal_product_costs', 'create_deal_product_cost', 'update_deal_product_cost', 'delete_deal_product_cost',
       'add_deal_contact', 'remove_deal_contact', 'list_deal_contacts',
       'assign_deal_user', 'unassign_deal_user', 'list_deal_users',
       'get_deal_activities', 'get_deal_tasks', 'get_deal_work_orders',
+      'bulk_create_deals', 'bulk_update_deals', 'bulk_delete_deals', 'bulk_move_deals',
     ],
   },
   {
@@ -284,6 +343,57 @@ function McpTools() {
           {RESOURCES.reduce((sum, r) => sum + r.endpoints.length, 0)} API endpoints total)
         </p>
 
+        {/* --------------------------------------------------------------- */}
+        {/* Discovery protocol overview                                     */}
+        {/* --------------------------------------------------------------- */}
+        <section className="mb-12 bg-teal-50/60 border border-teal-200 rounded-lg p-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-2">Discovery protocol</h2>
+          <p className="text-sm text-gray-700 mb-4">
+            The MCP server's instruction blob points at four discovery primitives. Call them
+            at the start of every session instead of guessing tool names — they're all free
+            (0 credits) and they replace the older static "Primitives" list.
+          </p>
+          <ol className="space-y-3 list-decimal pl-5">
+            {DISCOVERY_TOOLS.map((t, i) => (
+              <li key={t.name} className="text-sm text-gray-700">
+                <code className="font-mono text-teal-700 bg-white px-1.5 py-0.5 rounded border border-teal-200 text-xs">
+                  {t.name}
+                </code>
+                <span className="ml-2">{t.summary}</span>
+                {i === 1 && (
+                  <div className="mt-2 text-xs text-gray-500 italic">
+                    Accepted resource values include: opportunity, company, contact, file, document,
+                    image, task, booking, invoice, spreadsheet, notepad, form, automation, voice_agent,
+                    pipeline, product, supplier_product, work_order, knowledge, transcript, and more.
+                  </div>
+                )}
+              </li>
+            ))}
+          </ol>
+        </section>
+
+        {/* --------------------------------------------------------------- */}
+        {/* Phase A naming refactor notice                                  */}
+        {/* --------------------------------------------------------------- */}
+        <section className="mb-12 bg-amber-50/60 border border-amber-200 rounded-lg p-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-2">2026-05-13 naming refactor</h2>
+          <p className="text-sm text-gray-700 mb-2">
+            All <code className="font-mono text-xs bg-white px-1 py-0.5 rounded border border-amber-200">deal_*</code> tools
+            are now <code className="font-mono text-xs bg-white px-1 py-0.5 rounded border border-amber-200">opportunity_*</code>,
+            and all <code className="font-mono text-xs bg-white px-1 py-0.5 rounded border border-amber-200">customer_*</code> tools
+            are now <code className="font-mono text-xs bg-white px-1 py-0.5 rounded border border-amber-200">company_*</code>.
+            The legacy tool names remain registered as indefinite aliases — every existing integration keeps working
+            with zero changes. The categories below list canonical names first and legacy aliases at the bottom of the same group.
+          </p>
+          <p className="text-sm text-gray-700">
+            13 new opportunity-attachment tools shipped alongside the rename (files, documents, images, spreadsheets,
+            invoices), all listed in the Opportunities group.
+          </p>
+        </section>
+
+        {/* --------------------------------------------------------------- */}
+        {/* Tool catalogue                                                  */}
+        {/* --------------------------------------------------------------- */}
         {TOOL_CATEGORIES.map(category => (
           <div key={category.label} className="mb-8">
             <h2 className="text-lg font-semibold text-gray-900 mb-3">
