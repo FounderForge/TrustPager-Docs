@@ -212,7 +212,7 @@ export const CONTACTS: ResourceGroup = {
       method: 'GET',
       path: '/contacts/:id/opportunities',
       description: 'List all opportunities associated with a contact. Legacy alias: GET /contacts/:id/deals.',
-      scopes: ['contacts:read', 'deals:read'],
+      scopes: ['contacts:read', 'opportunities:read'],
       isWrite: false,
       params: [
         { name: 'id', type: 'uuid', required: true, description: 'Contact ID', in: 'path' },

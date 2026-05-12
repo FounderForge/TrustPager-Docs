@@ -9,7 +9,7 @@ export const SEARCH: ResourceGroup = {
       method: 'POST',
       path: '/search',
       description: 'Universal fuzzy search across contacts, customers, and deals. Returns ranked results with entity_type, display_name, subtitle, and relevance rank. Exact substring matches rank highest (1.0), fuzzy matches rank by trigram similarity. Names support typo-tolerant matching; email and phone use exact substring matching.',
-      scopes: ['contacts:read', 'customers:read', 'deals:read'],
+      scopes: ['contacts:read', 'companies:read', 'opportunities:read'],
       isWrite: false,
       params: [
         { name: 'query', type: 'string', required: true, description: 'Search text -- matches names, emails, phone numbers across all entity types', in: 'body' },

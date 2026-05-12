@@ -12,7 +12,7 @@ export const REPORTS: ResourceGroup = {
     // ── Query Engine ────────────────────────────────────────────────────────
     {
       method: 'POST', path: '/reports/query', description: 'Run a report query. Returns aggregated rows for charts or individual deal rows for drilldowns.',
-      scopes: ['deals:read'], isWrite: false,
+      scopes: ['opportunities:read'], isWrite: false,
       params: [
         { name: 'source', type: 'string', required: true, description: 'Data source. Currently "deals".', in: 'body' },
         { name: 'measures', type: 'array', required: false, description: 'Array of { field, aggregation, alias }. Fields: id, value, products_total_value. Aggregations: count, sum, avg, min, max.', in: 'body' },
@@ -25,17 +25,17 @@ export const REPORTS: ResourceGroup = {
     },
     {
       method: 'GET', path: '/reports/sources', description: 'List available data sources with supported measures, dimensions, and filter fields.',
-      scopes: ['deals:read'], isWrite: false,
+      scopes: ['opportunities:read'], isWrite: false,
     },
     {
       method: 'GET', path: '/reports/templates', description: 'List available dashboard templates: sales_overview, staff_accountability, pipeline_health, marketing_roi.',
-      scopes: ['deals:read'], isWrite: false,
+      scopes: ['opportunities:read'], isWrite: false,
     },
 
     // ── Dashboard CRUD ──────────────────────────────────────────────────────
     {
       method: 'POST', path: '/report-dashboards', description: 'Create a report dashboard. Supports template expansion with optional pipeline_id scoping. Set visibility to "restricted" then use POST /report-dashboards/:id/acl to grant per-user/role access.',
-      scopes: ['deals:read'], isWrite: true,
+      scopes: ['opportunities:read'], isWrite: true,
       params: [
         { name: 'name', type: 'string', required: false, description: 'Dashboard name. Required if no template.', in: 'body' },
         { name: 'description', type: 'string', required: false, description: 'Dashboard description.', in: 'body' },
@@ -46,16 +46,16 @@ export const REPORTS: ResourceGroup = {
     },
     {
       method: 'GET', path: '/report-dashboards', description: 'List all report dashboards for the company.',
-      scopes: ['deals:read'], isWrite: false,
+      scopes: ['opportunities:read'], isWrite: false,
     },
     {
       method: 'GET', path: '/report-dashboards/:id', description: 'Get a dashboard with all its cards. Each card includes title, visualization_type, size, position, and full query_spec.',
-      scopes: ['deals:read'], isWrite: false,
+      scopes: ['opportunities:read'], isWrite: false,
       params: [{ name: 'id', type: 'uuid', required: true, description: 'Dashboard UUID.', in: 'path' }],
     },
     {
       method: 'PATCH', path: '/report-dashboards/:id', description: 'Partial update -- rename, re-describe, or change visibility of a dashboard. Changing visibility to "all_users" removes the restriction but does not delete existing ACL entries.',
-      scopes: ['deals:read'], isWrite: true,
+      scopes: ['opportunities:read'], isWrite: true,
       params: [
         { name: 'id', type: 'uuid', required: true, description: 'Dashboard UUID.', in: 'path' },
         { name: 'name', type: 'string', required: false, description: 'New name.', in: 'body' },
@@ -65,19 +65,19 @@ export const REPORTS: ResourceGroup = {
     },
     {
       method: 'DELETE', path: '/report-dashboards/:id', description: 'Delete a dashboard and all its cards permanently.',
-      scopes: ['deals:read'], isWrite: true,
+      scopes: ['opportunities:read'], isWrite: true,
       params: [{ name: 'id', type: 'uuid', required: true, description: 'Dashboard UUID.', in: 'path' }],
     },
 
     // ── ACL ─────────────────────────────────────────────────────────────────
     {
       method: 'GET', path: '/report-dashboards/:id/acl', description: 'List ACL entries for a restricted dashboard. Each entry has user_id or role_name indicating who has access.',
-      scopes: ['deals:read'], isWrite: false,
+      scopes: ['opportunities:read'], isWrite: false,
       params: [{ name: 'id', type: 'uuid', required: true, description: 'Dashboard UUID.', in: 'path' }],
     },
     {
       method: 'POST', path: '/report-dashboards/:id/acl', description: 'Grant a user or role access to a restricted dashboard. Set visibility="restricted" on the dashboard first.',
-      scopes: ['deals:read'], isWrite: true,
+      scopes: ['opportunities:read'], isWrite: true,
       params: [
         { name: 'id', type: 'uuid', required: true, description: 'Dashboard UUID.', in: 'path' },
         { name: 'principal_type', type: 'string', required: true, description: '"user" or "role".', in: 'body' },
@@ -88,7 +88,7 @@ export const REPORTS: ResourceGroup = {
     // ── Card CRUD ───────────────────────────────────────────────────────────
     {
       method: 'POST', path: '/report-dashboards/:id/cards', description: 'Add a chart card to a dashboard.',
-      scopes: ['deals:read'], isWrite: true,
+      scopes: ['opportunities:read'], isWrite: true,
       params: [
         { name: 'id', type: 'uuid', required: true, description: 'Dashboard UUID.', in: 'path' },
         { name: 'title', type: 'string', required: true, description: 'Card title.', in: 'body' },
@@ -100,7 +100,7 @@ export const REPORTS: ResourceGroup = {
     },
     {
       method: 'PATCH', path: '/report-cards/:id', description: 'Partial update on a card -- change title, visualization type, query spec, size, or position.',
-      scopes: ['deals:read'], isWrite: true,
+      scopes: ['opportunities:read'], isWrite: true,
       params: [
         { name: 'id', type: 'uuid', required: true, description: 'Card UUID.', in: 'path' },
         { name: 'title', type: 'string', required: false, description: 'Card title.', in: 'body' },
@@ -112,12 +112,12 @@ export const REPORTS: ResourceGroup = {
     },
     {
       method: 'DELETE', path: '/report-cards/:id', description: 'Remove a card from its dashboard. Dashboard itself is not affected.',
-      scopes: ['deals:read'], isWrite: true,
+      scopes: ['opportunities:read'], isWrite: true,
       params: [{ name: 'id', type: 'uuid', required: true, description: 'Card UUID.', in: 'path' }],
     },
     {
       method: 'PUT', path: '/report-dashboards/:id/reorder', description: 'Reorder cards by providing an ordered array of card UUIDs.',
-      scopes: ['deals:read'], isWrite: true,
+      scopes: ['opportunities:read'], isWrite: true,
       params: [
         { name: 'id', type: 'uuid', required: true, description: 'Dashboard UUID.', in: 'path' },
         { name: 'card_ids', type: 'array', required: true, description: 'Ordered array of card UUIDs.', in: 'body' },
@@ -127,12 +127,12 @@ export const REPORTS: ResourceGroup = {
     // ── Funnel Config ───────────────────────────────────────────────────────
     {
       method: 'GET', path: '/report-funnels', description: 'Get funnel step configuration for a pipeline.',
-      scopes: ['deals:read'], isWrite: false,
+      scopes: ['opportunities:read'], isWrite: false,
       params: [{ name: 'pipeline_id', type: 'uuid', required: true, description: 'Pipeline UUID.', in: 'query' }],
     },
     {
       method: 'PUT', path: '/report-funnels', description: 'Create or update funnel step configuration for a pipeline.',
-      scopes: ['deals:read'], isWrite: true,
+      scopes: ['opportunities:read'], isWrite: true,
       params: [
         { name: 'pipeline_id', type: 'uuid', required: true, description: 'Pipeline UUID.', in: 'body' },
         { name: 'steps', type: 'array', required: true, description: 'Array of { name, stage_ids[] }. Each step groups one or more pipeline stages.', in: 'body' },
@@ -140,7 +140,7 @@ export const REPORTS: ResourceGroup = {
     },
     {
       method: 'DELETE', path: '/report-funnels/:id', description: 'Delete a funnel config.',
-      scopes: ['deals:read'], isWrite: true,
+      scopes: ['opportunities:read'], isWrite: true,
       params: [{ name: 'id', type: 'uuid', required: true, description: 'Funnel config UUID.', in: 'path' }],
     },
   ],
