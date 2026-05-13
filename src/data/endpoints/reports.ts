@@ -124,6 +124,45 @@ export const REPORTS: ResourceGroup = {
       ],
     },
 
+    // ── Digest Send ─────────────────────────────────────────────────────────
+    {
+      method: 'POST', path: '/reports/send', description: 'Send a report dashboard as an email digest. Dashboard cards render server-side and are inlined into the email body. Each recipient is scoped via current_user_id so cards filtered to "the current user" naturally show per-recipient data. Returns per-recipient send status with skipped_reason when a send is suppressed.',
+      scopes: ['opportunities:read'], isWrite: true,
+      params: [
+        { name: 'dashboard_id', type: 'uuid', required: true, description: 'UUID of the dashboard to send.', in: 'body' },
+        { name: 'recipients', type: 'array', required: true, description: 'Array of recipients. Each item is a plain email string or { email, name?, user_id? }. user_id scopes the rendered report to that workspace user.', in: 'body' },
+        { name: 'subject', type: 'string', required: false, description: 'Email subject line. Defaults to the dashboard name.', in: 'body' },
+        { name: 'intro_text', type: 'string', required: false, description: 'Plain-text intro paragraph above the report block. Supports {{variable}} placeholders. Ignored when intro_html is also set.', in: 'body' },
+        { name: 'outro_text', type: 'string', required: false, description: 'Plain-text outro paragraph below the report block. Supports {{variable}} placeholders. Ignored when outro_html is also set.', in: 'body' },
+        { name: 'intro_html', type: 'string', required: false, description: 'Pre-authored HTML intro (e.g. from the rich-text wizard). Takes precedence over intro_text when both are provided.', in: 'body' },
+        { name: 'outro_html', type: 'string', required: false, description: 'Pre-authored HTML outro. Takes precedence over outro_text when both are provided.', in: 'body' },
+        { name: 'sender_name', type: 'string', required: false, description: 'Display name shown above the signature line.', in: 'body' },
+        { name: 'suppress_if_empty', type: 'boolean', required: false, description: 'When true (default), skip sending to any recipient whose dashboard renders zero rows. Skipped sends are reported as success with skipped_reason: "empty_dashboard".', in: 'body' },
+        { name: 'email_config_id', type: 'uuid', required: false, description: 'Optional email config UUID to pin the sender alias or provider.', in: 'body' },
+        { name: 'email_provider', type: 'string', required: false, description: 'Provider to use: "postmark" (TrustPager Mail, default) or "gmail". Gmail requires the workspace email_config to have a Gmail sender connected; returns an error otherwise.', in: 'body' },
+        { name: 'contact_id', type: 'uuid', required: false, description: 'Optional CRM contact UUID to associate with the email send log.', in: 'body' },
+        { name: 'customer_id', type: 'uuid', required: false, description: 'Optional CRM company UUID to associate with the email send log.', in: 'body' },
+        { name: 'deal_id', type: 'uuid', required: false, description: 'Optional CRM opportunity UUID to associate with the email send log.', in: 'body' },
+      ],
+      example: {
+        request: {
+          dashboard_id: '550e8400-e29b-41d4-a716-446655440000',
+          recipients: [{ email: 'alice@example.com', name: 'Alice', user_id: 'usr_abc123' }],
+          subject: 'Your weekly sales report',
+          intro_html: '<p>Hi {{name}}, here is your weekly summary.</p>',
+          email_provider: 'postmark',
+          suppress_if_empty: true,
+        },
+        response: {
+          success: true,
+          dashboard_name: 'Sales Overview',
+          recipients: [
+            { email: 'alice@example.com', sent: true, rendered_card_count: 4 },
+          ],
+        },
+      },
+    },
+
     // ── Funnel Config ───────────────────────────────────────────────────────
     {
       method: 'GET', path: '/report-funnels', description: 'Get funnel step configuration for a pipeline.',
