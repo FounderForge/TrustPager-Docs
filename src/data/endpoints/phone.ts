@@ -35,5 +35,60 @@ export const PHONE: ResourceGroup = {
     { method: 'GET', path: '/phone/bundles', description: 'List regulatory bundles for phone compliance.', scopes: ['phone:read'], isWrite: false },
     { method: 'POST', path: '/phone/bundles', description: 'Create a regulatory bundle.', scopes: ['phone:write'], isWrite: true },
     { method: 'POST', path: '/phone/bundles/:id/submit', description: 'Submit a regulatory bundle for review.', scopes: ['phone:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Bundle ID', in: 'path' }] },
+    {
+      method: 'GET',
+      path: '/phone/bundles/:id',
+      description: 'Get a single regulatory bundle with live compliance state. Returns the DB record plus live provider detail and evaluation history (per-requirement pass/fail breakdown). Use this to diagnose why a bundle was rejected and see which compliance requirements failed.',
+      scopes: ['phone:read'],
+      isWrite: false,
+      params: [
+        { name: 'id', type: 'uuid', required: true, description: 'Bundle UUID', in: 'path' },
+      ],
+      response: {
+        example: JSON.stringify({
+          id: 'uuid',
+          company_id: 'uuid',
+          bundle_sid: 'BU...',
+          friendly_name: 'My Bundle',
+          status: 'twilio-rejected',
+          approved_at: null,
+          created_at: '2025-01-01T00:00:00Z',
+          updated_at: '2025-01-01T00:00:00Z',
+          twilio: {
+            detail: {
+              sid: 'BU...',
+              friendly_name: 'My Bundle',
+              status: 'twilio-rejected',
+              valid_until: null,
+              email: 'admin@example.com',
+              status_callback: null,
+            },
+            detail_error: null,
+            evaluations: [
+              {
+                sid: 'EL...',
+                account_sid: 'AC...',
+                regulation_sid: 'RN...',
+                bundle_sid: 'BU...',
+                status: 'noncompliant',
+                date_created: '2025-01-01T00:00:00Z',
+                date_updated: '2025-01-01T00:00:00Z',
+                results: [
+                  {
+                    friendly_name: 'Business Identity',
+                    object_type: 'business',
+                    passed: false,
+                    failure_reason: 'Business name does not match government records',
+                    fields: [],
+                  },
+                ],
+              },
+            ],
+            evaluations_error: null,
+            parsed_status_message: 'Business name does not match government records',
+          },
+        }, null, 2),
+      },
+    },
   ],
 };
