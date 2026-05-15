@@ -91,6 +91,45 @@ export const FILES: ResourceGroup = {
       params: [{ name: 'id', type: 'uuid', required: true, description: 'Document file ID (type=document only)', in: 'path' }],
     },
     {
+      method: 'POST',
+      path: '/files/:id/make-public',
+      description: 'Move an image or secure file from private storage to the public CDN. For image files (type=image, is_private=true): the file is moved from private R2 to the public bucket and is_private is set to false -- the original private copy is removed. For secure files (type=secure): the file is copied from Supabase private storage to the public CDN and public_url is set -- the original private copy is retained. Returns the public URL of the published file. Use POST /files/:id/publish for documents (type=document).',
+      scopes: ['files:write'],
+      isWrite: true,
+      params: [{ name: 'id', type: 'uuid', required: true, description: 'File UUID (company_files row with is_private=true, or company_secure_files row)', in: 'path' }],
+      responseExample: JSON.stringify({
+        data: {
+          id: 'file-uuid',
+          type: 'image',
+          public_url: 'https://cdn.trustpager.com/client-website-content/company-id/filename.jpg',
+          is_private: false,
+        },
+      }, null, 2),
+    },
+    {
+      method: 'POST',
+      path: '/files/:id/make-private',
+      description: 'Move an image or secure file from the public CDN back to private storage. For image files (type=image, is_private=false): the file is moved from the public bucket to private R2 and is_private is set to true -- the public URL is no longer accessible. For secure files (type=secure): the public CDN copy is deleted and public_url is cleared -- the original private copy is retained. Use POST /files/:id/unpublish for documents (type=document).',
+      scopes: ['files:write'],
+      isWrite: true,
+      params: [{ name: 'id', type: 'uuid', required: true, description: 'File UUID (company_files row with is_private=false, or company_secure_files row with a public_url)', in: 'path' }],
+    },
+    {
+      method: 'GET',
+      path: '/files/:id/signed-url',
+      description: 'Generate a short-lived signed URL for a private image file stored in private R2. Only applicable to image files (type=image) with is_private=true. The signed URL expires after 600 seconds (10 minutes) and allows temporary read access without making the file permanently public. Returns the signed URL, expiry timestamp, and MIME type.',
+      scopes: ['files:read'],
+      isWrite: false,
+      params: [{ name: 'id', type: 'uuid', required: true, description: 'File UUID of a private image (company_files row with is_private=true)', in: 'path' }],
+      responseExample: JSON.stringify({
+        data: {
+          signed_url: 'https://private.r2.dev/trustpager-private/...?X-Amz-Signature=...',
+          expires_at: '2026-05-16T12:10:00.000Z',
+          mime_type: 'image/jpeg',
+        },
+      }, null, 2),
+    },
+    {
       method: 'GET',
       path: '/files/folders?type=document|image|secure',
       description: 'List distinct folder names for a given file type. Use type="document", "image", or "secure".',
