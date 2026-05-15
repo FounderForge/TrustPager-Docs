@@ -289,5 +289,36 @@ export const SPREADSHEETS: ResourceGroup = {
         { name: 'rowId', type: 'uuid', required: true, description: 'Row ID', in: 'path' },
       ],
     },
+    {
+      method: 'POST',
+      path: '/spreadsheets/:id/rows/bulk',
+      description: 'Append up to 100 rows in a single request. Rows are inserted in input order. Returns created[] with original input index on each entry, and errors[] for any rows that failed. Use this instead of looping POST /spreadsheets/:id/rows for imports larger than ~10 rows.',
+      scopes: ['spreadsheets:write'],
+      isWrite: true,
+      params: [
+        { name: 'id', type: 'uuid', required: true, description: 'Spreadsheet ID', in: 'path' },
+        { name: 'rows', type: 'array', required: true, description: 'Array of row objects (max 100). Each item: { cells: { "<column-uuid>": <value> } }. cells may be omitted to insert an empty row.', in: 'body' },
+      ],
+      requestExample: `curl -X POST "https://ucqwijexmjctglmrxlej.supabase.co/functions/v1/api/v1/spreadsheets/spr-uuid/rows/bulk" \\
+  -H "Authorization: Bearer tp_live_..." \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "rows": [
+      { "cells": { "col-uuid-1": "Widget A", "col-uuid-2": "First item note" } },
+      { "cells": { "col-uuid-1": "Widget B", "col-uuid-2": "Second item note" } },
+      { "cells": { "col-uuid-1": "Widget C" } }
+    ]
+  }'`,
+      responseExample: JSON.stringify({
+        created: [
+          { index: 0, id: 'row-uuid-1', spreadsheet_id: 'spr-uuid', row_index: 0, cells: { 'col-uuid-1': 'Widget A', 'col-uuid-2': 'First item note' } },
+          { index: 1, id: 'row-uuid-2', spreadsheet_id: 'spr-uuid', row_index: 1, cells: { 'col-uuid-1': 'Widget B', 'col-uuid-2': 'Second item note' } },
+          { index: 2, id: 'row-uuid-3', spreadsheet_id: 'spr-uuid', row_index: 2, cells: { 'col-uuid-1': 'Widget C' } },
+        ],
+        errors: [],
+        created_count: 3,
+        error_count: 0,
+      }, null, 2),
+    },
   ],
 };

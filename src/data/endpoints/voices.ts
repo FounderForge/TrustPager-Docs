@@ -81,5 +81,68 @@ export const VOICES: ResourceGroup = {
         { name: 'id', type: 'uuid', required: true, description: 'Voice UUID to delete', in: 'path' },
       ],
     },
+    // --- Provider catalogue ---
+    {
+      method: 'GET',
+      path: '/voices/provider-catalog',
+      description: 'List the upstream voice provider catalogue. Returns each voice with its namespaced provider voice_id (e.g. "11labs-Noah"), name, accent, gender, and preview URL. Use this to discover valid values for set_provider_voice_mapping, or to troubleshoot voice rejections when creating or provisioning voice agents.',
+      scopes: ['voices:read'],
+      isWrite: false,
+      params: [],
+      responseExample: JSON.stringify({
+        data: {
+          voices: [
+            { voice_id: '11labs-Noah', name: 'Noah', accent: 'American', gender: 'male', preview_audio_url: 'https://...' },
+            { voice_id: '11labs-Jessica', name: 'Jessica', accent: 'American', gender: 'female', preview_audio_url: 'https://...' },
+          ],
+          count: 2,
+        },
+      }, null, 2),
+    },
+    {
+      method: 'POST',
+      path: '/voices/:id/provider-mapping',
+      description: 'Map a local voice (workspace or platform) to a provider-format voice ID so voice agent creation and provisioning use it instead of the fallback voice. Pass a namespaced voice_id (e.g. "11labs-Noah") from GET /voices/provider-catalog. Pass null to clear an existing mapping.',
+      scopes: ['voices:write'],
+      isWrite: true,
+      params: [
+        { name: 'id', type: 'uuid', required: true, description: 'Local voice UUID (workspace or platform voice)', in: 'path' },
+        { name: 'retell_voice_id', type: 'string|null', required: true, description: 'Provider-format voice ID (e.g. "11labs-Noah"). Pass null to clear.', in: 'body' },
+      ],
+      requestExample: `curl -X POST "https://ucqwijexmjctglmrxlej.supabase.co/functions/v1/api/v1/voices/voice-uuid/provider-mapping" \\
+  -H "Authorization: Bearer tp_live_..." \\
+  -H "Content-Type: application/json" \\
+  -d '{"retell_voice_id": "11labs-Noah"}'`,
+      responseExample: JSON.stringify({
+        data: { id: 'voice-uuid', name: 'Noah', retell_voice_id: '11labs-Noah', updated: true },
+        meta: { credits_remaining: 4500 },
+      }, null, 2),
+    },
+    {
+      method: 'POST',
+      path: '/voices/sync-provider-catalog',
+      description: 'Idempotent sync: pulls the upstream provider catalogue, finds same-provider name matches for every local voice (workspace + platform) missing a mapping, and writes the provider voice ID. Already-mapped voices are skipped unless force=true. Returns matched/skipped/unmatched counts per voice.',
+      scopes: ['voices:write'],
+      isWrite: true,
+      params: [
+        { name: 'force', type: 'boolean', required: false, description: 're-evaluate voices that already have a mapping (default false)', in: 'body' },
+        { name: 'voice_id', type: 'string', required: false, description: 'Scope sync to a single local voice UUID', in: 'body' },
+      ],
+      requestExample: `curl -X POST "https://ucqwijexmjctglmrxlej.supabase.co/functions/v1/api/v1/voices/sync-provider-catalog" \\
+  -H "Authorization: Bearer tp_live_..." \\
+  -H "Content-Type: application/json" \\
+  -d '{}'`,
+      responseExample: JSON.stringify({
+        data: {
+          matched: [{ id: 'voice-uuid', name: 'Noah', retell_voice_id: '11labs-Noah' }],
+          skipped_already_mapped: [],
+          unmatched: [],
+          matched_count: 1,
+          skipped_count: 0,
+          unmatched_count: 0,
+        },
+        meta: { credits_remaining: 4499 },
+      }, null, 2),
+    },
   ],
 };
