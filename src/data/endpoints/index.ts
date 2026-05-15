@@ -57,6 +57,7 @@ export { REPUTATION } from './reputation.js';
 export { VOICE_AGENT_KBS } from './voice-agent-kbs.js';
 export { CRM_EXPORT } from './crm-export.js';
 export { SPREADSHEETS } from './spreadsheets.js';
+export { REFERRALS } from './referrals.js';
 
 import { type ResourceGroup } from './types.js';
 import { SEARCH } from './search.js';
@@ -113,6 +114,7 @@ import { REPUTATION } from './reputation.js';
 import { VOICE_AGENT_KBS } from './voice-agent-kbs.js';
 import { CRM_EXPORT } from './crm-export.js';
 import { SPREADSHEETS } from './spreadsheets.js';
+import { REFERRALS } from './referrals.js';
 
 // =============================================================================
 // RESOURCES -- ordered for the sidebar / API hub.
@@ -178,6 +180,7 @@ export const RESOURCES: ResourceGroup[] = [
   SCHEDULED_COMMUNICATIONS,
   SCHEMAS,
   REPUTATION,
+  REFERRALS,
   CRM_EXPORT,
 ];
 
