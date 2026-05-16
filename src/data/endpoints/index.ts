@@ -58,6 +58,7 @@ export { VOICE_AGENT_KBS } from './voice-agent-kbs.js';
 export { CRM_EXPORT } from './crm-export.js';
 export { SPREADSHEETS } from './spreadsheets.js';
 export { REFERRALS } from './referrals.js';
+export { EVIE } from './evie.js';
 
 import { type ResourceGroup } from './types.js';
 import { SEARCH } from './search.js';
@@ -115,6 +116,7 @@ import { VOICE_AGENT_KBS } from './voice-agent-kbs.js';
 import { CRM_EXPORT } from './crm-export.js';
 import { SPREADSHEETS } from './spreadsheets.js';
 import { REFERRALS } from './referrals.js';
+import { EVIE } from './evie.js';
 
 // =============================================================================
 // RESOURCES -- ordered for the sidebar / API hub.
@@ -182,6 +184,7 @@ export const RESOURCES: ResourceGroup[] = [
   REPUTATION,
   REFERRALS,
   CRM_EXPORT,
+  EVIE,
 ];
 
 /**

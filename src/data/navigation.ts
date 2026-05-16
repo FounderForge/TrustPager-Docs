@@ -64,6 +64,7 @@ export const API_CATEGORIES: NavCategory[] = [
       { id: 'webhooks', label: 'Webhooks', icon: 'Webhook' },
       { id: 'ai', label: 'AI', icon: 'Brain' },
       { id: 'voices', label: 'Voices', icon: 'Mic' },
+      { id: 'evie', label: 'Evie (In-App Agent)', icon: 'Bot' },
     ],
   },
   {
