@@ -11,20 +11,23 @@ export const REPORTS: ResourceGroup = {
   endpoints: [
     // ── Query Engine ────────────────────────────────────────────────────────
     {
-      method: 'POST', path: '/reports/query', description: 'Run a report query. Returns aggregated rows for charts or individual deal rows for drilldowns.',
+      method: 'POST', path: '/reports/query', description: 'Run a report query. Returns aggregated rows for charts, or individual rows for drilldowns. Sources: "deals" (pipeline performance, revenue, win/loss) and "tasks" (open/overdue/by-assignee). In drilldown mode, the dimensions[] array controls which columns are returned and in what order (up to 8 columns via display_config.columns on a saved card).',
       scopes: ['opportunities:read'], isWrite: false,
       params: [
-        { name: 'source', type: 'string', required: true, description: 'Data source. Currently "deals".', in: 'body' },
-        { name: 'measures', type: 'array', required: false, description: 'Array of { field, aggregation, alias }. Fields: id, value, products_total_value. Aggregations: count, sum, avg, min, max.', in: 'body' },
-        { name: 'dimensions', type: 'array', required: false, description: 'Group-by fields: status, pipeline_name, stage_name, assigned_user_name, lead_source, etc.', in: 'body' },
-        { name: 'filters', type: 'array', required: false, description: 'Array of { field, operator, value/values }. Operators: eq, neq, gt, gte, lt, lte, in, not_in, like, is_null, is_not_null, contains.', in: 'body' },
-        { name: 'time_dimension', type: 'object', required: false, description: '{ field: "deal_created_at"|"won_at"|"lost_at", granularity: "day"|"week"|"month"|"quarter"|"year" }', in: 'body' },
-        { name: 'mode', type: 'string', required: false, description: '"aggregate" (default) or "drilldown" for individual deal rows.', in: 'body' },
+        { name: 'source', type: 'string', required: true, description: 'Data source: "deals" or "tasks".', in: 'body' },
+        { name: 'measures', type: 'array', required: false, description: 'Array of { field, aggregation, alias }. deals fields: id (count), value, products_total_value, product_count. tasks fields: id (count). Aggregations: count, sum, avg, min, max.', in: 'body' },
+        { name: 'dimensions', type: 'array', required: false, description: 'In aggregate mode: group-by fields. In drilldown mode: also sets which columns are returned in order. deals fields: status, pipeline_name, stage_name, assigned_user_name, lead_source, currency, won_reasons, lost_reasons, product_names, product_categories. tasks fields: status, priority, category, assignee_name, deal_name, contact_name, is_overdue, client (virtual -- display only, resolves to contact_name falling back to deal_name; cannot be filtered or sorted). Virtual dimensions (virtual:true in /reports/sources) are computed in JS post-fetch and cannot appear in filters or order_by.', in: 'body' },
+        { name: 'filters', type: 'array', required: false, description: 'Array of { field, operator, value/values }. Operators: eq, neq, gt, gte, lt, lte, in, not_in, like, is_null, is_not_null, contains. Do not filter on virtual dimensions.', in: 'body' },
+        { name: 'time_dimension', type: 'object', required: false, description: '{ field, granularity }. deals: field is deal_created_at, won_at, lost_at, placed_at. tasks: field is due_date, task_created_at, completed_at. granularity: day, week, month, quarter, year.', in: 'body' },
+        { name: 'mode', type: 'string', required: false, description: '"aggregate" (default) returns grouped/summed rows. "drilldown" returns individual rows from the source; dimensions[] controls which columns are returned.', in: 'body' },
+        { name: 'order_by', type: 'array', required: false, description: 'Sort order. Array of { field, direction } objects where direction is "asc" or "desc". Can also be a single { field, direction } object. "sort" is accepted as an alias. Cannot sort on virtual dimensions.', in: 'body' },
+        { name: 'drilldown_dimension', type: 'string', required: false, description: 'For drilldown mode: dimension field to filter by.', in: 'body' },
+        { name: 'drilldown_value', type: 'string', required: false, description: 'For drilldown mode: value to match on drilldown_dimension.', in: 'body' },
         { name: 'limit', type: 'number', required: false, description: 'Max rows (default 100, max 1000).', in: 'body' },
       ],
     },
     {
-      method: 'GET', path: '/reports/sources', description: 'List available data sources with supported measures, dimensions, and filter fields.',
+      method: 'GET', path: '/reports/sources', description: 'List available data sources ("deals", "tasks") with supported measures, dimensions, and filter fields. Dimensions with virtual:true are computed in JS post-fetch -- they cannot be used in filters or order_by, only in dimensions[] for display column selection.',
       scopes: ['opportunities:read'], isWrite: false,
     },
     {
@@ -87,25 +90,27 @@ export const REPORTS: ResourceGroup = {
 
     // ── Card CRUD ───────────────────────────────────────────────────────────
     {
-      method: 'POST', path: '/report-dashboards/:id/cards', description: 'Add a chart card to a dashboard.',
+      method: 'POST', path: '/report-dashboards/:id/cards', description: 'Add a chart or table card to a dashboard. Use display_config.columns to control which columns appear in email digest renders for table/drilldown cards.',
       scopes: ['opportunities:read'], isWrite: true,
       params: [
         { name: 'id', type: 'uuid', required: true, description: 'Dashboard UUID.', in: 'path' },
         { name: 'title', type: 'string', required: true, description: 'Card title.', in: 'body' },
         { name: 'visualization_type', type: 'string', required: false, description: 'Chart type: stat, bar, horizontal_bar, line, area, donut, pie, table, composed.', in: 'body' },
-        { name: 'query_spec', type: 'object', required: false, description: 'Query specification (same format as POST /reports/query).', in: 'body' },
+        { name: 'query_spec', type: 'object', required: false, description: 'Query specification (same format as POST /reports/query). For drilldown table cards set mode:"drilldown" and optionally dimensions[] to control columns. order_by accepts an array of { field, direction } objects for multi-key sorting; "sort" is accepted as alias.', in: 'body' },
+        { name: 'display_config', type: 'object', required: false, description: 'Display overrides for email digest rendering. display_config.columns: array of column key strings or { key, label? } objects (up to 8 columns). When set, overrides dimensions[] as the column source for table cards. Use to show different columns in the email vs the underlying data query.', in: 'body' },
         { name: 'size', type: 'string', required: false, description: 'Card size: sm, md, lg.', in: 'body' },
         { name: 'position', type: 'number', required: false, description: 'Zero-based position in the dashboard.', in: 'body' },
       ],
     },
     {
-      method: 'PATCH', path: '/report-cards/:id', description: 'Partial update on a card -- change title, visualization type, query spec, size, or position.',
+      method: 'PATCH', path: '/report-cards/:id', description: 'Partial update on a card -- change title, visualization type, query spec, display_config, size, or position.',
       scopes: ['opportunities:read'], isWrite: true,
       params: [
         { name: 'id', type: 'uuid', required: true, description: 'Card UUID.', in: 'path' },
         { name: 'title', type: 'string', required: false, description: 'Card title.', in: 'body' },
         { name: 'visualization_type', type: 'string', required: false, description: 'Visualization type (bar, line, pie, etc.).', in: 'body' },
-        { name: 'query_spec', type: 'object', required: false, description: 'Query specification object.', in: 'body' },
+        { name: 'query_spec', type: 'object', required: false, description: 'Query specification object. Supports order_by as array of { field, direction } for multi-key sorting; "sort" is accepted as alias for order_by.', in: 'body' },
+        { name: 'display_config', type: 'object', required: false, description: 'Display overrides. display_config.columns sets an explicit column list for table/drilldown email digest rendering (string[] or { key, label? }[], up to 8 columns).', in: 'body' },
         { name: 'size', type: 'string', required: false, description: 'Card size (sm, md, lg).', in: 'body' },
         { name: 'position', type: 'number', required: false, description: 'Sort order position.', in: 'body' },
       ],
