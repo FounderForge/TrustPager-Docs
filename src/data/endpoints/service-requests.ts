@@ -139,6 +139,40 @@ export const SERVICE_REQUESTS: ResourceGroup = {
     },
     {
       method: 'POST',
+      path: '/service-requests/search',
+      description: 'Semantic search across the workspace\'s service requests using vector embeddings (Voyage voyage-3, 1024 dimensions). Returns results ranked by cosine similarity. Useful for: finding duplicate requests before filing, grouping related open tickets, retrieving historical resolutions. Scoped per-workspace -- cross-company search is only available via the internal agent-write webhook.',
+      scopes: ['service-requests:read'],
+      isWrite: false,
+      params: [
+        { name: 'query', type: 'string', required: true, description: 'Natural-language description of what you are looking for (max 5000 chars)', in: 'body' },
+        { name: 'status', type: 'string', required: false, description: 'Optional: restrict results to a single status: pending, in_progress, completed, rejected, cancelled, backlog', in: 'body' },
+        { name: 'limit', type: 'number', required: false, description: 'Max results to return, 1-50 (default 10)', in: 'body' },
+        { name: 'threshold', type: 'number', required: false, description: 'Minimum cosine similarity 0-1 (default 0.5). Lower = broader recall.', in: 'body' },
+      ],
+      requestExample: `curl -X POST https://ucqwijexmjctglmrxlej.supabase.co/functions/v1/api/v1/service-requests/search \\
+  -H "Authorization: Bearer tp_live_..." \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "query": "missing status filter on list opportunities",
+    "status": "pending",
+    "limit": 5
+  }'`,
+      responseExample: `{
+  "data": [
+    {
+      "id": "f112de7b-c7df-4193-bacd-2d43c31c1f11",
+      "title": "Add status filter to list_opportunities",
+      "description": "Cannot filter opportunities by status (won/lost/open).",
+      "status": "pending",
+      "similarity": 0.8621,
+      "created_at": "2026-04-19T05:08:56.498025+00:00"
+    }
+  ],
+  "meta": { "credits_remaining": 3456 }
+}`,
+    },
+    {
+      method: 'POST',
       path: '/service-requests/:id/notes',
       description: 'Add a note to an existing service request. Notes are appended to a JSONB array on the record. Each note stores a UUID, the user_id of the API key owner, the content text, and a created_at timestamp. Does NOT change the request status. Max content length raised to 20000 chars.',
       scopes: ['service-requests:write'],

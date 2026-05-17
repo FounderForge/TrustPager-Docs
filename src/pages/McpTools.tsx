@@ -294,7 +294,7 @@ const TOOL_CATEGORIES = [
   },
   {
     label: 'Service Requests',
-    tools: ['create_service_request'],
+    tools: ['list_service_requests', 'get_service_request', 'search_service_requests', 'create_service_request', 'add_service_request_note', 'update_service_request_note', 'link_service_requests'],
   },
   {
     label: 'Approval Queue',
