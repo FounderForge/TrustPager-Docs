@@ -66,20 +66,22 @@ export const AUTO_QUEUES: ResourceGroup = {
     {
       method: 'POST',
       path: '/auto-queues/:id/bulk-enroll',
-      description: `Enrol contacts into an auto queue in bulk. Requires EXACTLY ONE of three mutually exclusive targeting modes:
+      description: `Enrol contacts (or deals) into an auto queue in bulk. Requires EXACTLY ONE of four mutually exclusive targeting modes:
 
 - contact_ids -- explicit list of contact UUIDs (max 500)
+- deal_ids -- explicit list of opportunity/deal UUIDs (max 500). Server resolves each deal to its contacts via crm_deals.contact_id + crm_deal_contacts join, then enrols each unique contact. The originating deal_id is passed as trigger_data.deal_id so downstream automation actions have full deal context.
 - contact_filter -- filter by contact-level fields (individual-person fields: contact_type, source, email, first_name, last_name, job_title, city, state, country)
 - customer_filter -- filter by company/customer-level fields (account_type, industry, is_customer, is_supplier, city, state, country) -- resolves to all contacts linked to matching customers
 
-ENTITY AXIS DISTINCTION: contact_type lives on crm_contacts (use contact_filter). account_type lives on crm_customers (use customer_filter). opportunity_type lives on crm_deals (not filterable here -- use automations with deal triggers instead).
+ENTITY AXIS DISTINCTION: contact_type lives on crm_contacts (use contact_filter). account_type lives on crm_customers (use customer_filter). opportunity_type lives on crm_deals -- use deal_ids to target specific deals or automations with deal triggers for filter-based targeting.
 
 Idempotent by default: contacts already enrolled with a pending step are skipped (set skip_if_already_enrolled: false to override). Capped at 500 contacts per call; if the filter would match more, has_more: true is returned and you should call again to page through.`,
       scopes: ['automations:write'],
       isWrite: true,
       params: [
         { name: 'id', type: 'uuid', required: true, description: 'Auto queue ID', in: 'path' },
-        { name: 'contact_ids', type: 'string[]', required: false, description: 'Explicit list of contact UUIDs (max 500). Mutually exclusive with contact_filter and customer_filter.', in: 'body' },
+        { name: 'contact_ids', type: 'string[]', required: false, description: 'Explicit list of contact UUIDs (max 500). Mutually exclusive with deal_ids, contact_filter, customer_filter.', in: 'body' },
+        { name: 'deal_ids', type: 'string[]', required: false, description: 'Explicit list of opportunity/deal UUIDs (max 500). Server resolves each deal to its contacts (crm_deals.contact_id + crm_deal_contacts join) and passes deal_id into trigger_data for downstream actions. Mutually exclusive with contact_ids, contact_filter, customer_filter.', in: 'body' },
         { name: 'contact_filter', type: 'object', required: false, description: 'Filter by contact-level fields. Supported: contact_type, source, email, first_name, last_name, job_title, city, state, country. Values can be a single value or an array (IN). Example: { "contact_type": ["Referrer", "Lawyer"] }', in: 'body' },
         { name: 'customer_filter', type: 'object', required: false, description: 'Filter by customer/company-level fields -- resolves to all contacts linked to matching customers. Supported: account_type, industry, is_customer, is_supplier, city, state, country. Example: { "account_type": "Accounting Firm" }', in: 'body' },
         { name: 'enrollment_time', type: 'string', required: false, description: 'ISO timestamp to use as the anchor for step delay calculations (default: now). Useful for backdating enrolments.', in: 'body' },
@@ -92,6 +94,15 @@ curl -X POST \\
   -H "Content-Type: application/json" \\
   -d '{
     "contact_filter": { "contact_type": ["Referrer", "Lawyer"] }
+  }'
+
+# Enrol contacts linked to specific deals (deal_ids mode -- deal_id passes through to trigger_data)
+curl -X POST \\
+  "${API_BASE_URL}/auto-queues/QUEUE_ID/bulk-enroll" \\
+  -H "Authorization: Bearer YOUR_API_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "deal_ids": ["deal-uuid-1", "deal-uuid-2"]
   }'
 
 # Enrol all contacts linked to accounting firms (customer-level field)

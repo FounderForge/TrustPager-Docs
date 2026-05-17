@@ -12,7 +12,7 @@ export const LEAD_GEN: ResourceGroup = {
     {
       method: 'POST',
       path: '/lead-gen/search',
-      description: 'Start a new Google Maps business search via Apify. For max_results <= 100 the search runs synchronously and returns results immediately. For 101-500 results, the search runs asynchronously -- poll GET /lead-gen/searches/:id until status is "completed". Results are automatically deduplicated and matched against existing CRM contacts (by phone) and customers (by website domain). Credits are charged based on max_results tier.',
+      description: 'Start a new Google Maps business search via Apify. For max_results <= 100 the search runs synchronously and returns results immediately. For 101-500 results, the search runs asynchronously -- poll GET /lead-gen/searches/:id until status is "completed". When scrape_contacts=true, the search always runs asynchronously (website scraping exceeds sync timeout), website_filter is forced to "withWebsite", and results without a valid email are dropped before saving (email guarantee) -- result_count reflects only kept rows. Results are automatically deduplicated and matched against existing CRM contacts (by phone) and customers (by website domain). Credits are charged based on max_results tier.',
       scopes: ['lead-gen:write'],
       isWrite: true,
       params: [
@@ -25,7 +25,7 @@ export const LEAD_GEN: ResourceGroup = {
         { name: 'website_filter', type: 'string', required: false, description: 'Filter by website presence: "allPlaces" (default), "withWebsite", "withoutWebsite"', in: 'body' },
         { name: 'skip_closed_places', type: 'boolean', required: false, description: 'Skip permanently closed businesses (default true)', in: 'body' },
         { name: 'category_filter_words', type: 'string[]', required: false, description: 'Only return results whose Google category contains one of these words', in: 'body' },
-        { name: 'scrape_contacts', type: 'boolean', required: false, description: 'Attempt to scrape email addresses from business websites (slower)', in: 'body' },
+        { name: 'scrape_contacts', type: 'boolean', required: false, description: 'Scrape email addresses from business websites. When true: always runs async (returns immediately, poll for completion), forces website_filter to "withWebsite", drops results without a valid email (email guarantee), result_count reflects only kept rows. Use lead_gen_get_search to poll until status="completed".', in: 'body' },
         { name: 'language', type: 'string', required: false, description: 'Language code for results (default "en")', in: 'body' },
       ],
       requestExample: `curl -X POST \\
@@ -203,7 +203,7 @@ export const LEAD_GEN: ResourceGroup = {
         { name: 'default_pipeline_id', type: 'uuid', required: false, description: 'Default pipeline for deal creation on import', in: 'body' },
         { name: 'default_stage_id', type: 'uuid', required: false, description: 'Default stage for deal creation on import', in: 'body' },
         { name: 'default_tags', type: 'string[]', required: false, description: 'Default tags to apply on import', in: 'body' },
-        { name: 'enrich_emails', type: 'boolean', required: false, description: 'Whether to attempt email enrichment by default', in: 'body' },
+        { name: 'enrich_emails', type: 'boolean', required: false, description: 'When true, all runs of this saved search automatically set scrape_contacts=true: always async, forces website_filter to "withWebsite", drops results without a valid email (email guarantee). Saved searches with enrich_emails=true will never return email-less rows.', in: 'body' },
       ],
       requestExample: `curl -X POST \\
   "${API_BASE_URL}/lead-gen/saved-searches" \\
@@ -302,7 +302,7 @@ export const LEAD_GEN: ResourceGroup = {
         { name: 'default_pipeline_id', type: 'uuid', required: false, description: 'Updated default pipeline UUID', in: 'body' },
         { name: 'default_stage_id', type: 'uuid', required: false, description: 'Updated default stage UUID', in: 'body' },
         { name: 'default_tags', type: 'string[]', required: false, description: 'Updated default tags', in: 'body' },
-        { name: 'enrich_emails', type: 'boolean', required: false, description: 'Updated email enrichment default', in: 'body' },
+        { name: 'enrich_emails', type: 'boolean', required: false, description: 'Updated email enrichment default. When true, all runs auto-set scrape_contacts=true (always async, forces website="withWebsite", email guarantee).', in: 'body' },
       ],
       requestExample: `curl -X PUT \\
   "${API_BASE_URL}/lead-gen/saved-searches/7d05612a-..." \\
