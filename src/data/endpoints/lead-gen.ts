@@ -332,5 +332,292 @@ export const LEAD_GEN: ResourceGroup = {
   -H "Authorization: Bearer YOUR_API_KEY"`,
       responseExample: `HTTP 204 No Content`,
     },
+    {
+      method: 'POST',
+      path: '/lead-gen/results',
+      description: 'Record a manual result for a lead-gen search result (e.g. mark as contacted, won, not interested). Creates an activity log entry on the linked contact if one exists.',
+      scopes: ['lead-gen:write'],
+      isWrite: true,
+      params: [
+        { name: 'search_id', type: 'uuid', required: true, description: 'Search UUID this result belongs to', in: 'body' },
+        { name: 'place_id', type: 'string', required: true, description: 'External place identifier from the search result', in: 'body' },
+        { name: 'result_type', type: 'string', required: true, description: 'Outcome type: contacted, not_interested, won, lost', in: 'body' },
+        { name: 'notes', type: 'string', required: false, description: 'Optional notes about the outcome', in: 'body' },
+      ],
+      requestExample: `curl -X POST \\
+  "${API_BASE_URL}/lead-gen/results" \\
+  -H "Authorization: Bearer YOUR_API_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{"search_id":"7d05612a-...","place_id":"ChIJ...","result_type":"contacted","notes":"Left voicemail"}'`,
+      responseExample: `{
+  "id": "b1c2d3e4-...",
+  "search_id": "7d05612a-...",
+  "place_id": "ChIJ...",
+  "result_type": "contacted",
+  "notes": "Left voicemail",
+  "created_at": "2026-05-01T10:00:00Z"
+}`,
+    },
+    {
+      method: 'POST',
+      path: '/lead-gen/initiatives',
+      description: 'Create a new outreach initiative (multi-step automated sequence). An initiative defines the name, goal, and optional daily send cap. Add steps via POST /lead-gen/initiatives/:id/steps, then enrol leads via POST /lead-gen/initiatives/:id/enrol.',
+      scopes: ['lead-gen:write'],
+      isWrite: true,
+      params: [
+        { name: 'name', type: 'string', required: true, description: 'Initiative display name', in: 'body' },
+        { name: 'description', type: 'string', required: false, description: 'Internal description of this outreach goal', in: 'body' },
+        { name: 'daily_send_cap', type: 'integer', required: false, description: 'Max outreach actions per day across all enrolments (default: no cap beyond per-user limits)', in: 'body' },
+        { name: 'status', type: 'string', required: false, description: 'Initial status: draft (default) or active', in: 'body' },
+      ],
+      requestExample: `curl -X POST \\
+  "${API_BASE_URL}/lead-gen/initiatives" \\
+  -H "Authorization: Bearer YOUR_API_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{"name":"Q3 Roofing Outreach","description":"Multi-touch email + SMS sequence","status":"draft"}'`,
+      responseExample: `{
+  "id": "a1b2c3d4-...",
+  "name": "Q3 Roofing Outreach",
+  "description": "Multi-touch email + SMS sequence",
+  "status": "draft",
+  "daily_send_cap": null,
+  "step_count": 0,
+  "enrolment_count": 0,
+  "created_at": "2026-05-01T10:00:00Z"
+}`,
+    },
+    {
+      method: 'GET',
+      path: '/lead-gen/initiatives',
+      description: 'List all outreach initiatives for your workspace. Returns initiatives ordered by creation date descending, with step and enrolment counts.',
+      scopes: ['lead-gen:read'],
+      params: [
+        { name: 'status', type: 'string', required: false, description: 'Filter by status: draft, active, paused, completed', in: 'query' },
+        { name: 'limit', type: 'integer', required: false, description: 'Max results to return (default: 50)', in: 'query' },
+        { name: 'after', type: 'string', required: false, description: 'Pagination cursor from previous response', in: 'query' },
+      ],
+      requestExample: `curl \\
+  "${API_BASE_URL}/lead-gen/initiatives?status=active" \\
+  -H "Authorization: Bearer YOUR_API_KEY"`,
+      responseExample: `{
+  "data": [
+    {
+      "id": "a1b2c3d4-...",
+      "name": "Q3 Roofing Outreach",
+      "status": "active",
+      "step_count": 3,
+      "enrolment_count": 47,
+      "created_at": "2026-05-01T10:00:00Z"
+    }
+  ],
+  "pagination": { "has_more": false, "next_cursor": null }
+}`,
+    },
+    {
+      method: 'GET',
+      path: '/lead-gen/initiatives/:id',
+      description: 'Retrieve a single outreach initiative including its full step list and summary enrolment counts.',
+      scopes: ['lead-gen:read'],
+      params: [
+        { name: 'id', type: 'uuid', required: true, description: 'Initiative UUID', in: 'path' },
+      ],
+      requestExample: `curl \\
+  "${API_BASE_URL}/lead-gen/initiatives/a1b2c3d4-..." \\
+  -H "Authorization: Bearer YOUR_API_KEY"`,
+      responseExample: `{
+  "id": "a1b2c3d4-...",
+  "name": "Q3 Roofing Outreach",
+  "status": "active",
+  "steps": [
+    { "id": "s1...", "step_number": 1, "action_type": "send_gmail_email", "delay_days": 0 },
+    { "id": "s2...", "step_number": 2, "action_type": "send_sms", "delay_days": 3 }
+  ],
+  "enrolment_count": 47,
+  "created_at": "2026-05-01T10:00:00Z"
+}`,
+    },
+    {
+      method: 'PATCH',
+      path: '/lead-gen/initiatives/:id',
+      description: 'Update an outreach initiative\'s name, description, status, or daily send cap. Set status to "active" to begin processing enrolments, "paused" to temporarily halt sends.',
+      scopes: ['lead-gen:write'],
+      isWrite: true,
+      params: [
+        { name: 'id', type: 'uuid', required: true, description: 'Initiative UUID', in: 'path' },
+        { name: 'name', type: 'string', required: false, description: 'Updated name', in: 'body' },
+        { name: 'description', type: 'string', required: false, description: 'Updated description', in: 'body' },
+        { name: 'status', type: 'string', required: false, description: 'New status: draft, active, paused, completed', in: 'body' },
+        { name: 'daily_send_cap', type: 'integer', required: false, description: 'Updated daily send cap (null to remove cap)', in: 'body' },
+      ],
+      requestExample: `curl -X PATCH \\
+  "${API_BASE_URL}/lead-gen/initiatives/a1b2c3d4-..." \\
+  -H "Authorization: Bearer YOUR_API_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{"status":"active"}'`,
+      responseExample: `{
+  "id": "a1b2c3d4-...",
+  "name": "Q3 Roofing Outreach",
+  "status": "active",
+  "updated_at": "2026-05-02T09:00:00Z"
+}`,
+    },
+    {
+      method: 'DELETE',
+      path: '/lead-gen/initiatives/:id',
+      description: 'Delete an outreach initiative. All associated steps and enrolments are also removed. Active enrolments in progress will be cancelled. Returns 204 No Content on success.',
+      scopes: ['lead-gen:delete'],
+      isWrite: true,
+      params: [
+        { name: 'id', type: 'uuid', required: true, description: 'Initiative UUID to delete', in: 'path' },
+      ],
+      requestExample: `curl -X DELETE \\
+  "${API_BASE_URL}/lead-gen/initiatives/a1b2c3d4-..." \\
+  -H "Authorization: Bearer YOUR_API_KEY"`,
+      responseExample: `HTTP 204 No Content`,
+    },
+    {
+      method: 'POST',
+      path: '/lead-gen/initiatives/:id/steps',
+      description: 'Add a new step to an outreach initiative. Steps are executed in step_number order. Supported action types: send_gmail_email (requires gmail_connection_id and subject/body templates with {{lead.*}} tokens), send_sms (requires sms body with {{lead.*}} tokens), notify_assigned_staff (sends an internal alert email to the enrolling user).',
+      scopes: ['lead-gen:write'],
+      isWrite: true,
+      params: [
+        { name: 'id', type: 'uuid', required: true, description: 'Initiative UUID', in: 'path' },
+        { name: 'step_number', type: 'integer', required: true, description: 'Execution order (1-based). Existing steps with >= this number are shifted down.', in: 'body' },
+        { name: 'action_type', type: 'string', required: true, description: 'Action to perform: send_gmail_email, send_sms, notify_assigned_staff', in: 'body' },
+        { name: 'delay_days', type: 'integer', required: false, description: 'Days to wait after the previous step before executing this one (default: 0)', in: 'body' },
+        { name: 'config', type: 'object', required: true, description: 'Action-specific config. For send_gmail_email: {gmail_connection_id, subject, body}. For send_sms: {body}. For notify_assigned_staff: {subject, body}.', in: 'body' },
+      ],
+      requestExample: `curl -X POST \\
+  "${API_BASE_URL}/lead-gen/initiatives/a1b2c3d4-.../steps" \\
+  -H "Authorization: Bearer YOUR_API_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{"step_number":1,"action_type":"send_gmail_email","delay_days":0,"config":{"gmail_connection_id":"conn-id","subject":"Hi {{lead.name}}","body":"Hi {{lead.name}}, I saw your business {{lead.business_name}}..."}}'`,
+      responseExample: `{
+  "id": "s1b2c3d4-...",
+  "initiative_id": "a1b2c3d4-...",
+  "step_number": 1,
+  "action_type": "send_gmail_email",
+  "delay_days": 0,
+  "config": { "gmail_connection_id": "conn-id", "subject": "Hi {{lead.name}}", "body": "..." },
+  "created_at": "2026-05-01T10:00:00Z"
+}`,
+    },
+    {
+      method: 'PATCH',
+      path: '/lead-gen/initiatives/:id/steps/:stepId',
+      description: 'Update a step\'s delay, config (subject/body templates), or reorder its step_number. Updating step_number re-sequences other steps automatically.',
+      scopes: ['lead-gen:write'],
+      isWrite: true,
+      params: [
+        { name: 'id', type: 'uuid', required: true, description: 'Initiative UUID', in: 'path' },
+        { name: 'stepId', type: 'uuid', required: true, description: 'Step UUID', in: 'path' },
+        { name: 'delay_days', type: 'integer', required: false, description: 'Updated delay in days', in: 'body' },
+        { name: 'config', type: 'object', required: false, description: 'Updated action config', in: 'body' },
+        { name: 'step_number', type: 'integer', required: false, description: 'New step position (triggers re-sequence)', in: 'body' },
+      ],
+      requestExample: `curl -X PATCH \\
+  "${API_BASE_URL}/lead-gen/initiatives/a1b2c3d4-.../steps/s1b2c3d4-..." \\
+  -H "Authorization: Bearer YOUR_API_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{"delay_days":2}'`,
+      responseExample: `{
+  "id": "s1b2c3d4-...",
+  "step_number": 1,
+  "delay_days": 2,
+  "updated_at": "2026-05-02T09:00:00Z"
+}`,
+    },
+    {
+      method: 'DELETE',
+      path: '/lead-gen/initiatives/:id/steps/:stepId',
+      description: 'Remove a step from an initiative. Subsequent steps are re-numbered to fill the gap. Returns 204 No Content on success.',
+      scopes: ['lead-gen:delete'],
+      isWrite: true,
+      params: [
+        { name: 'id', type: 'uuid', required: true, description: 'Initiative UUID', in: 'path' },
+        { name: 'stepId', type: 'uuid', required: true, description: 'Step UUID to remove', in: 'path' },
+      ],
+      requestExample: `curl -X DELETE \\
+  "${API_BASE_URL}/lead-gen/initiatives/a1b2c3d4-.../steps/s1b2c3d4-..." \\
+  -H "Authorization: Bearer YOUR_API_KEY"`,
+      responseExample: `HTTP 204 No Content`,
+    },
+    {
+      method: 'POST',
+      path: '/lead-gen/initiatives/:id/enrol',
+      description: 'Enrol one or more search results into an outreach initiative. Each enrolment tracks progress through the initiative\'s steps. Leads already enrolled in this initiative are skipped (idempotent). Unsubscribed leads are silently excluded.',
+      scopes: ['lead-gen:write'],
+      isWrite: true,
+      params: [
+        { name: 'id', type: 'uuid', required: true, description: 'Initiative UUID', in: 'path' },
+        { name: 'search_result_ids', type: 'array', required: true, description: 'Array of search result UUIDs to enrol', in: 'body' },
+        { name: 'assigned_user_id', type: 'uuid', required: false, description: 'User whose Gmail connection to use for email steps. Defaults to the API key owner.', in: 'body' },
+      ],
+      requestExample: `curl -X POST \\
+  "${API_BASE_URL}/lead-gen/initiatives/a1b2c3d4-.../enrol" \\
+  -H "Authorization: Bearer YOUR_API_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{"search_result_ids":["r1...","r2...","r3..."]}'`,
+      responseExample: `{
+  "enrolled": 3,
+  "skipped_already_enrolled": 0,
+  "skipped_unsubscribed": 0,
+  "enrolment_ids": ["e1...","e2...","e3..."]
+}`,
+    },
+    {
+      method: 'GET',
+      path: '/lead-gen/initiatives/:id/enrolments',
+      description: 'List enrolments for an initiative. Returns each enrolment with the lead\'s details, current step number, status, and next scheduled action date.',
+      scopes: ['lead-gen:read'],
+      params: [
+        { name: 'id', type: 'uuid', required: true, description: 'Initiative UUID', in: 'path' },
+        { name: 'status', type: 'string', required: false, description: 'Filter by enrolment status: active, completed, unsubscribed, failed', in: 'query' },
+        { name: 'limit', type: 'integer', required: false, description: 'Max results (default: 50)', in: 'query' },
+        { name: 'after', type: 'string', required: false, description: 'Pagination cursor', in: 'query' },
+      ],
+      requestExample: `curl \\
+  "${API_BASE_URL}/lead-gen/initiatives/a1b2c3d4-.../enrolments?status=active" \\
+  -H "Authorization: Bearer YOUR_API_KEY"`,
+      responseExample: `{
+  "data": [
+    {
+      "id": "e1...",
+      "lead_name": "Acme Plumbing",
+      "lead_email": "info@acmeplumbing.com",
+      "current_step": 1,
+      "status": "active",
+      "next_action_at": "2026-05-04T10:00:00Z"
+    }
+  ],
+  "pagination": { "has_more": true, "next_cursor": "e2..." }
+}`,
+    },
+    {
+      method: 'POST',
+      path: '/lead-gen/initiatives/dispatcher/run',
+      description: 'Manually trigger the initiative dispatcher for your workspace. The dispatcher processes all due enrolment tasks: sends emails, SMS messages, and staff notifications for active initiatives. Under normal operation this runs automatically via cron. Use this endpoint to trigger an immediate processing cycle, for testing, or to catch up after a pause. Returns a summary of tasks processed.',
+      scopes: ['lead-gen:write'],
+      isWrite: true,
+      params: [
+        { name: 'initiative_id', type: 'uuid', required: false, description: 'Limit dispatch to a single initiative. Omit to process all active initiatives.', in: 'body' },
+        { name: 'dry_run', type: 'boolean', required: false, description: 'If true, simulate processing without sending anything (default: false)', in: 'body' },
+      ],
+      requestExample: `curl -X POST \\
+  "${API_BASE_URL}/lead-gen/initiatives/dispatcher/run" \\
+  -H "Authorization: Bearer YOUR_API_KEY" \\
+  -H "Content-Type: application/json" \\
+  -d '{}'`,
+      responseExample: `{
+  "tasks_processed": 12,
+  "tasks_sent": 10,
+  "tasks_skipped": 2,
+  "runs": [
+    { "enrolment_id": "e1...", "step": 1, "action": "send_gmail_email", "status": "sent" },
+    { "enrolment_id": "e2...", "step": 1, "action": "send_sms", "status": "sent" }
+  ]
+}`,
+    },
   ],
 };
