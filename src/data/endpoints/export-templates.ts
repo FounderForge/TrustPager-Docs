@@ -51,7 +51,7 @@ export const EXPORT_TEMPLATES: ResourceGroup = {
                 key: 'tags',
                 label: 'Tags',
                 type: 'tags',
-                ops: ['contains', 'not_contains', 'is_null', 'not_null'],
+                ops: ['in', 'not_in', 'is_null', 'not_null'],
               },
               {
                 key: 'status',
@@ -167,12 +167,11 @@ export const EXPORT_TEMPLATES: ResourceGroup = {
           type: 'array',
           required: false,
           description:
-            'Array of ExportFilter objects. Each has: id (uuid), field (dotted path), ' +
-            'op (one of: eq, neq, in, gte, lte, between, contains, not_contains, is_null, not_null), ' +
-            'value. ' +
-            'The "contains" op for tags means "has ALL of these tags". ' +
-            'The "not_contains" op for tags means "is none of" -- rows that share zero tag names with the value set are returned. ' +
-            'Reference fields (pipeline_id, stage_id, assigned_to) default to the "in" operator.',
+            'Array of ExportFilter objects. Each has: id (uuid), field (dotted path), op, value. ' +
+            'Canonical ops: eq, neq, in, not_in, gte, lte, between, contains (text substring), is_null, not_null. ' +
+            'Tags use "in" (OR -- "has any of these tags") and "not_in" (NOR -- "has none of these tags"). ' +
+            'Reference fields (pipeline_id, stage_id, assigned_to, status): in, not_in. ' +
+            'Legacy: "not_contains" on tags is a back-compat alias for "not_in" -- new code should use "not_in".',
           in: 'body',
         },
         {
@@ -208,8 +207,8 @@ export const EXPORT_TEMPLATES: ResourceGroup = {
       { "id": "c3", "source": "relation", "relation": "primary_contact", "relation_field": "email", "relation_mode": "primary", "header": "Email" }
     ],
     "filters": [
-      { "id": "f1", "field": "tags", "op": "contains", "value": ["PET"] },
-      { "id": "f2", "field": "tags", "op": "not_contains", "value": ["VIP"] }
+      { "id": "f1", "field": "tags", "op": "in", "value": ["PET"] },
+      { "id": "f2", "field": "tags", "op": "not_in", "value": ["VIP"] }
     ],
     "output": { "format": "xlsx" }
   }' \\
@@ -244,7 +243,8 @@ export const EXPORT_TEMPLATES: ResourceGroup = {
           type: 'array',
           required: false,
           description:
-            'Replacement filter array. Filter ops: eq, neq, in, gte, lte, between, contains, not_contains (tags "is none of"), is_null, not_null.',
+            'Replacement filter array. Canonical ops: eq, neq, in, not_in, gte, lte, between, contains (text substring), is_null, not_null. ' +
+            'Tags use in (OR) / not_in (NOR). Legacy not_contains is a back-compat alias for not_in.',
           in: 'body',
         },
         { name: 'sort', type: 'array', required: false, description: 'Replacement sort array.', in: 'body' },
@@ -272,7 +272,8 @@ export const EXPORT_TEMPLATES: ResourceGroup = {
         'Preview the first 10 rows of an export template (or a saved view). ' +
         'Returns JSON with headers and rows -- useful for verifying filter logic before running a full export. ' +
         'Filters, sort, and column layout from the template (or overrides in the request body) are applied. ' +
-        'All filter operators including not_contains (tags "is none of") are supported.',
+        'All filter operators are supported: tags use in (OR/"has any of") / not_in (NOR/"has none of"). ' +
+        'Legacy not_contains is a back-compat alias for not_in.',
       scopes: ['exports:read'],
       isWrite: false,
       params: [
@@ -314,7 +315,7 @@ export const EXPORT_TEMPLATES: ResourceGroup = {
         'Run an export template and download the resulting XLSX or CSV file. ' +
         'Up to 250,000 rows are exported (X-Truncated: 1 header if the cap is hit). ' +
         'Optionally apply a saved view\'s filter/sort overrides. ' +
-        'Supports all filter operators including not_contains for tags ("is none of" semantics).',
+        'Supports all filter operators: tags use in (OR/"has any of") / not_in (NOR/"has none of"); not_contains is a back-compat alias for not_in.',
       scopes: ['exports:read'],
       isWrite: false,
       params: [
