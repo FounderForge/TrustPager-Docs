@@ -93,6 +93,15 @@ export const API_CATEGORIES: NavCategory[] = [
       { id: 'approvals', label: 'Approvals', icon: 'ShieldCheck' },
     ],
   },
+  {
+    label: 'Exports & Spreadsheets',
+    description: 'Saved export templates (XLSX/CSV with filters, columns, sort, and named views), spreadsheet templates, and bulk CRM export',
+    items: [
+      { id: 'export-templates', label: 'Export Templates', icon: 'Download' },
+      { id: 'spreadsheets', label: 'Spreadsheets', icon: 'Table' },
+      { id: 'crm-export', label: 'CRM Export (bulk)', icon: 'FileDown' },
+    ],
+  },
 ];
 
 // Flat list for backwards compat

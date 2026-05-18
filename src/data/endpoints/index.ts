@@ -56,6 +56,7 @@ export { SCHEMAS } from './schemas.js';
 export { REPUTATION } from './reputation.js';
 export { VOICE_AGENT_KBS } from './voice-agent-kbs.js';
 export { CRM_EXPORT } from './crm-export.js';
+export { EXPORT_TEMPLATES } from './export-templates.js';
 export { SPREADSHEETS } from './spreadsheets.js';
 export { REFERRALS } from './referrals.js';
 export { EVIE } from './evie.js';
@@ -114,6 +115,7 @@ import { SCHEMAS } from './schemas.js';
 import { REPUTATION } from './reputation.js';
 import { VOICE_AGENT_KBS } from './voice-agent-kbs.js';
 import { CRM_EXPORT } from './crm-export.js';
+import { EXPORT_TEMPLATES } from './export-templates.js';
 import { SPREADSHEETS } from './spreadsheets.js';
 import { REFERRALS } from './referrals.js';
 import { EVIE } from './evie.js';
@@ -184,6 +186,7 @@ export const RESOURCES: ResourceGroup[] = [
   REPUTATION,
   REFERRALS,
   CRM_EXPORT,
+  EXPORT_TEMPLATES,
   EVIE,
 ];
 
