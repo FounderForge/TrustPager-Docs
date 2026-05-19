@@ -47,12 +47,12 @@ export const AUTOMATIONS: ResourceGroup = {
     {
       method: 'POST',
       path: '/automations',
-      description: 'Create a new automation. name and trigger_type are required. For stage_changed automations, pass stage_id directly on the automation -- this is the single source of truth for stage matching (do not use automations_triggers for stage_changed).',
+      description: 'Create a new automation. name and trigger_type are required. For stage_changed automations, pass stage_id directly on the automation -- this is the single source of truth for stage matching (do not use automations_triggers for stage_changed). Note: trigger_type "form_submitted" is deprecated and rejected -- use "form_completed" instead.',
       scopes: ['automations:write'],
       isWrite: true,
       params: [
         { name: 'name', type: 'string', required: true, description: 'Automation name', in: 'body' },
-        { name: 'trigger_type', type: 'string', required: true, description: 'Trigger type. Common values: stage_changed, form_submitted, call_analyzed, sms_received, email_received, checkout_completed. CRM entity triggers (fired by Portal API on CRUD): contact_created, contact_updated, customer_created, customer_updated, deal_created, deal_updated. ENTITY AXIS RULES: contact_type lives on contacts (use contact_created/updated); account_type lives on customers (use customer_created/updated); opportunity_type lives on deals (use deal_created/updated). Update triggers include _changed_fields and _previous_values in trigger data for field-level condition matching. ALL entity triggers also include _trigger_entity_kind ("contact"|"customer"|"deal") and _trigger_entity_id (the UUID of the triggering row) so CRM Integration actions can match the exact record by id without needing email/phone/name extraction.', in: 'body' },
+        { name: 'trigger_type', type: 'string', required: true, description: 'Trigger type. Common values: stage_changed, form_completed, call_analyzed, sms_received, email_received, checkout_completed. CRM entity triggers (fired by Portal API on CRUD): contact_created, contact_updated, customer_created, customer_updated, deal_created, deal_updated. ENTITY AXIS RULES: contact_type lives on contacts (use contact_created/updated); account_type lives on customers (use customer_created/updated); opportunity_type lives on deals (use deal_created/updated). Update triggers include _changed_fields and _previous_values in trigger data for field-level condition matching. ALL entity triggers also include _trigger_entity_kind ("contact"|"customer"|"deal") and _trigger_entity_id (the UUID of the triggering row) so CRM Integration actions can match the exact record by id without needing email/phone/name extraction. DEPRECATED: "form_submitted" is rejected with a 400 -- use "form_completed".', in: 'body' },
         { name: 'stage_id', type: 'uuid', required: false, description: 'Pipeline stage UUID. Required when trigger_type is "stage_changed". Single source of truth for stage matching.', in: 'body' },
         { name: 'description', type: 'string', required: false, description: 'Description', in: 'body' },
         { name: 'enabled', type: 'boolean', required: false, description: 'Whether enabled (default: false)', in: 'body' },
@@ -228,14 +228,14 @@ export const AUTOMATIONS: ResourceGroup = {
     {
       method: 'POST',
       path: '/automations/:id/triggers',
-      description: 'Add a trigger to an automation.',
+      description: 'Add a trigger to an automation. source_type auto-populates from the parent automation trigger_type when omitted -- you only need to pass source_type to override the default. For stage_changed automations, use update_automation with stage_id instead -- adding a trigger row for stage_changed is rejected with a 400.',
       scopes: ['automations:write'],
       isWrite: true,
       params: [
         { name: 'id', type: 'uuid', required: true, description: 'Automation ID', in: 'path' },
-        { name: 'source_type', type: 'string', required: false, description: 'Trigger source type', in: 'body' },
-        { name: 'source_id', type: 'string', required: false, description: 'Trigger source ID (e.g. pipeline stage ID)', in: 'body' },
-        { name: 'config', type: 'object', required: false, description: 'Trigger configuration', in: 'body' },
+        { name: 'source_type', type: 'string', required: false, description: 'Trigger source type. Optional -- auto-populates from the parent automation trigger_type. Canonical defaults: deal_created/contact_*/customer_*/api/trustpager_signup -> "any"; form_completed/form_sent -> "form_template"; sms_received -> "sms"; email_received/email_bounced -> "email"; call_* -> "voice_agent"; document_sent -> "document_template"; signature_* -> "signature_template"; webhook/zapier/typeform/generic_webhook -> "webhook"; xero_*/zoom_*/calcom_*/facebook_lead_ad/booking_* -> "platform_integration".', in: 'body' },
+        { name: 'source_id', type: 'string', required: false, description: 'Trigger source ID (optional). For form_completed: form_template UUID. For sms_received: phone_number UUID. For call_*: voice_agent ID. Omit to match any source of that type.', in: 'body' },
+        { name: 'config', type: 'object', required: false, description: 'Trigger configuration (varies by type). For form_completed: { form_template_id }. For sms_received/email_received: no config needed.', in: 'body' },
       ],
     },
     {
