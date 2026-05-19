@@ -65,6 +65,7 @@ export const API_CATEGORIES: NavCategory[] = [
       { id: 'ai', label: 'AI', icon: 'Brain' },
       { id: 'voices', label: 'Voices', icon: 'Mic' },
       { id: 'evie', label: 'Evie (In-App Agent)', icon: 'Bot' },
+      { id: 'agent-ops', label: 'Agent Ops', icon: 'LayoutDashboard' },
     ],
   },
   {

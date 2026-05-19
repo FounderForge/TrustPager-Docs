@@ -61,6 +61,7 @@ export { EXPORT_TEMPLATES } from './export-templates.js';
 export { SPREADSHEETS } from './spreadsheets.js';
 export { REFERRALS } from './referrals.js';
 export { EVIE } from './evie.js';
+export { AGENT_OPS } from './agent-ops.js';
 
 import { type ResourceGroup } from './types.js';
 import { SEARCH } from './search.js';
@@ -121,6 +122,7 @@ import { EXPORT_TEMPLATES } from './export-templates.js';
 import { SPREADSHEETS } from './spreadsheets.js';
 import { REFERRALS } from './referrals.js';
 import { EVIE } from './evie.js';
+import { AGENT_OPS } from './agent-ops.js';
 
 // =============================================================================
 // RESOURCES -- ordered for the sidebar / API hub.
@@ -191,6 +193,7 @@ export const RESOURCES: ResourceGroup[] = [
   CRM_EXPORT,
   EXPORT_TEMPLATES,
   EVIE,
+  AGENT_OPS,
 ];
 
 /**
