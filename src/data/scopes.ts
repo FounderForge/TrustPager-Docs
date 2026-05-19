@@ -123,6 +123,8 @@ export const SCOPE_GROUPS: ScopeGroup[] = [
       { key: 'dispatcher:read', label: 'Dispatcher (Read)' },
       { key: 'dispatcher:write', label: 'Dispatcher (Write)' },
       { key: 'dispatcher:delete', label: 'Dispatcher (Delete)' },
+      { key: 'memory:read', label: 'Agent Memory (Read)' },
+      { key: 'memory:write', label: 'Agent Memory (Write)' },
     ],
   },
   {

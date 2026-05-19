@@ -47,6 +47,7 @@ export { APPROVALS } from './approvals.js';
 export { AI_INSTRUCTIONS } from './ai-instructions.js';
 export { VOICES } from './voices.js';
 export { KNOWLEDGE } from './knowledge.js';
+export { MEMORY } from './memory.js';
 export { EMAIL_CAMPAIGNS } from './email-campaigns.js';
 export { AGENT_PROPOSALS } from './agent-proposals.js';
 export { LEAD_GEN } from './lead-gen.js';
@@ -106,6 +107,7 @@ import { APPROVALS } from './approvals.js';
 import { AI_INSTRUCTIONS } from './ai-instructions.js';
 import { VOICES } from './voices.js';
 import { KNOWLEDGE } from './knowledge.js';
+import { MEMORY } from './memory.js';
 import { EMAIL_CAMPAIGNS } from './email-campaigns.js';
 import { AGENT_PROPOSALS } from './agent-proposals.js';
 import { LEAD_GEN } from './lead-gen.js';
@@ -168,6 +170,7 @@ export const RESOURCES: ResourceGroup[] = [
   SPREADSHEETS,
   REPORTS,
   KNOWLEDGE,
+  MEMORY,
   COMPANY,
   CRM_TEMPLATES,
   INTEGRATIONS,
