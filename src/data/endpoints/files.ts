@@ -150,6 +150,29 @@ export const FILES: ResourceGroup = {
     },
     {
       method: 'POST',
+      path: '/files/bundle',
+      description: 'Bundle up to 50 files (any mix of document / image / secure types -- auto-detected) into a ZIP archive. Default mode ("binary") streams the ZIP back directly as application/zip (suitable for browser save dialogs). Pass ?response=url (or "response": "url" in the body) to stage the ZIP and return a 10-minute signed download URL instead -- use this mode with API agents that cannot consume a large binary response. Cap: 50 files / 200MB total decompressed. Files that cannot be fetched from storage are listed in a _manifest.txt included in the ZIP and in the skipped[] field of the url-mode response. Requires files:read scope (no write scope needed).',
+      scopes: ['files:read'],
+      isWrite: false,
+      params: [
+        { name: 'ids', type: 'string[]', required: true, description: 'Array of 1-50 file UUIDs to bundle. Mix of document, image, and secure types is fine -- each is auto-detected.', in: 'body' },
+        { name: 'filename', type: 'string', required: false, description: 'Optional ZIP filename without extension. Defaults to "attachments_YYYY-MM-DD". A .zip suffix is always appended.', in: 'body' },
+        { name: 'response', type: 'string', required: false, description: 'Response mode. "binary" (default) streams the ZIP directly. "url" returns a JSON body with a signed URL good for 10 minutes. Also accepted as a query parameter: ?response=url.', in: 'body' },
+      ],
+      responseExample: JSON.stringify({
+        data: {
+          download_url: 'https://trustpager-private.r2.cloudflarestorage.com/_bundles/company-id/uuid.zip?X-Amz-Signature=...',
+          filename: 'deal_attachments_2026-05-19.zip',
+          expires_in_seconds: 600,
+          file_count: 3,
+          size_bytes: 567246,
+          skipped: [{ id: 'uuid', name: 'missing.pdf', reason: 'storage_unavailable' }],
+        },
+        meta: { credits_remaining: 9800 },
+      }, null, 2),
+    },
+    {
+      method: 'POST',
       path: '/images/optimize',
       description: 'Generate web-optimized WebP variants (mobile 640px, tablet 1024px, desktop 1920px) from an existing image file or a public image URL. RECOMMENDED WORKFLOW: generate an image with POST /ai/generate-image (returns lossless PNG) then call this endpoint to produce lean WebP variants ready for web delivery. Pass file_id to optimize an existing company_files entry -- variants are persisted to R2 and website_images rows are created, and the original file\'s is_optimized_image metadata is updated. Pass image_url for ad-hoc optimization of an external image -- variants are uploaded to R2 but no website_images rows are written. Idempotent: re-optimizing a file_id replaces previous variants. Costs credits when the platform prices the "image_optimize" feature; otherwise free.',
       scopes: ['files:write'],
