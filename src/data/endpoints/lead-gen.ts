@@ -391,6 +391,7 @@ export const LEAD_GEN: ResourceGroup = {
       path: '/lead-gen/initiatives',
       description: 'List all outreach initiatives for your workspace. Returns initiatives ordered by creation date descending, with step and enrolment counts.',
       scopes: ['lead-gen:read'],
+      isWrite: false,
       params: [
         { name: 'status', type: 'string', required: false, description: 'Filter by status: draft, active, paused, completed', in: 'query' },
         { name: 'limit', type: 'integer', required: false, description: 'Max results to return (default: 50)', in: 'query' },
@@ -418,6 +419,7 @@ export const LEAD_GEN: ResourceGroup = {
       path: '/lead-gen/initiatives/:id',
       description: 'Retrieve a single outreach initiative including its full step list and summary enrolment counts.',
       scopes: ['lead-gen:read'],
+      isWrite: false,
       params: [
         { name: 'id', type: 'uuid', required: true, description: 'Initiative UUID', in: 'path' },
       ],
@@ -571,6 +573,7 @@ export const LEAD_GEN: ResourceGroup = {
       path: '/lead-gen/initiatives/:id/enrolments',
       description: 'List enrolments for an initiative. Returns each enrolment with the lead\'s details, current step number, status, and next scheduled action date.',
       scopes: ['lead-gen:read'],
+      isWrite: false,
       params: [
         { name: 'id', type: 'uuid', required: true, description: 'Initiative UUID', in: 'path' },
         { name: 'status', type: 'string', required: false, description: 'Filter by enrolment status: active, completed, unsubscribed, failed', in: 'query' },
