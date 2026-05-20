@@ -81,7 +81,7 @@ export const SCHEDULING_BOOKINGS: ResourceGroup = {
     {
       method: 'POST',
       path: '/scheduling-bookings',
-      description: 'Create a booking. Auto-creates CRM opportunity + contact (response field names like deal_id are preserved for backward compatibility). Flat request body (no nested objects). On slot conflict, returns SLOT_UNAVAILABLE error with nearest alternatives. Accepts event type by ID, slug, or name.',
+      description: 'Create a booking. Auto-creates CRM opportunity + contact (response field names like deal_id are preserved for backward compatibility). Flat request body (no nested objects). Email format is validated before slot logic runs -- malformed addresses (missing TLD, no domain) return INVALID_EMAIL; invalid attendee emails return INVALID_ATTENDEE_EMAIL. On slot conflict, returns SLOT_UNAVAILABLE error with nearest alternatives. Accepts event type by ID, slug, or name.',
       scopes: ['company:write'],
       isWrite: true,
       params: [
@@ -92,13 +92,13 @@ export const SCHEDULING_BOOKINGS: ResourceGroup = {
         { name: 'time', type: 'string', required: true, description: 'Booking time HH:MM (24h format)', in: 'body' },
         { name: 'timezone', type: 'string', required: false, description: 'Customer (booker) timezone. Authoritative for converting date+time to UTC. Default: Australia/Sydney. Accepts IANA names (e.g. "Australia/Perth") or shorthands (e.g. "Perth", "AWST", "WA").', in: 'body' },
         { name: 'fullName', type: 'string', required: true, description: 'Customer full name', in: 'body' },
-        { name: 'email', type: 'string', required: true, description: 'Customer email', in: 'body' },
+        { name: 'email', type: 'string', required: true, description: 'Customer email. Must be a valid format with a complete TLD (e.g. "name@example.com"). Truncated addresses like "doug@resolvency." are rejected with INVALID_EMAIL before slot validation runs.', in: 'body' },
         { name: 'phone', type: 'string', required: false, description: 'Customer phone', in: 'body' },
         { name: 'message', type: 'string', required: false, description: 'Customer notes', in: 'body' },
         { name: 'company_name', type: 'string', required: false, description: 'Customer company (used for CRM account)', in: 'body' },
         { name: 'booker_state', type: 'string', required: false, description: 'Customer state/region (e.g. "WA", "NSW"). Written to CRM contact state field if currently empty.', in: 'body' },
         { name: 'booker_timezone', type: 'string', required: false, description: 'Explicit CRM timezone to store on the contact (e.g. "Australia/Perth"). Falls back to timezone if omitted. Written to CRM contact timezone field if currently empty.', in: 'body' },
-        { name: 'attendees', type: 'array', required: false, description: 'Additional attendees: [{ "email": "...", "name": "...", "phone": "..." }]. All receive Google Calendar invites.', in: 'body' },
+        { name: 'attendees', type: 'array', required: false, description: 'Additional attendees: [{ "email": "...", "name": "...", "phone": "..." }]. All receive calendar invites. Each attendee email must also be a valid format; invalid entries return INVALID_ATTENDEE_EMAIL.', in: 'body' },
       ],
       requestExample: `curl -X POST \\
   "${API_BASE_URL}/scheduling-bookings" \\
