@@ -101,7 +101,7 @@ export const EMAIL: ResourceGroup = {
     {
       method: 'POST',
       path: '/email/send',
-      description: 'Send a new email. Default mode is "company" (uses configured Company Mail provider). Use mode "personal" with sender_user_id to send from a specific user\'s Gmail. When contact_id or deal_id is provided, an outbound email activity is automatically logged to their CRM timeline.',
+      description: 'Send a new email. Default mode is "company" (uses configured Company Mail provider). Use mode "personal" with sender_user_id to send from a specific user\'s Gmail. When contact_id or deal_id is provided, an outbound email activity is automatically logged to their CRM timeline. If a contact_id / deal_id / customer_id is provided but does not exist in the workspace, the request is rejected with 400 VALIDATION_ERROR before the email is dispatched; the response body includes details.missing_entities with the offending field names and IDs. Omit the field entirely to send without a CRM link. Rare: if the email is delivered but the internal log row fails, the API returns 422 EMAIL_LOG_FAILED with the Postmark message id in postmark_message_id so the caller knows the email did reach the recipient.',
       scopes: ['email:send'],
       isWrite: true,
       params: [
@@ -112,10 +112,10 @@ export const EMAIL: ResourceGroup = {
         { name: 'mode', type: 'string', required: false, description: 'Send mode: "company" (default) or "personal"', in: 'body' },
         { name: 'sender_user_id', type: 'uuid', required: false, description: 'User UUID whose Gmail to send from (required when mode is "personal")', in: 'body' },
         { name: 'from_email', type: 'string', required: false, description: 'Send-as alias when mode is "personal". Must be a valid alias for the sender (use GET /email/capabilities to see available aliases). If omitted, auto-resolves to the user\'s workspace email if it is a valid alias.', in: 'body' },
-        { name: 'contact_id', type: 'uuid', required: false, description: 'Link to contact. Auto-logs an outbound email activity on the contact timeline.', in: 'body' },
-        { name: 'deal_id', type: 'uuid', required: false, description: 'Link to deal. Auto-logs an outbound email activity on the deal timeline.', in: 'body' },
+        { name: 'contact_id', type: 'uuid', required: false, description: 'Link to contact. Auto-logs an outbound email activity on the contact timeline. Must exist in this workspace or the request returns 400 VALIDATION_ERROR.', in: 'body' },
+        { name: 'deal_id', type: 'uuid', required: false, description: 'Link to deal. Auto-logs an outbound email activity on the deal timeline. Must exist in this workspace or the request returns 400 VALIDATION_ERROR.', in: 'body' },
         { name: 'cc', type: 'string', required: false, description: 'CC recipients as comma-separated email addresses (e.g. "alice@example.com, bob@example.com"). Supported on both mode="company" (TrustPager Mail) and mode="personal" (Gmail). CC addresses are merged into the email thread\'s participant list.', in: 'body' },
-        { name: 'customer_id', type: 'uuid', required: false, description: 'Link to customer', in: 'body' },
+        { name: 'customer_id', type: 'uuid', required: false, description: 'Link to customer. Must exist in this workspace or the request returns 400 VALIDATION_ERROR.', in: 'body' },
         { name: 'email_config_id', type: 'uuid', required: false, description: 'Email config to use (defaults to company default)', in: 'body' },
         { name: 'attachments', type: 'array', required: false, description: 'File attachments (Gmail only, max 25MB total). Array of objects with filename, mime_type, and content (base64-encoded file data).', in: 'body' },
       ],
