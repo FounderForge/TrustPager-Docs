@@ -181,7 +181,7 @@ const TOOL_CATEGORIES = [
       'list_form_templates', 'get_form_template', 'create_form_template', 'update_form_template', 'delete_form_template',
       'duplicate_form_template', 'archive_form_template',
       'list_form_fields', 'add_form_field', 'update_form_field', 'delete_form_field', 'reorder_form_fields',
-      'send_form', 'list_form_submissions', 'get_form_submission', 'resend_form_submission', 'void_form_submission',
+      'send_form', 'list_form_submissions', 'get_form_submission', 'resend_form_submission', 'void_form_submission', 'delete_form_submission',
       'list_form_folders', 'create_form_folder', 'update_form_folder', 'delete_form_folder',
       'list_form_prefills', 'create_form_prefill', 'get_form_prefill', 'upsert_form_prefill_values',
     ],

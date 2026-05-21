@@ -140,6 +140,26 @@ export const FORMS: ResourceGroup = {
     { method: 'POST', path: '/forms/submissions/:id/resend', description: 'Resend a form submission email to the original recipient.', scopes: ['forms:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Submission ID', in: 'path' }] },
     { method: 'POST', path: '/forms/submissions/:id/void', description: 'Void (expire) a form submission to prevent further responses.', scopes: ['forms:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Submission ID', in: 'path' }] },
     {
+      method: 'DELETE',
+      path: '/forms/submissions/:id',
+      description: 'Permanently delete a form submission and any uploaded files attached to its responses. Use delete_archived_pdf=true to also remove the auto-archived PDF from the Documents library (matched via source_form_submission_id). Unlike void, this removes the record entirely and cannot be undone. Requires forms:delete scope.',
+      scopes: ['forms:delete'],
+      isWrite: true,
+      params: [
+        { name: 'id', type: 'uuid', required: true, description: 'Submission ID', in: 'path' },
+        { name: 'delete_archived_pdf', type: 'boolean', required: false, description: 'When true, also deletes the auto-archived PDF in the Documents library generated from this submission. Default false - the PDF is preserved.', in: 'query' },
+      ],
+      responseExample: JSON.stringify({
+        data: {
+          id: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx',
+          deleted: true,
+          files_deleted: 2,
+          archived_pdfs_deleted: 1,
+        },
+        meta: { credits_remaining: 9488 },
+      }, null, 2),
+    },
+    {
       method: 'POST',
       path: '/forms/submissions/:id/render-pdf',
       description: 'Render a completed form submission to PDF and archive it in the Documents library. The PDF is auto-attached to the linked opportunity, contact, or account. Submission must have status "completed". Costs 1 credit per rendered page (typical intake form = 1-3 pages). All override params fall back to the form template settings, then platform defaults.',
