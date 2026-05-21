@@ -25,7 +25,7 @@ export const OPPORTUNITIES: ResourceGroup = {
     {
       method: 'GET',
       path: '/opportunities',
-      description: 'List all opportunities with cursor-based pagination. Supports search, status, contact, company, pipeline, stage, and date filters. Always includes pipeline placements. When using expand=products, payment_status on each product is stripped unless the caller has invoices:read scope. Legacy alias: GET /deals (same response shape).',
+      description: 'List all opportunities with cursor-based pagination. Supports search, status, contact, company, pipeline, stage, and date filters. Always includes pipeline placements. Response always includes read-only referral attribution fields: primary_referrer_contact_id (UUID of the most-recent referrer, maintained by a Postgres trigger) and primary_referrer_category (workspace category string). Use expand=referrer to inline the full referrer contact object. When using expand=products, payment_status on each product is stripped unless the caller has invoices:read scope. Legacy alias: GET /deals (same response shape).',
       scopes: ['opportunities:read'],
       isWrite: false,
       params: [
@@ -40,7 +40,7 @@ export const OPPORTUNITIES: ResourceGroup = {
         { name: 'created_before', type: 'string', required: false, description: 'ISO date filter', in: 'query' },
         { name: 'limit', type: 'number', required: false, description: 'Max results (1-100, default 25)', in: 'query' },
         { name: 'cursor', type: 'string', required: false, description: 'Cursor for next page', in: 'query' },
-        { name: 'expand', type: 'string', required: false, description: 'Expansions: contact, customer, products, assigned_users', in: 'query' },
+        { name: 'expand', type: 'string', required: false, description: 'Expansions: contact, referrer, customer, products, assigned_users. "referrer" inlines the referrer contact for opportunities with primary_referrer_contact_id set.', in: 'query' },
       ],
       requestExample: `curl -X GET \\
   "${API_BASE_URL}/opportunities?status=open&pipeline_id=UUID&stage_id=UUID&limit=25" \\
@@ -79,8 +79,28 @@ export const OPPORTUNITIES: ResourceGroup = {
       isWrite: false,
       params: [
         { name: 'id', type: 'uuid', required: true, description: 'Opportunity ID', in: 'path' },
-        { name: 'expand', type: 'string', required: false, description: 'Expansions: contact, customer, products, assigned_users', in: 'query' },
+        { name: 'expand', type: 'string', required: false, description: 'Expansions: contact, referrer, customer, products, assigned_users. "referrer" inlines the referrer contact (id, public_id, first_name, last_name, email, phone, job_title) when primary_referrer_contact_id is set.', in: 'query' },
       ],
+      responseExample: `{
+  "data": {
+    "id": "opp-uuid",
+    "name": "Radiology Referral -- John Smith",
+    "status": "open",
+    "primary_referrer_contact_id": "referrer-contact-uuid",
+    "primary_referrer_category": "CT",
+    "referrer": {
+      "id": "referrer-contact-uuid",
+      "public_id": "CONT-042",
+      "first_name": "Dr",
+      "last_name": "Smith",
+      "email": "dr.smith@clinic.com.au",
+      "phone": "+61285551234",
+      "job_title": "Radiologist"
+    },
+    "placements": [...]
+  },
+  "meta": { "credits_remaining": 9499 }
+}`,
     },
     {
       method: 'POST',

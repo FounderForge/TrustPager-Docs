@@ -14,7 +14,7 @@ export const SCHEMAS: ResourceGroup = {
     {
       method: 'GET',
       path: '/schemas/triggers',
-      description: 'List all 42 trigger types supported by the automation engine. Each entry includes trigger_type, label, description, sample_trigger_data, and available_variables[]. The response also includes enriched_variables -- the CRM-enriched namespaces (contact.*, deal.*, customer.*, etc.) available on every trigger after CRM matching. Use this before building automations so you know which variable tokens to reference in action templates.',
+      description: 'List all 43 trigger types supported by the automation engine. Each entry includes trigger_type, label, description, sample_trigger_data, and available_variables[]. The response also includes enriched_variables -- the CRM-enriched namespaces (contact.*, deal.*, customer.*, etc.) available on every trigger after CRM matching. Use this before building automations so you know which variable tokens to reference in action templates.',
       scopes: [],
       isWrite: false,
       params: [],
@@ -23,7 +23,7 @@ export const SCHEMAS: ResourceGroup = {
   -H "Authorization: Bearer YOUR_API_KEY"`,
       responseExample: `{
   "data": {
-    "count": 42,
+    "count": 43,
     "enriched_variables": {
       "contact.*": "Contact record fields (first_name, last_name, email, phone, custom fields) - populated after opportunity matching.",
       "deal.*": "Deal/opportunity fields (name, value, status, opportunity_type, tags).",
@@ -32,6 +32,33 @@ export const SCHEMAS: ResourceGroup = {
       "now": "Current timestamp as ISO 8601."
     },
     "triggers": [
+      {
+        "trigger_type": "referral_attributed",
+        "label": "Referral Attributed",
+        "description": "When an inbound referral is recorded -- fires for every code path (attribute_referral action, public form, manual). Use to thank referrers, alert team, or increment per-referrer counters.",
+        "sample_trigger_data": {
+          "referral_id": "uuid",
+          "referrer_contact_id": "uuid",
+          "referrer_email": "dr.smith@clinic.com.au",
+          "referred_contact_id": "uuid",
+          "referred_deal_id": "uuid",
+          "category": "CT",
+          "status": "pending",
+          "source": "api",
+          "notes": null
+        },
+        "available_variables": [
+          "{{referral_id}}",
+          "{{referrer_contact_id}}",
+          "{{referrer_email}}",
+          "{{referred_contact_id}}",
+          "{{referred_deal_id}}",
+          "{{category}}",
+          "{{status}}",
+          "{{source}}",
+          "{{notes}}"
+        ]
+      },
       {
         "trigger_type": "facebook_lead_ad",
         "label": "Facebook Lead Ad",
