@@ -220,7 +220,7 @@ export const REPUTATION: ResourceGroup = {
     "status": "draft",
     "created_at": "2026-04-24T00:00:00.000Z"
   },
-  "meta": { "credits_remaining": 4498, "url": "https://app.trustpager.com/tools/reputation/reviews" }
+  "meta": { "credits_remaining": 4498, "url": "https://app.trustpager.com/growth/reputation/reviews" }
 }`,
     },
     {

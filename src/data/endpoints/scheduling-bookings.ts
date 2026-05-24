@@ -290,7 +290,7 @@ export const SCHEDULING_BOOKINGS: ResourceGroup = {
   },
   "meta": {
     "credits_remaining": 53827,
-    "url": "https://app.trustpager.com/tools/scheduling"
+    "url": "https://app.trustpager.com/operations/scheduling"
   }
 }`,
     },

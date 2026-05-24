@@ -75,7 +75,7 @@ export const LEAD_GEN: ResourceGroup = {
         "imported_at": null
       }
     ],
-    "meta": { "url": "https://app.trustpager.com/tools/lead-gen" }
+    "meta": { "url": "https://app.trustpager.com/growth/lead-gen" }
   }
 }`,
     },
@@ -132,7 +132,7 @@ export const LEAD_GEN: ResourceGroup = {
     "new_result_count": 38,
     "already_in_crm_count": 4,
     "results": [ ... ],
-    "meta": { "url": "https://app.trustpager.com/tools/lead-gen" }
+    "meta": { "url": "https://app.trustpager.com/growth/lead-gen" }
   }
 }`,
     },
@@ -229,7 +229,7 @@ export const LEAD_GEN: ResourceGroup = {
     "created_at": "2026-04-17T04:00:00Z",
     "updated_at": "2026-04-17T04:00:00Z"
   },
-  "meta": { "url": "https://app.trustpager.com/tools/lead-gen" }
+  "meta": { "url": "https://app.trustpager.com/growth/lead-gen" }
 }`,
     },
     {
