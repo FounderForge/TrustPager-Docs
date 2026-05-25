@@ -276,7 +276,7 @@ export const AUTOMATIONS: ResourceGroup = {
       isWrite: true,
       params: [
         { name: 'id', type: 'uuid', required: true, description: 'Automation ID', in: 'path' },
-        { name: 'action_type', type: 'string', required: true, description: 'Action type (send_custom_email, send_gmail_email, send_sms, voice_outbound_call, call_webhook, add_tasks, create_lead, move_deal, attach_to_event_queue, remove_from_event_queue, apply_tags, remove_tags, assign_user, set_custom_field, send_document, send_for_signing, send_form, slack_send_message, trigger_automation, etc.)', in: 'body' },
+        { name: 'action_type', type: 'string', required: true, description: 'Action type. Common values: send_custom_email, send_gmail_email, send_sms, voice_outbound_call, call_webhook, zapier_send (Zapier Catch Hook - Zapier-branded variant of call_webhook), add_tasks, create_lead, move_deal, attach_to_event_queue, remove_from_event_queue, apply_tags, remove_tags, assign_user, set_custom_field, send_document, send_for_signing, send_form, slack_send_message, trigger_automation, etc.', in: 'body' },
         { name: 'sequence', type: 'number', required: true, description: 'Execution order', in: 'body' },
         {
           name: 'config',
@@ -289,6 +289,7 @@ send_sms: { phone_number_id, message_body, recipient_target?, custom_recipient_p
 voice_outbound_call: { voice_agent_outbound_config_id, recipient_target?, variable_mappings?, respect_business_hours? }
 add_tasks: { tasks: [{ title, category?, due_offset_days? }] }
 call_webhook: { url, method? }
+zapier_send: { url, include_trigger_data? } -- Zapier Catch Hook. url must start with https://hooks.zapier.com/. include_trigger_data defaults to true (sends the full trigger payload so downstream Zap steps can map deal, contact, and custom fields). Response includes _warnings if url is missing or does not look like a Zapier hook URL.
 create_lead: { pipeline_id, stage_id }
 move_deal: { pipeline_id, stage_id, pipeline_name?, stage_name? } - moves the triggering deal to the specified stage
 apply_tags: { tags: [{ name, color? }] } - merges tags onto the deal. Deduplicates by name. Color falls back to tag palette or #6b7280.
