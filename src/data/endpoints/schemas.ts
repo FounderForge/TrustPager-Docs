@@ -35,7 +35,7 @@ export const SCHEMAS: ResourceGroup = {
       {
         "trigger_type": "referral_attributed",
         "label": "Referral Attributed",
-        "description": "When an inbound referral is recorded -- fires for every code path (attribute_referral action, public form, manual). Use to thank referrers, alert team, or increment per-referrer counters.",
+        "description": "When an inbound referral is recorded -- fires for every code path (create_referral automation action, public form, or direct API/MCP create). Use to thank referrers, alert team, or increment per-referrer counters.",
         "sample_trigger_data": {
           "referral_id": "uuid",
           "referrer_contact_id": "uuid",

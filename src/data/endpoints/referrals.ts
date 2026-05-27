@@ -3,7 +3,7 @@ import { type ResourceGroup } from './types.js';
 export const REFERRALS: ResourceGroup = {
   id: 'referrals',
   label: 'Referrals',
-  description: 'Track the referrer -> referred contact -> opportunity chain. Includes workspace-defined category picklist, a leaderboard endpoint, a public token-based submission form, and an automation action (attribute_referral) for pipeline-driven attribution. Every write to the referrals table fires the referral_attributed automation trigger (see GET /schemas/triggers/referral_attributed). Attribution is also cached on the opportunity: crm_deals.primary_referrer_contact_id and crm_deals.primary_referrer_category are maintained by a Postgres trigger and surface in GET /opportunities/:id (including the expand=referrer expansion).',
+  description: 'Track the referrer -> referred contact -> opportunity chain. Includes workspace-defined category picklist, a leaderboard endpoint, a public token-based submission form, and a create_referral automation action for pipeline-driven partner registration. Every write to the referrals table fires the referral_attributed automation trigger (see GET /schemas/triggers/referral_attributed). Attribution is also cached on the opportunity: crm_deals.primary_referrer_contact_id and crm_deals.primary_referrer_category are maintained by a Postgres trigger and surface in GET /opportunities/:id (including the expand=referrer expansion).',
   endpoints: [
     // ==================== LIST ====================
     {
@@ -82,7 +82,7 @@ export const REFERRALS: ResourceGroup = {
     {
       method: 'POST',
       path: '/referrals',
-      description: 'Manually log a referral (verbal/ad-hoc). source defaults to "manual". For form-driven flows use POST /referrals/request. For automation-driven attribution configure the attribute_referral automation action.',
+      description: 'Manually log a referral (verbal/ad-hoc). source defaults to "manual". For form-driven flows use POST /referrals/request. For automation-driven partner registration configure the create_referral automation action (fires on stage changes; defaults referrer to the trigger deal primary contact).',
       scopes: ['referrals:write'],
       isWrite: true,
       params: [
