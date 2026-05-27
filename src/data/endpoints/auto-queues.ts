@@ -12,8 +12,25 @@ export const AUTO_QUEUES: ResourceGroup = {
   endpoints: [
     { method: 'GET', path: '/auto-queues', description: 'List all auto queues.', scopes: ['automations:read'], isWrite: false },
     { method: 'GET', path: '/auto-queues/:id', description: 'Retrieve an auto queue with its steps.', scopes: ['automations:read'], isWrite: false, params: [{ name: 'id', type: 'uuid', required: true, description: 'Auto queue ID', in: 'path' }] },
-    { method: 'POST', path: '/auto-queues', description: 'Create an auto queue.', scopes: ['automations:write'], isWrite: true, params: [{ name: 'name', type: 'string', required: true, description: 'Queue name', in: 'body' }] },
-    { method: 'PATCH', path: '/auto-queues/:id', description: 'Update an auto queue.', scopes: ['automations:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Auto queue ID', in: 'path' }] },
+    {
+      method: 'POST', path: '/auto-queues', description: 'Create an auto queue. Accepted body fields: name (required), description, is_active. NOTE: enroll_on_triggers and cancel_on_triggers are no longer accepted -- the API returns 400 if either field is sent. Configure enrolment and cancellation via automations with attach_to_event_queue / remove_from_event_queue actions instead.',
+      scopes: ['automations:write'], isWrite: true,
+      params: [
+        { name: 'name', type: 'string', required: true, description: 'Queue name', in: 'body' },
+        { name: 'description', type: 'string', required: false, description: 'Optional description', in: 'body' },
+        { name: 'is_active', type: 'boolean', required: false, description: 'Whether the queue is active (default true)', in: 'body' },
+      ],
+    },
+    {
+      method: 'PATCH', path: '/auto-queues/:id', description: 'Update an auto queue. Accepted body fields: name, description, is_active. NOTE: enroll_on_triggers and cancel_on_triggers are no longer accepted -- the API returns 400 if either field is sent. Configure enrolment and cancellation via automations with attach_to_event_queue / remove_from_event_queue actions.',
+      scopes: ['automations:write'], isWrite: true,
+      params: [
+        { name: 'id', type: 'uuid', required: true, description: 'Auto queue ID', in: 'path' },
+        { name: 'name', type: 'string', required: false, description: 'Queue name', in: 'body' },
+        { name: 'description', type: 'string', required: false, description: 'Optional description', in: 'body' },
+        { name: 'is_active', type: 'boolean', required: false, description: 'Active status', in: 'body' },
+      ],
+    },
     { method: 'DELETE', path: '/auto-queues/:id', description: 'Delete an auto queue.', scopes: ['automations:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Auto queue ID', in: 'path' }] },
     { method: 'POST', path: '/auto-queues/:id/steps', description: 'Add a step to an auto queue.', scopes: ['automations:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Auto queue ID', in: 'path' }] },
     { method: 'PATCH', path: '/auto-queues/:id/steps/:stepId', description: 'Update an auto queue step.', scopes: ['automations:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Auto queue ID', in: 'path' }, { name: 'stepId', type: 'uuid', required: true, description: 'Step ID', in: 'path' }] },
