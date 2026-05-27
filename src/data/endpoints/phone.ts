@@ -29,6 +29,31 @@ export const PHONE: ResourceGroup = {
       ],
     },
     { method: 'POST', path: '/phone/numbers/:id/release', description: 'Release a phone number.', scopes: ['phone:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Phone number ID', in: 'path' }] },
+    {
+      method: 'POST',
+      path: '/phone/numbers/:id/import-to-retell',
+      description: 'Register an existing phone number with the AI voice provider so voice agents can be bound to it. Idempotent -- safe to re-run on a number that is already registered. Use this to recover numbers that were purchased before auto-registration was enabled, or where the automatic registration failed. After this completes successfully, PATCH /phone/numbers/:id with inbound_voice_agent_config_id or outbound_voice_agent_config_id will succeed. On success, the response includes retell_import.retell_phone_number_id (the E.164 number) and retell_import.termination_uri.',
+      scopes: ['phone:write'],
+      isWrite: true,
+      params: [
+        { name: 'id', type: 'uuid', required: true, description: 'Phone number UUID', in: 'path' },
+      ],
+      response: {
+        example: JSON.stringify({
+          id: 'uuid',
+          phone_number: '+61400000001',
+          retell_phone_number_id: '+61400000001',
+          retell_imported_at: '2026-05-28T10:00:00Z',
+          retell_last_synced_at: '2026-05-28T10:00:00Z',
+          retell_last_sync_error: null,
+          retell_import: {
+            retell_phone_number_id: '+61400000001',
+            already_imported: false,
+            termination_uri: 'retell-example-sip.pstn.twilio.com',
+          },
+        }, null, 2),
+      },
+    },
     { method: 'GET', path: '/phone/call-logs', description: 'List phone call logs.', scopes: ['calls:read'], isWrite: false },
     { method: 'GET', path: '/phone/addresses', description: 'List regulatory addresses for phone compliance.', scopes: ['phone:read'], isWrite: false },
     { method: 'POST', path: '/phone/addresses', description: 'Create a regulatory address for phone compliance.', scopes: ['phone:write'], isWrite: true },
