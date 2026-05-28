@@ -82,7 +82,7 @@ export const REFERRALS: ResourceGroup = {
     {
       method: 'POST',
       path: '/referrals',
-      description: 'Manually log a referral (verbal/ad-hoc). source defaults to "manual". For form-driven flows use POST /referrals/request. For automation-driven partner registration configure the create_referral automation action (fires on stage changes; defaults referrer to the trigger deal primary contact).',
+      description: 'Manually log a referral (verbal/ad-hoc). source defaults to "manual". For form-driven flows use POST /referrals/request. For automation-driven partner registration configure the create_referral automation action (fires on stage changes; defaults referrer to the opportunity\'s primary contact when no referrer_contact_id is configured).',
       scopes: ['referrals:write'],
       isWrite: true,
       params: [
