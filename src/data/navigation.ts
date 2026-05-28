@@ -34,6 +34,7 @@ export const API_CATEGORIES: NavCategory[] = [
       { id: 'email', label: 'Email', icon: 'Mail' },
       { id: 'email-campaigns', label: 'Email Campaigns', icon: 'Megaphone' },
       { id: 'sms', label: 'SMS', icon: 'MessageSquare' },
+      { id: 'whatsapp', label: 'WhatsApp', icon: 'MessageCircle' },
       { id: 'phone', label: 'Phone', icon: 'Phone' },
       { id: 'agents', label: 'Agents', icon: 'Mic' },
       { id: 'voice-agent-kbs', label: 'Agent Knowledge Bases', icon: 'BookOpen' },

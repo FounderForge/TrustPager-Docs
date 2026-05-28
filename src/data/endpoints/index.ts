@@ -20,6 +20,7 @@ export { EVENT_SCHEDULES } from './event-schedules.js';
 export { AUTO_QUEUES } from './auto-queues.js';
 export { AUTO_SCHEDULES } from './auto-schedules.js';
 export { SMS } from './sms.js';
+export { WHATSAPP } from './whatsapp.js';
 export { PHONE } from './phone.js';
 export { VOICE_AGENTS } from './voice-agents.js';
 export { TEXT_AGENTS } from './text-agents.js';
@@ -81,6 +82,7 @@ import { EVENT_SCHEDULES } from './event-schedules.js';
 import { AUTO_QUEUES } from './auto-queues.js';
 import { AUTO_SCHEDULES } from './auto-schedules.js';
 import { SMS } from './sms.js';
+import { WHATSAPP } from './whatsapp.js';
 import { PHONE } from './phone.js';
 import { VOICE_AGENTS } from './voice-agents.js';
 import { TEXT_AGENTS } from './text-agents.js';
@@ -156,6 +158,7 @@ export const RESOURCES: ResourceGroup[] = [
   EMAIL,
   EMAIL_CAMPAIGNS,
   SMS,
+  WHATSAPP,
   PHONE,
   VOICE_AGENTS,
   VOICE_AGENT_KBS,  // Agent Knowledge Bases
