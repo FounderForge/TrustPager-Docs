@@ -17,8 +17,10 @@
   "contact_email": "support@trustpager.com",
   "legal_info_url": "https://trustpager.com/terms",
   "mcp": {
-    "install_url": "https://app.trustpager.com/auto/ai-access",
+    "transport": "http-streamable",
+    "url_pattern": "https://mcp.trustpager.com/{workspace_slug}/mcp",
+    "install_page": "https://app.trustpager.com/auto/ai-access",
     "install_docs": "https://docs.trustpager.com/quickstart",
-    "description": "TrustPager exposes a Model Context Protocol server for AI assistants. Each workspace's MCP install URL is shown on the AI Access page at https://app.trustpager.com/auto/ai-access."
+    "description": "TrustPager exposes a Model Context Protocol server for AI assistants. Workspace-scoped — every workspace's MCP URL follows the pattern https://mcp.trustpager.com/<workspace_slug>/mcp (HTTP streamable transport). The workspace owner can copy the full `claude mcp add ...` command for their workspace from the AI Access page at https://app.trustpager.com/auto/ai-access."
   }
 }

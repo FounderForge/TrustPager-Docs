@@ -217,7 +217,7 @@ function llmsShort(): string {
   lines.push('- **REST API base URL:** `https://api.trustpager.com/functions/v1/api/v1`');
   lines.push('- **Auth:** `Authorization: Bearer tp_live_...` — one key per workspace');
   lines.push('- **Create or rotate your key:** https://app.trustpager.com/settings/api');
-  lines.push('- **MCP server:** each workspace has its own install URL at https://app.trustpager.com/auto/ai-access (the "AI Access" page). Recommended for interactive AI sessions.');
+  lines.push('- **MCP server:** workspace-scoped install URL follows the pattern `https://mcp.trustpager.com/<workspace-slug>/mcp` (HTTP streamable transport). Get yours from https://app.trustpager.com/auto/ai-access (the "AI Access" page) — that page emits the full `claude mcp add ...` command for your workspace. Recommended for interactive AI sessions.');
   lines.push('- **Welcome / discovery endpoint:** `GET https://api.trustpager.com/functions/v1/api/v1/` — returns a JSON manifest pointing at every other artefact listed below. No auth required.');
   lines.push('');
   lines.push('## Common tasks (cookbook)');

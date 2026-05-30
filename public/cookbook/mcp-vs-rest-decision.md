@@ -2,7 +2,7 @@
 
 TrustPager exposes the same workspace through two surfaces:
 
-- **MCP server** — ~280 typed tools your AI assistant invokes mid-conversation. Install URL per workspace at https://app.trustpager.com/auto/ai-access.
+- **MCP server** — ~280 typed tools your AI assistant invokes mid-conversation. Workspace-scoped URL of shape `https://mcp.trustpager.com/<workspace-slug>/mcp` (HTTP streamable transport). The full `claude mcp add ...` command for your workspace is on https://app.trustpager.com/auto/ai-access.
 - **REST API** — `https://api.trustpager.com/functions/v1/api/v1/<resource>`, `Authorization: Bearer tp_live_...`. Full reference at https://docs.trustpager.com/openapi.json.
 
 They are **not redundant.** Each is correct for a different shape of work.
