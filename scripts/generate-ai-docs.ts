@@ -121,6 +121,7 @@ function endpointMarkdown(ep: Endpoint, resource: ResourceGroup): string {
   lines.push(`# ${ep.method} ${ep.path}`);
   lines.push('');
   lines.push(`**Resource:** [${resource.label}](./${resource.id}.md)  `);
+  if (ep.toolName) lines.push(`**MCP tool:** \`${ep.toolName}\`  `);
   lines.push(`**Scopes:** ${ep.scopes.length ? ep.scopes.map((s) => `\`${s}\``).join(', ') : '_none_'}  `);
   lines.push(`**Write operation:** ${ep.isWrite ? 'yes' : 'no'}`);
   lines.push('');
@@ -208,22 +209,46 @@ function llmsShort(): string {
   lines.push('# TrustPager');
   lines.push('');
   lines.push(
-    '> TrustPager is a CRM platform with a REST API and MCP server. This documentation site covers every public endpoint, authentication, scopes, MCP tools, error codes, template variables, and the changelog. The API base URL is `https://api.trustpager.com/functions/v1/api/v1`. Authentication is `Authorization: Bearer <api_key>` (one key per workspace).',
+    '> TrustPager is an AI-first CRM platform. AI assistants like Claude Code use TrustPager as a tool surface to run a workspace end-to-end — opportunities (deals), contacts, companies, automations, voice agents, scheduling, documents, forms, transcripts, and more. This file is the entry briefing for AI agents working against TrustPager.',
   );
   lines.push('');
-  lines.push(
-    'Endpoints are grouped by resource. Every endpoint below links to a machine-readable Markdown file. A full OpenAPI 3.1 spec is also available at `/openapi.json`.',
-  );
+  lines.push('## Get connected');
   lines.push('');
-
-  lines.push('## API reference');
+  lines.push('- **REST API base URL:** `https://api.trustpager.com/functions/v1/api/v1`');
+  lines.push('- **Auth:** `Authorization: Bearer tp_live_...` — one key per workspace');
+  lines.push('- **Create or rotate your key:** https://app.trustpager.com/settings/api');
+  lines.push('- **MCP server:** each workspace has its own install URL at https://app.trustpager.com/auto/ai-access (the "AI Access" page). Recommended for interactive AI sessions.');
+  lines.push('- **Welcome / discovery endpoint:** `GET https://api.trustpager.com/functions/v1/api/v1/` — returns a JSON manifest pointing at every other artefact listed below. No auth required.');
   lines.push('');
-  for (const r of RESOURCES) {
-    lines.push(`- [${r.label}](${SITE_URL}/api/${r.id}.md): ${r.description}`);
-  }
+  lines.push('## Common tasks (cookbook)');
   lines.push('');
-
-  lines.push('## Guides');
+  lines.push('Recipes are paste-ready markdown. Read these before fanning out into bulk REST calls — they tell you which surface to use and what gotchas to avoid.');
+  lines.push('');
+  lines.push(`- [Bulk-fetch transcripts](${SITE_URL}/cookbook/bulk-fetch-transcripts.md) — paginate \`/transcripts\` via REST, save to disk, analyse offline. Solves the "100 transcripts is too much for MCP context" case.`);
+  lines.push(`- [MCP vs REST — when to use which](${SITE_URL}/cookbook/mcp-vs-rest-decision.md) — decision rules + side-by-side. Both surfaces hit the same workspace.`);
+  lines.push(`- [Paginate correctly](${SITE_URL}/cookbook/paginate-correctly.md) — \`?limit\`, \`?after\`, \`has_more\`, field selection, expansions. Same pattern on every list endpoint.`);
+  lines.push('');
+  lines.push('## Key concepts');
+  lines.push('');
+  lines.push('- **Scopes.** API keys are scoped (e.g. `contacts:read`, `opportunities:write`, `admin`). The `admin` scope is a superscope. Scopes are stamped on the key at creation time and visible on each key in Settings → API.');
+  lines.push('- **Approval queue.** Keys with `-approval` scopes (e.g. `contacts:write-approval`) return **202** on write operations with an `approval_id`. The action is queued, not executed. Do NOT retry. Check `GET /approvals/:id`. Approvers act at https://app.trustpager.com/settings/api?tab=approvals.');
+  lines.push('- **Pagination.** `{ data, pagination: { has_more, next_cursor } }`. Pass `next_cursor` back as `?after=`. Default limit 25, max 100.');
+  lines.push('- **Idempotency.** Send `Idempotency-Key: <unique>` header on writes to prevent duplicates on retry. Same key within 24 hours returns cached response.');
+  lines.push('- **Error responses.** 401/403/404 bodies include a `docs` URL and `auth_scheme` / `required_scopes` fields. Headers include `WWW-Authenticate: Bearer realm="trustpager"` and `Link: <docs>; rel="help"`. If you hit auth issues, the error itself tells you where to look.');
+  lines.push('- **Credit costs.** Reads are free. Writes are billed; AI generation and send operations are billed more. MCP rates are ~10x cheaper than REST flat-rate. Check balance any time via `GET /credit/balance` or `get_credit_balance` MCP tool.');
+  lines.push('- **Approval and idempotency are surface-agnostic.** Same key, same behaviour, whether you call via MCP or REST.');
+  lines.push('');
+  lines.push('## Discovery surface — machine-readable everything');
+  lines.push('');
+  lines.push(`- [OpenAPI 3.1 spec](${SITE_URL}/openapi.json) — declares \`bearerAuth\` with \`bearerFormat: tp_live_*\`. Every endpoint, every param, every scope.`);
+  lines.push(`- [Full reference (llms-full.txt)](${SITE_URL}/llms-full.txt) — every endpoint inlined with curl + params + scopes`);
+  lines.push(`- [Machine-readable resource index](${SITE_URL}/api-index.json) — JSON map of resources → endpoints with metadata`);
+  lines.push(`- [Per-endpoint markdown](${SITE_URL}/api/{resource}/{verb}.md) — fetchable directly. Replace \`{resource}\` and \`{verb}\` with real values.`);
+  lines.push(`- [Sitemap](${SITE_URL}/sitemap.xml) — every public URL`);
+  lines.push(`- [\`.well-known/ai-plugin.json\`](${SITE_URL}/.well-known/ai-plugin.json) — ChatGPT-plugin-compatible manifest. Names this OpenAPI spec, the MCP install URL, and the auth scheme.`);
+  lines.push(`- [\`.well-known/api-catalog\`](${SITE_URL}/.well-known/api-catalog) — RFC 9727 catalog`);
+  lines.push('');
+  lines.push('## Guides (longer-form)');
   lines.push('');
   lines.push(`- [Quickstart](${SITE_URL}/quickstart)`);
   lines.push(`- [Authentication & scopes](${SITE_URL}/authentication)`);
@@ -234,12 +259,14 @@ function llmsShort(): string {
   lines.push(`- [Error reference](${SITE_URL}/errors)`);
   lines.push(`- [Changelog](${SITE_URL}/changelog)`);
   lines.push('');
-
-  lines.push('## Optional');
+  lines.push('## Full API reference (inventory)');
   lines.push('');
-  lines.push(`- [Full expanded reference (llms-full.txt)](${SITE_URL}/llms-full.txt)`);
-  lines.push(`- [OpenAPI 3.1 spec](${SITE_URL}/openapi.json)`);
-  lines.push(`- [Machine-readable API index](${SITE_URL}/api-index.json)`);
+  lines.push('Every resource has a dedicated markdown file with every endpoint inlined. Fetch them on demand:');
+  lines.push('');
+  for (const r of RESOURCES) {
+    lines.push(`- [${r.label}](${SITE_URL}/api/${r.id}.md): ${r.description}`);
+  }
+  lines.push('');
   return lines.join('\n');
 }
 
@@ -265,9 +292,12 @@ function llmsFull(): string {
       lines.push('');
       lines.push(ep.description);
       lines.push('');
-      lines.push(
-        `**Scopes:** ${ep.scopes.length ? ep.scopes.map((s) => `\`${s}\``).join(', ') : '_none_'}${ep.isWrite ? ' — _write_' : ''}`,
-      );
+      const meta = [
+        `**Scopes:** ${ep.scopes.length ? ep.scopes.map((s) => `\`${s}\``).join(', ') : '_none_'}`,
+      ];
+      if (ep.toolName) meta.push(`**MCP tool:** \`${ep.toolName}\``);
+      if (ep.isWrite) meta.push('_write_');
+      lines.push(meta.join(' — '));
       lines.push('');
       if (ep.params && ep.params.length) {
         lines.push('Parameters:');
@@ -318,6 +348,9 @@ function openApiDoc() {
       if (ep.scopes.length) {
         (op as Record<string, unknown>)['x-scopes'] = ep.scopes;
       }
+      if (ep.toolName) {
+        (op as Record<string, unknown>)['x-mcp-tool'] = ep.toolName;
+      }
       const body = bodySchema(ep);
       if (body) (op as Record<string, unknown>)['requestBody'] = body;
       paths[oaPath][ep.method.toLowerCase()] = op;
@@ -337,7 +370,12 @@ function openApiDoc() {
     tags: resourceTags,
     components: {
       securitySchemes: {
-        bearerAuth: { type: 'http', scheme: 'bearer', bearerFormat: 'API key' },
+        bearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'tp_live_*',
+          description: 'TrustPager API key. One key per workspace. Format: `tp_live_<random>`. Header: `Authorization: Bearer tp_live_...`. Create or rotate at https://app.trustpager.com/settings/api. Scopes are stamped on the key at creation time; see https://docs.trustpager.com/authentication for the full scope reference.',
+        },
       },
     },
     security: [{ bearerAuth: [] }],
@@ -361,6 +399,7 @@ function apiIndex() {
       endpoints: r.endpoints.map((ep) => ({
         method: ep.method,
         path: ep.path,
+        tool_name: ep.toolName,
         description: ep.description,
         scopes: ep.scopes,
         is_write: ep.isWrite,

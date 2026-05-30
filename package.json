@@ -7,7 +7,9 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "sync:api": "tsx scripts/sync-from-api.ts",
+    "sync:api:check": "tsx scripts/sync-from-api.ts --check"
   },
   "dependencies": {
     "clsx": "^2.1.1",
@@ -36,6 +38,8 @@
     "eslint-plugin-react-refresh": "^0.5.2",
     "globals": "^17.4.0",
     "tailwindcss": "^4.2.2",
+    "ts-morph": "^28.0.0",
+    "tsx": "^4.22.3",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.57.0",
     "vite": "^8.0.1"

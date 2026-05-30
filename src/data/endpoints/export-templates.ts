@@ -24,6 +24,7 @@ export const EXPORT_TEMPLATES: ResourceGroup = {
     {
       method: 'GET',
       path: '/exports/field-catalog',
+      toolName: 'get_export_field_catalog',
       description:
         'Discover which fields are available as columns and filters for a given root entity. ' +
         'Returns filter_fields (with allowed operator sets per field type) and column_fields (source + relation options). ' +
@@ -84,6 +85,7 @@ export const EXPORT_TEMPLATES: ResourceGroup = {
     {
       method: 'GET',
       path: '/exports/templates',
+      toolName: 'list_export_templates',
       description: 'List all export templates for this workspace.',
       scopes: ['exports:read'],
       isWrite: false,
@@ -121,6 +123,7 @@ export const EXPORT_TEMPLATES: ResourceGroup = {
     {
       method: 'GET',
       path: '/exports/templates/:id',
+      toolName: 'get_export_template',
       description: 'Get a single export template with full column, filter, and output config.',
       scopes: ['exports:read'],
       isWrite: false,
@@ -131,6 +134,7 @@ export const EXPORT_TEMPLATES: ResourceGroup = {
     {
       method: 'POST',
       path: '/exports/templates',
+      toolName: 'create_export_template',
       description: 'Create an export template. Define columns (root fields or relation fields), filters, optional sort, and output format.',
       scopes: ['exports:write'],
       isWrite: true,
@@ -231,6 +235,7 @@ export const EXPORT_TEMPLATES: ResourceGroup = {
     {
       method: 'PATCH',
       path: '/exports/templates/:id',
+      toolName: 'update_export_template',
       description: 'Update an export template. All body fields are optional; send only the fields you want to change.',
       scopes: ['exports:write'],
       isWrite: true,
@@ -254,6 +259,7 @@ export const EXPORT_TEMPLATES: ResourceGroup = {
     {
       method: 'DELETE',
       path: '/exports/templates/:id',
+      toolName: 'delete_export_template',
       description: 'Delete an export template and all its saved views.',
       scopes: ['exports:delete'],
       isWrite: true,
@@ -268,6 +274,7 @@ export const EXPORT_TEMPLATES: ResourceGroup = {
     {
       method: 'POST',
       path: '/exports/templates/:id/preview',
+      toolName: 'preview_export_template',
       description:
         'Preview the first 10 rows of an export template (or a saved view). ' +
         'Returns JSON with headers and rows -- useful for verifying filter logic before running a full export. ' +
@@ -311,6 +318,7 @@ export const EXPORT_TEMPLATES: ResourceGroup = {
     {
       method: 'POST',
       path: '/exports/templates/:id/run',
+      toolName: 'run_export_template',
       description:
         'Run an export template and download the resulting XLSX or CSV file. ' +
         'Up to 250,000 rows are exported (X-Truncated: 1 header if the cap is hit). ' +
@@ -350,6 +358,7 @@ export const EXPORT_TEMPLATES: ResourceGroup = {
     {
       method: 'GET',
       path: '/exports/templates/:id/views',
+      toolName: 'list_export_template_views',
       description: 'List all saved views for an export template.',
       scopes: ['exports:read'],
       isWrite: false,
@@ -360,6 +369,7 @@ export const EXPORT_TEMPLATES: ResourceGroup = {
     {
       method: 'POST',
       path: '/exports/templates/:id/views',
+      toolName: 'create_export_template_view',
       description: 'Create a saved view on an export template. A view stores a per-user filter/sort overlay without modifying the base template.',
       scopes: ['exports:write'],
       isWrite: true,
@@ -385,6 +395,7 @@ export const EXPORT_TEMPLATES: ResourceGroup = {
     {
       method: 'PATCH',
       path: '/exports/templates/:template_id/views/:id',
+      toolName: 'update_export_template_view',
       description: 'Update a saved view name, filters, or sort.',
       scopes: ['exports:write'],
       isWrite: true,
@@ -399,6 +410,7 @@ export const EXPORT_TEMPLATES: ResourceGroup = {
     {
       method: 'DELETE',
       path: '/exports/templates/:template_id/views/:id',
+      toolName: 'delete_export_template_view',
       description: 'Delete a saved view.',
       scopes: ['exports:delete'],
       isWrite: true,

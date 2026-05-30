@@ -12,6 +12,7 @@ export const EVENT_SCHEDULES: ResourceGroup = {
     {
       method: 'GET',
       path: '/event-schedules',
+      toolName: 'list_auto_schedules',
       description: 'List all event schedules for the workspace.',
       scopes: ['schedules:read'],
       isWrite: false,
@@ -49,6 +50,7 @@ export const EVENT_SCHEDULES: ResourceGroup = {
     {
       method: 'GET',
       path: '/event-schedules/:id',
+      toolName: 'get_auto_schedule',
       description: 'Retrieve a single event schedule.',
       scopes: ['schedules:read'],
       isWrite: false,
@@ -83,6 +85,7 @@ export const EVENT_SCHEDULES: ResourceGroup = {
     {
       method: 'POST',
       path: '/event-schedules',
+      toolName: 'create_auto_schedule',
       description: `Create a new event schedule. Required fields: name, cron_expression, audience_type, automation_id.
 
 **Cron expression** is standard 5-field syntax: "min hour day-of-month month day-of-week".
@@ -157,6 +160,7 @@ Optionally set end_at (ISO timestamp) to stop firing after a date, or max_runs (
     {
       method: 'PATCH',
       path: '/event-schedules/:id',
+      toolName: 'update_auto_schedule',
       description: 'Partial update — modify name, description, is_active, cron_expression, timezone, audience_type, audience_filter, automation_id, end_at, or max_runs. Changing cron_expression or timezone automatically recomputes next_run_at.',
       scopes: ['schedules:write'],
       isWrite: true,
@@ -202,6 +206,7 @@ Optionally set end_at (ISO timestamp) to stop firing after a date, or max_runs (
     {
       method: 'DELETE',
       path: '/event-schedules/:id',
+      toolName: 'delete_auto_schedule',
       description: 'Permanently delete an event schedule. The linked automation is NOT deleted. This cannot be undone.',
       scopes: ['schedules:delete'],
       isWrite: true,
@@ -216,6 +221,7 @@ Optionally set end_at (ISO timestamp) to stop firing after a date, or max_runs (
     {
       method: 'POST',
       path: '/event-schedules/preview-cron',
+      toolName: 'preview_auto_schedule_cron',
       description: 'Validate a cron expression and preview the next N fire times in a specified timezone. Does NOT create any schedule. Use to confirm a pattern before saving.',
       scopes: ['schedules:read'],
       isWrite: false,
@@ -249,6 +255,7 @@ Optionally set end_at (ISO timestamp) to stop firing after a date, or max_runs (
     {
       method: 'POST',
       path: '/event-schedules/:id/fire-now',
+      toolName: 'fire_auto_schedule_now',
       description: 'Manually fire an event schedule immediately. Resolves the current audience and triggers one automation run per row. Does NOT advance next_run_at, increment run_count, or respect end_at/max_runs limits. Useful for testing, ad-hoc sends, or recovering from a missed fire.',
       scopes: ['schedules:write'],
       isWrite: true,
@@ -273,6 +280,7 @@ Optionally set end_at (ISO timestamp) to stop firing after a date, or max_runs (
     {
       method: 'GET',
       path: '/event-schedules/:id/audience-preview',
+      toolName: 'preview_auto_schedule_audience',
       description: 'Preview the audience a schedule WOULD resolve to right now -- returns the total count and a configurable sample of trigger_data rows, without firing anything. Use before enabling a schedule to verify the filter targets the right rows.',
       scopes: ['schedules:read'],
       isWrite: false,
@@ -304,6 +312,7 @@ Optionally set end_at (ISO timestamp) to stop firing after a date, or max_runs (
     {
       method: 'GET',
       path: '/event-schedules/:id/runs',
+      toolName: 'list_auto_schedule_runs',
       description: 'List historical fire records for a schedule. Shows audience_size, runs_triggered, runs_failed, status (completed/partial/failed), and timing. Use to verify schedules are firing, debug failures, or audit history. Supports cursor pagination ordered by fired_at descending.',
       scopes: ['schedules:read'],
       isWrite: false,

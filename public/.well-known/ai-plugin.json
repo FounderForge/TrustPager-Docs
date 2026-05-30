@@ -1,0 +1,24 @@
+{
+  "schema_version": "v1",
+  "name_for_human": "TrustPager",
+  "name_for_model": "trustpager",
+  "description_for_human": "AI-first CRM platform. Manage opportunities, contacts, companies, automations, voice agents, scheduling, documents, forms, and more.",
+  "description_for_model": "Use TrustPager to operate a CRM workspace: list and modify opportunities (deals), contacts (people), companies (accounts), tasks, activities, work orders, automations, forms, documents, files, notepads, spreadsheets; send email/SMS/WhatsApp; trigger voice agents; manage scheduling and bookings; build and run reports; query transcripts. Auth uses Bearer tokens with the format `tp_live_*`. Keys are scoped (e.g. `contacts:read`, `opportunities:write`, `admin`); the `admin` scope is a superscope. Some write operations return HTTP 202 with an `approval_id` when the API key requires human approval - the action queues for review at https://app.trustpager.com/settings/api?tab=approvals. Cursor-based pagination via `{data, pagination: {next_cursor, has_more}}`. The MCP server exposes ~280 typed tools mirroring the REST surface; recommend MCP for interactive agent sessions and REST for bulk/scripted work.",
+  "auth": {
+    "type": "service_http",
+    "authorization_type": "bearer",
+    "verification_tokens": {}
+  },
+  "api": {
+    "type": "openapi",
+    "url": "https://docs.trustpager.com/openapi.json"
+  },
+  "logo_url": "https://app.trustpager.com/apple-touch-icon.png",
+  "contact_email": "support@trustpager.com",
+  "legal_info_url": "https://trustpager.com/terms",
+  "mcp": {
+    "install_url": "https://app.trustpager.com/auto/ai-access",
+    "install_docs": "https://docs.trustpager.com/quickstart",
+    "description": "TrustPager exposes a Model Context Protocol server for AI assistants. Each workspace's MCP install URL is shown on the AI Access page at https://app.trustpager.com/auto/ai-access."
+  }
+}

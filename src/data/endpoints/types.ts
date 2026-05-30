@@ -13,6 +13,7 @@ export interface EndpointParam {
 export interface Endpoint {
   method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
   path: string;
+  toolName?: string;
   description: string;
   scopes: string[];
   isWrite: boolean;

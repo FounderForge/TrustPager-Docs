@@ -12,6 +12,7 @@ export const CRM_EXPORT: ResourceGroup = {
     {
       method: 'GET',
       path: '/crm/export',
+      toolName: 'export_crm_data',
       description: 'Export CRM data as a downloadable file. Returns the file as an attachment (XLSX or CSV). Custom fields from company_settings are appended as dynamic columns. Work-order dynamic fields come from crm_work_order_fields. Response headers include X-Row-Count (actual rows returned) and X-Truncated (1 if the 50,000-row cap was hit).',
       scopes: ['contacts:read', 'companies:read', 'opportunities:read', 'work-orders:read'],
       isWrite: false,

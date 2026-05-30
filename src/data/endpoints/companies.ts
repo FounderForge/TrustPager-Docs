@@ -25,6 +25,7 @@ export const COMPANIES: ResourceGroup = {
     {
       method: 'GET',
       path: '/companies',
+      toolName: 'list_companies',
       description: 'List all companies with cursor-based pagination. Legacy alias: GET /customers.',
       scopes: ['companies:read'],
       isWrite: false,
@@ -56,6 +57,7 @@ export const COMPANIES: ResourceGroup = {
     {
       method: 'GET',
       path: '/companies/:id',
+      toolName: 'get_company',
       description: 'Retrieve a single company by ID. Legacy alias: GET /customers/:id.',
       scopes: ['companies:read'],
       isWrite: false,
@@ -64,6 +66,7 @@ export const COMPANIES: ResourceGroup = {
     {
       method: 'POST',
       path: '/companies',
+      toolName: 'create_company',
       description: 'Create a new company. name is required. Set skip_automations: true to suppress the customer_created trigger -- recommended for historical imports. Legacy alias: POST /customers.',
       scopes: ['companies:write'],
       isWrite: true,
@@ -87,6 +90,7 @@ export const COMPANIES: ResourceGroup = {
     {
       method: 'PATCH',
       path: '/companies/:id',
+      toolName: 'update_company',
       description: 'Update an existing company. Only include fields you want to change. Every successful PATCH emits a field-level audit row to crm_field_change_log (viewable at /data/crm-logs with the crm_audit:read scope). Legacy alias: PATCH /customers/:id.',
       scopes: ['companies:write'],
       isWrite: true,
@@ -105,6 +109,7 @@ export const COMPANIES: ResourceGroup = {
     {
       method: 'DELETE',
       path: '/companies/:id',
+      toolName: 'delete_company',
       description: 'Delete a company. Legacy alias: DELETE /customers/:id.',
       scopes: ['companies:write'],
       isWrite: true,
@@ -113,6 +118,7 @@ export const COMPANIES: ResourceGroup = {
     {
       method: 'POST',
       path: '/companies/search',
+      toolName: 'search_companies',
       description: 'Search companies by name, email, or phone. Legacy alias: POST /customers/search.',
       scopes: ['companies:read'],
       isWrite: false,
@@ -124,6 +130,7 @@ export const COMPANIES: ResourceGroup = {
     {
       method: 'GET',
       path: '/companies/:id/contacts',
+      toolName: 'get_company_contacts',
       description: 'List all contacts linked to this company. Legacy alias: GET /customers/:id/contacts.',
       scopes: ['companies:read', 'contacts:read'],
       isWrite: false,
@@ -132,6 +139,7 @@ export const COMPANIES: ResourceGroup = {
     {
       method: 'GET',
       path: '/companies/:id/opportunities',
+      toolName: 'get_company_opportunities',
       description: 'List all opportunities for this company. Legacy alias: GET /customers/:id/deals (also still supported).',
       scopes: ['companies:read', 'opportunities:read'],
       isWrite: false,
@@ -140,6 +148,7 @@ export const COMPANIES: ResourceGroup = {
     {
       method: 'GET',
       path: '/companies/:id/activities',
+      toolName: 'get_company_activities',
       description: 'List all activities for this company. Legacy alias: GET /customers/:id/activities.',
       scopes: ['companies:read', 'activities:read'],
       isWrite: false,
@@ -148,6 +157,7 @@ export const COMPANIES: ResourceGroup = {
     {
       method: 'POST',
       path: '/companies/bulk-create',
+      toolName: 'bulk_create_companies',
       description: 'Create up to 100 companies in a single request. Built for historical migrations and bulk imports. Set skip_automations: true to suppress customer_created triggers across all records. Returns a created array and an errors array. Legacy alias: POST /customers/bulk-create.',
       scopes: ['companies:write'],
       isWrite: true,
@@ -182,6 +192,7 @@ export const COMPANIES: ResourceGroup = {
     {
       method: 'POST',
       path: '/companies/bulk-delete',
+      toolName: 'bulk_delete_companies',
       description: 'Permanently delete up to 100 companies in a single request. Returns a count of deleted records. Cannot be undone. Legacy alias: POST /customers/bulk-delete.',
       scopes: ['companies:delete'],
       isWrite: true,

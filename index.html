@@ -41,19 +41,80 @@
     </script>
   </head>
   <body>
-    <div id="root"></div>
-    <noscript>
+    <!--
+      STATIC FALLBACK — visible to AI WebFetch / curl / HTML-to-markdown converters
+      that don't execute JS or strip <noscript>. main.tsx removes this div the moment
+      the React app starts to render, so real (JS-enabled) users never see it.
+      Keep this content in sync with public/llms.txt — same headings, same links.
+    -->
+    <div id="static-fallback">
       <h1>TrustPager Developer Docs</h1>
-      <p>This site requires JavaScript for the interactive documentation viewer. For AI agents, scrapers, and JavaScript-disabled clients, all reference material is available as static files:</p>
+      <p>TrustPager is an AI-first CRM platform. AI assistants like Claude Code use TrustPager as a tool surface to run a workspace end-to-end — opportunities (deals), contacts, companies, automations, voice agents, scheduling, documents, forms, transcripts, and more. This page is the entry briefing for AI agents working against TrustPager.</p>
+
+      <h2>Get connected</h2>
       <ul>
-        <li><a href="/llms.txt">/llms.txt</a> — compact index of every resource (llmstxt.org standard)</li>
-        <li><a href="/llms-full.txt">/llms-full.txt</a> — full reference with every endpoint, parameter, and scope inlined</li>
-        <li><a href="/openapi.json">/openapi.json</a> — OpenAPI 3.1 specification</li>
-        <li><a href="/api-index.json">/api-index.json</a> — machine-readable resource and endpoint index</li>
-        <li><a href="/sitemap.xml">/sitemap.xml</a> — full URL list including per-resource Markdown</li>
+        <li><strong>REST API base URL:</strong> <code>https://api.trustpager.com/functions/v1/api/v1</code></li>
+        <li><strong>Auth:</strong> <code>Authorization: Bearer tp_live_...</code> — one key per workspace</li>
+        <li><strong>Create or rotate your key:</strong> <a href="https://app.trustpager.com/settings/api">https://app.trustpager.com/settings/api</a></li>
+        <li><strong>MCP server:</strong> each workspace has its own install URL on the same Settings → API page. Recommended for interactive AI sessions.</li>
+        <li><strong>Welcome / discovery endpoint:</strong> <code>GET https://api.trustpager.com/functions/v1/api/v1/</code> — returns a JSON manifest pointing at every other artefact listed below. No auth required.</li>
       </ul>
-      <p>API base URL: <code>https://api.trustpager.com/functions/v1/api/v1</code>. Authentication: <code>Authorization: Bearer &lt;api_key&gt;</code> (one key per workspace).</p>
-    </noscript>
+
+      <h2>Common tasks (cookbook)</h2>
+      <p>Recipes are paste-ready markdown. Read these before fanning out into bulk REST calls — they tell you which surface to use and what gotchas to avoid.</p>
+      <ul>
+        <li><a href="/cookbook/bulk-fetch-transcripts.md">Bulk-fetch transcripts</a> — paginate <code>/transcripts</code> via REST, save to disk, analyse offline.</li>
+        <li><a href="/cookbook/mcp-vs-rest-decision.md">MCP vs REST — when to use which</a> — decision rules + side-by-side. Both surfaces hit the same workspace.</li>
+        <li><a href="/cookbook/paginate-correctly.md">Paginate correctly</a> — <code>?limit</code>, <code>?after</code>, <code>has_more</code>, field selection, expansions. Same pattern on every list endpoint.</li>
+      </ul>
+
+      <h2>Key concepts</h2>
+      <ul>
+        <li><strong>Scopes.</strong> API keys are scoped (e.g. <code>contacts:read</code>, <code>opportunities:write</code>, <code>admin</code>). The <code>admin</code> scope is a superscope. Scopes are stamped on the key at creation time.</li>
+        <li><strong>Approval queue.</strong> Keys with <code>-approval</code> scopes return <strong>202</strong> on writes with an <code>approval_id</code>. The action is queued, not executed. Do NOT retry. Check <code>GET /approvals/:id</code>.</li>
+        <li><strong>Pagination.</strong> <code>{ data, pagination: { has_more, next_cursor } }</code>. Pass <code>next_cursor</code> back as <code>?after=</code>. Default limit 25, max 100.</li>
+        <li><strong>Idempotency.</strong> Send <code>Idempotency-Key: &lt;unique&gt;</code> header on writes to prevent duplicates on retry. Same key within 24 hours returns cached response.</li>
+        <li><strong>Error responses.</strong> 401/403/404 bodies include a <code>docs</code> URL and structured <code>auth_scheme</code> / <code>required_scopes</code> fields. Headers include <code>WWW-Authenticate: Bearer realm="trustpager"</code> and <code>Link: &lt;docs&gt;; rel="help"</code>. If you hit auth issues, the error itself tells you where to look.</li>
+        <li><strong>Credit costs.</strong> Reads are free. Writes are billed; AI generation and sends are billed more. MCP rates are ~10x cheaper than REST flat-rate.</li>
+      </ul>
+
+      <h2>Discovery surface — machine-readable everything</h2>
+      <ul>
+        <li><a href="/openapi.json">OpenAPI 3.1 spec</a> — declares <code>bearerAuth</code> with <code>bearerFormat: tp_live_*</code>. Every endpoint, every param, every scope.</li>
+        <li><a href="/llms.txt">llms.txt</a> — llmstxt.org-format briefing (same content as this page, plus full resource inventory)</li>
+        <li><a href="/llms-full.txt">llms-full.txt</a> — every endpoint inlined with curl + params + scopes</li>
+        <li><a href="/api-index.json">api-index.json</a> — JSON map of resources → endpoints with metadata</li>
+        <li><a href="/sitemap.xml">sitemap.xml</a> — every public URL on this site</li>
+        <li><a href="/.well-known/ai-plugin.json">/.well-known/ai-plugin.json</a> — ChatGPT-plugin-compatible manifest. Names this OpenAPI spec, the MCP install URL, and the auth scheme.</li>
+        <li><a href="/.well-known/api-catalog">/.well-known/api-catalog</a> — RFC 9727 API catalog</li>
+      </ul>
+
+      <h2>Per-endpoint markdown reference</h2>
+      <p>Every resource has a dedicated markdown file fetched on demand:</p>
+      <ul>
+        <li><a href="/api/contacts.md">Contacts</a> — manage individuals (people) in the CRM</li>
+        <li><a href="/api/companies.md">Companies</a> — manage business accounts</li>
+        <li><a href="/api/opportunities.md">Opportunities</a> — sales pipeline (legacy alias: deals)</li>
+        <li><a href="/api/pipelines.md">Pipelines</a> — stages and pipeline management</li>
+        <li><a href="/api/automations.md">Automations</a> — triggers, actions, runs</li>
+        <li><a href="/api/transcripts.md">Transcripts</a> — call and meeting transcripts</li>
+        <li><a href="/api/email.md">Email</a> — send, reply, threads, logs</li>
+        <li><a href="/api/sms.md">SMS</a> — send and receive</li>
+        <li><a href="/api/phone.md">Phone</a> — numbers and call logs</li>
+        <li><a href="/api/voice-agents.md">Voice Agents</a> — AI voice agents (inbound + outbound)</li>
+        <li><a href="/api/scheduling.md">Scheduling</a> — bookings, availability, event types</li>
+        <li><a href="/api/forms.md">Forms</a> — form templates, submissions, prefills</li>
+        <li><a href="/api/signing.md">Signing</a> — document signing envelopes</li>
+        <li><a href="/api/files.md">Files</a> — uploads, attachments, folders</li>
+        <li><a href="/api/automations.md">Automations</a> — workflow triggers and actions</li>
+        <li><a href="/llms.txt">…and 40+ more — see the full inventory in llms.txt</a></li>
+      </ul>
+
+      <h2>For humans</h2>
+      <p>If you have JavaScript enabled, the interactive React app at this URL provides the same content with navigation, search, and code highlighting. This static fallback exists so AI agents, curl, and HTML-to-markdown converters can read the documentation without executing JavaScript.</p>
+    </div>
+
+    <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

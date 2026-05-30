@@ -25,6 +25,7 @@ export const OPPORTUNITIES: ResourceGroup = {
     {
       method: 'GET',
       path: '/opportunities',
+      toolName: 'list_opportunities',
       description: 'List all opportunities with cursor-based pagination. Supports search, status, contact, company, pipeline, stage, and date filters. Always includes pipeline placements. Response always includes read-only referral attribution fields: primary_referrer_contact_id (UUID of the most-recent referrer, maintained by a Postgres trigger) and primary_referrer_category (workspace category string). Use expand=referrer to inline the full referrer contact object. When using expand=products, payment_status on each product is stripped unless the caller has invoices:read scope. Legacy alias: GET /deals (same response shape).',
       scopes: ['opportunities:read'],
       isWrite: false,
@@ -74,6 +75,7 @@ export const OPPORTUNITIES: ResourceGroup = {
     {
       method: 'GET',
       path: '/opportunities/:id',
+      toolName: 'get_opportunity',
       description: 'Retrieve a single opportunity by ID with pipeline placements. Supports expansions. Legacy alias: GET /deals/:id.',
       scopes: ['opportunities:read'],
       isWrite: false,
@@ -105,6 +107,7 @@ export const OPPORTUNITIES: ResourceGroup = {
     {
       method: 'POST',
       path: '/opportunities',
+      toolName: 'create_opportunity',
       description: 'Create a new opportunity. name is required. Set skip_automations: true to suppress the deal_created trigger -- recommended for historical imports to avoid spamming contacts with automation emails. Legacy alias: POST /deals.',
       scopes: ['opportunities:write'],
       isWrite: true,
@@ -134,6 +137,7 @@ export const OPPORTUNITIES: ResourceGroup = {
     {
       method: 'PATCH',
       path: '/opportunities/:id',
+      toolName: 'update_opportunity',
       description: 'Update an existing opportunity. Only include fields you want to change. Every successful PATCH emits a field-level audit row to crm_field_change_log (viewable at /data/crm-logs with the crm_audit:read scope). Legacy alias: PATCH /deals/:id.',
       scopes: ['opportunities:write'],
       isWrite: true,
@@ -152,6 +156,7 @@ export const OPPORTUNITIES: ResourceGroup = {
     {
       method: 'DELETE',
       path: '/opportunities/:id',
+      toolName: 'delete_opportunity',
       description: 'Delete an opportunity. Legacy alias: DELETE /deals/:id.',
       scopes: ['opportunities:write'],
       isWrite: true,
@@ -160,6 +165,7 @@ export const OPPORTUNITIES: ResourceGroup = {
     {
       method: 'POST',
       path: '/opportunities/search',
+      toolName: 'search_opportunities',
       description: 'Search opportunities by name, contact name/email/phone, or company name/email/phone. Matches across opportunity name and linked contact/company fields. Legacy alias: POST /deals/search.',
       scopes: ['opportunities:read'],
       isWrite: false,
@@ -171,6 +177,7 @@ export const OPPORTUNITIES: ResourceGroup = {
     {
       method: 'POST',
       path: '/opportunities/:id/move',
+      toolName: 'move_opportunity',
       description: 'Move an opportunity to a pipeline stage. If the opportunity is not in the pipeline, it will be added. If it is in a different pipeline, it will be moved. When the stage actually changes, stage_changed automations fire automatically. Use skip_automations=true to suppress all automation triggers, or pass skip_action_ids with an array of action UUIDs to suppress only specific actions within automations (the automation still runs and is logged, but those actions are bypassed and recorded in the run\'s skipped_action_ids field). Legacy alias: POST /deals/:id/move.',
       scopes: ['opportunities:write'],
       isWrite: true,
@@ -201,6 +208,7 @@ export const OPPORTUNITIES: ResourceGroup = {
     {
       method: 'POST',
       path: '/opportunities/:id/add-card',
+      toolName: 'add_opportunity_card',
       description: 'Add an opportunity card to a pipeline WITHOUT removing existing cards in other pipelines. Enables an opportunity to appear in multiple pipelines simultaneously (dual/multi placement). If the opportunity already has a card in the target pipeline, its stage is updated. Stage_changed automations fire on new placements or stage changes. Supports skip_automations and skip_action_ids for fine-grained automation control. Legacy alias: POST /deals/:id/add-card.',
       scopes: ['opportunities:write'],
       isWrite: true,
@@ -232,6 +240,7 @@ export const OPPORTUNITIES: ResourceGroup = {
     {
       method: 'GET',
       path: '/opportunities/:id/products',
+      toolName: 'list_opportunity_products',
       description: 'List products attached to an opportunity with pricing and payment status. payment_status is only included in the response when the caller has invoices:read scope. Legacy alias: GET /deals/:id/products.',
       scopes: ['opportunities:read'],
       isWrite: false,
@@ -259,6 +268,7 @@ export const OPPORTUNITIES: ResourceGroup = {
     {
       method: 'POST',
       path: '/opportunities/:id/products',
+      toolName: 'add_opportunity_product',
       description: 'Add a product to an opportunity. product_id is required. Optionally set payment_status (requires invoices:write scope). Valid payment_status values: unpaid (default), deposit_invoiced, invoiced, paid. Legacy alias: POST /deals/:id/products.',
       scopes: ['opportunities:write'],
       isWrite: true,
@@ -275,6 +285,7 @@ export const OPPORTUNITIES: ResourceGroup = {
     {
       method: 'PATCH',
       path: '/opportunities/:id/products/:opportunityProductId',
+      toolName: 'update_opportunity_product',
       description: 'Update an opportunity product. Supports quantity, price, discount, deposit, and payment_status. Setting payment_status requires invoices:write scope -- returns 403 otherwise. Valid payment_status values: unpaid, deposit_invoiced, invoiced, paid. Legacy alias: PATCH /deals/:id/products/:dealProductId.',
       scopes: ['opportunities:write'],
       isWrite: true,
@@ -291,6 +302,7 @@ export const OPPORTUNITIES: ResourceGroup = {
     {
       method: 'DELETE',
       path: '/opportunities/:id/products/:opportunityProductId',
+      toolName: 'remove_opportunity_product',
       description: 'Remove a product from an opportunity. Legacy alias: DELETE /deals/:id/products/:dealProductId.',
       scopes: ['opportunities:write'],
       isWrite: true,
@@ -302,6 +314,7 @@ export const OPPORTUNITIES: ResourceGroup = {
     {
       method: 'POST',
       path: '/opportunities/:id/products/reorder',
+      toolName: 'reorder_opportunity_products',
       description: 'Reorder products on an opportunity by providing an ordered array of opportunity product IDs. Legacy alias: POST /deals/:id/products/reorder.',
       scopes: ['opportunities:write'],
       isWrite: true,
@@ -314,6 +327,7 @@ export const OPPORTUNITIES: ResourceGroup = {
     {
       method: 'GET',
       path: '/opportunities/:id/product-costs/:opportunityProductId',
+      toolName: 'list_opportunity_product_costs',
       description: 'List costs for an opportunity product. Legacy alias: GET /deals/:id/product-costs/:dealProductId.',
       scopes: ['opportunities:read'],
       isWrite: false,
@@ -325,6 +339,7 @@ export const OPPORTUNITIES: ResourceGroup = {
     {
       method: 'POST',
       path: '/opportunities/:id/product-costs/:opportunityProductId',
+      toolName: 'create_opportunity_product_cost',
       description: 'Create a cost entry for an opportunity product. Legacy alias: POST /deals/:id/product-costs/:dealProductId.',
       scopes: ['opportunities:write'],
       isWrite: true,
@@ -365,6 +380,7 @@ export const OPPORTUNITIES: ResourceGroup = {
     {
       method: 'GET',
       path: '/opportunities/:id/contacts',
+      toolName: 'list_opportunity_contacts',
       description: 'List all contacts associated with an opportunity (beyond the primary contact). Legacy alias: GET /deals/:id/contacts.',
       scopes: ['opportunities:read', 'contacts:read'],
       isWrite: false,
@@ -373,6 +389,7 @@ export const OPPORTUNITIES: ResourceGroup = {
     {
       method: 'POST',
       path: '/opportunities/:id/contacts/:contactId',
+      toolName: 'add_opportunity_contact',
       description: 'Associate an additional contact with an opportunity. Legacy alias: POST /deals/:id/contacts/:contactId.',
       scopes: ['opportunities:write'],
       isWrite: true,
@@ -384,6 +401,7 @@ export const OPPORTUNITIES: ResourceGroup = {
     {
       method: 'DELETE',
       path: '/opportunities/:id/contacts/:contactId',
+      toolName: 'remove_opportunity_contact',
       description: 'Remove a contact association from an opportunity. Legacy alias: DELETE /deals/:id/contacts/:contactId.',
       scopes: ['opportunities:write'],
       isWrite: true,
@@ -396,6 +414,7 @@ export const OPPORTUNITIES: ResourceGroup = {
     {
       method: 'GET',
       path: '/opportunities/:id/users',
+      toolName: 'list_opportunity_users',
       description: 'List users assigned to an opportunity. Legacy alias: GET /deals/:id/users.',
       scopes: ['opportunities:read'],
       isWrite: false,
@@ -404,6 +423,7 @@ export const OPPORTUNITIES: ResourceGroup = {
     {
       method: 'POST',
       path: '/opportunities/:id/users/:userId',
+      toolName: 'add_opportunity_user',
       description: 'Assign a user to an opportunity. Legacy alias: POST /deals/:id/users/:userId.',
       scopes: ['opportunities:write'],
       isWrite: true,
@@ -415,6 +435,7 @@ export const OPPORTUNITIES: ResourceGroup = {
     {
       method: 'DELETE',
       path: '/opportunities/:id/users/:userId',
+      toolName: 'remove_opportunity_user',
       description: 'Remove a user assignment from an opportunity. Legacy alias: DELETE /deals/:id/users/:userId.',
       scopes: ['opportunities:write'],
       isWrite: true,
@@ -427,6 +448,7 @@ export const OPPORTUNITIES: ResourceGroup = {
     {
       method: 'GET',
       path: '/opportunities/:id/activities',
+      toolName: 'get_opportunity_activities',
       description: 'List all activities for an opportunity. Legacy alias: GET /deals/:id/activities.',
       scopes: ['opportunities:read', 'activities:read'],
       isWrite: false,
@@ -435,6 +457,7 @@ export const OPPORTUNITIES: ResourceGroup = {
     {
       method: 'GET',
       path: '/opportunities/:id/tasks',
+      toolName: 'get_opportunity_tasks',
       description: 'List all tasks for an opportunity. Legacy alias: GET /deals/:id/tasks.',
       scopes: ['opportunities:read', 'tasks:read'],
       isWrite: false,
@@ -443,6 +466,7 @@ export const OPPORTUNITIES: ResourceGroup = {
     {
       method: 'GET',
       path: '/opportunities/:id/work-orders',
+      toolName: 'get_opportunity_work_orders',
       description: 'List all work orders for an opportunity. Legacy alias: GET /deals/:id/work-orders.',
       scopes: ['opportunities:read'],
       isWrite: false,
@@ -452,6 +476,7 @@ export const OPPORTUNITIES: ResourceGroup = {
     {
       method: 'GET',
       path: '/opportunities/:id/files',
+      toolName: 'list_opportunity_files',
       description: 'List files attached to an opportunity. Returns file metadata for every file linked to the opportunity (any file type accepted by /files -- documents, images, secure). Legacy alias: GET /deals/:id/files. Matching MCP tool: list_opportunity_files.',
       scopes: ['opportunities:read', 'files:read'],
       isWrite: false,
@@ -460,6 +485,7 @@ export const OPPORTUNITIES: ResourceGroup = {
     {
       method: 'POST',
       path: '/opportunities/:id/files/:fileId',
+      toolName: 'add_opportunity_file',
       description: 'Attach an existing file to an opportunity. The file must already exist in the workspace (upload via POST /files first if needed). Legacy alias: POST /deals/:id/files/:fileId. Matching MCP tool: add_opportunity_file.',
       scopes: ['opportunities:write', 'files:read'],
       isWrite: true,
@@ -471,6 +497,7 @@ export const OPPORTUNITIES: ResourceGroup = {
     {
       method: 'DELETE',
       path: '/opportunities/:id/files/:fileId',
+      toolName: 'remove_opportunity_file',
       description: 'Remove a file attachment from an opportunity. Detaches the link only -- the file itself is not deleted (use DELETE /files/:id to fully delete the file). Legacy alias: DELETE /deals/:id/files/:fileId. Matching MCP tool: remove_opportunity_file.',
       scopes: ['opportunities:write'],
       isWrite: true,
@@ -483,6 +510,7 @@ export const OPPORTUNITIES: ResourceGroup = {
     {
       method: 'GET',
       path: '/opportunities/:id/documents',
+      toolName: 'list_opportunity_documents',
       description: 'List CRM documents attached to an opportunity. Returns generated documents (proposals, contracts, etc.) linked to the opportunity. Legacy alias: GET /deals/:id/documents. Matching MCP tool: list_opportunity_documents.',
       scopes: ['opportunities:read', 'documents:read'],
       isWrite: false,
@@ -491,6 +519,7 @@ export const OPPORTUNITIES: ResourceGroup = {
     {
       method: 'POST',
       path: '/opportunities/:id/documents/:documentId',
+      toolName: 'add_opportunity_document',
       description: 'Attach an existing CRM document to an opportunity. Legacy alias: POST /deals/:id/documents/:documentId. Matching MCP tool: add_opportunity_document.',
       scopes: ['opportunities:write', 'documents:read'],
       isWrite: true,
@@ -502,6 +531,7 @@ export const OPPORTUNITIES: ResourceGroup = {
     {
       method: 'DELETE',
       path: '/opportunities/:id/documents/:documentId',
+      toolName: 'remove_opportunity_document',
       description: 'Remove a document attachment from an opportunity. Detaches the link only -- the document itself is not deleted. Legacy alias: DELETE /deals/:id/documents/:documentId. Matching MCP tool: remove_opportunity_document.',
       scopes: ['opportunities:write'],
       isWrite: true,
@@ -514,6 +544,7 @@ export const OPPORTUNITIES: ResourceGroup = {
     {
       method: 'GET',
       path: '/opportunities/:id/images',
+      toolName: 'list_opportunity_images',
       description: 'List image files attached to an opportunity. Filters /files attachments to type=image. Legacy alias: GET /deals/:id/images. Matching MCP tool: list_opportunity_images.',
       scopes: ['opportunities:read', 'files:read'],
       isWrite: false,
@@ -522,6 +553,7 @@ export const OPPORTUNITIES: ResourceGroup = {
     {
       method: 'POST',
       path: '/opportunities/:id/images/:imageId',
+      toolName: 'add_opportunity_image',
       description: 'Attach an existing image file (type=image) to an opportunity. Legacy alias: POST /deals/:id/images/:imageId. Matching MCP tool: add_opportunity_image.',
       scopes: ['opportunities:write', 'files:read'],
       isWrite: true,
@@ -533,6 +565,7 @@ export const OPPORTUNITIES: ResourceGroup = {
     {
       method: 'DELETE',
       path: '/opportunities/:id/images/:imageId',
+      toolName: 'remove_opportunity_image',
       description: 'Remove an image attachment from an opportunity. Detaches the link only -- the image file itself is not deleted. Legacy alias: DELETE /deals/:id/images/:imageId. Matching MCP tool: remove_opportunity_image.',
       scopes: ['opportunities:write'],
       isWrite: true,
@@ -545,6 +578,7 @@ export const OPPORTUNITIES: ResourceGroup = {
     {
       method: 'GET',
       path: '/opportunities/:id/spreadsheets',
+      toolName: 'list_opportunity_spreadsheets',
       description: 'List spreadsheets attached to an opportunity. Returns metadata for every spreadsheet linked to the opportunity (including spreadsheets auto-created by form submissions where the form is linked to the opportunity). Legacy alias: GET /deals/:id/spreadsheets. Matching MCP tool: list_opportunity_spreadsheets.',
       scopes: ['opportunities:read', 'spreadsheets:read'],
       isWrite: false,
@@ -553,6 +587,7 @@ export const OPPORTUNITIES: ResourceGroup = {
     {
       method: 'POST',
       path: '/opportunities/:id/spreadsheets/:spreadsheetId',
+      toolName: 'add_opportunity_spreadsheet',
       description: 'Attach an existing spreadsheet to an opportunity. Legacy alias: POST /deals/:id/spreadsheets/:spreadsheetId. Matching MCP tool: add_opportunity_spreadsheet.',
       scopes: ['opportunities:write', 'spreadsheets:read'],
       isWrite: true,
@@ -564,6 +599,7 @@ export const OPPORTUNITIES: ResourceGroup = {
     {
       method: 'DELETE',
       path: '/opportunities/:id/spreadsheets/:spreadsheetId',
+      toolName: 'remove_opportunity_spreadsheet',
       description: 'Remove a spreadsheet attachment from an opportunity. Detaches the link only -- the spreadsheet itself is not deleted. Legacy alias: DELETE /deals/:id/spreadsheets/:spreadsheetId. Matching MCP tool: remove_opportunity_spreadsheet.',
       scopes: ['opportunities:write'],
       isWrite: true,
@@ -576,6 +612,7 @@ export const OPPORTUNITIES: ResourceGroup = {
     {
       method: 'GET',
       path: '/opportunities/:id/invoices',
+      toolName: 'list_opportunity_invoices',
       description: 'List invoices linked to an opportunity. Invoices are read-only here -- this endpoint surfaces every invoice that references the opportunity via trustpager_deal_id, so AI agents and integrations can answer "what has this customer been billed for?" without needing the invoices:write scope. Requires the invoices:read scope. Legacy alias: GET /deals/:id/invoices. Matching MCP tool: list_opportunity_invoices.',
       scopes: ['opportunities:read', 'invoices:read'],
       isWrite: false,
@@ -585,6 +622,7 @@ export const OPPORTUNITIES: ResourceGroup = {
     {
       method: 'POST',
       path: '/opportunities/bulk-create',
+      toolName: 'bulk_create_opportunities',
       description: 'Create up to 100 opportunities in a single request. Built for historical migrations and bulk data loads. Top-level pipeline_id/stage_id act as defaults inherited by each record unless overridden. Set skip_automations: true (strongly recommended for imports) to suppress deal_created triggers across all records. Returns a created array and an errors array so partial successes can be recovered from without duplicating work on retry. Legacy alias: POST /deals/bulk-create.',
       scopes: ['opportunities:write'],
       isWrite: true,
@@ -623,6 +661,7 @@ export const OPPORTUNITIES: ResourceGroup = {
     {
       method: 'POST',
       path: '/opportunities/bulk-delete',
+      toolName: 'bulk_delete_opportunities',
       description: 'Permanently delete up to 100 opportunities in a single request. Each opportunity is cascade-deleted including its products, pipeline placements, contacts, and users. Returns a count of deleted records and any IDs that failed. Cannot be undone. Legacy alias: POST /deals/bulk-delete.',
       scopes: ['opportunities:delete'],
       isWrite: true,
@@ -642,6 +681,7 @@ export const OPPORTUNITIES: ResourceGroup = {
     {
       method: 'POST',
       path: '/opportunities/bulk-move',
+      toolName: 'bulk_move_opportunities',
       description: 'Move up to 100 opportunities to a pipeline stage in a single request. Set skip_automations=true to suppress all stage_changed automation triggers (recommended for bulk moves to avoid flooding contacts). Alternatively, pass skip_action_ids to suppress only specific automation actions across all records in the batch. Returns a count of moved records and any IDs that failed. Legacy alias: POST /deals/bulk-move.',
       scopes: ['opportunities:write'],
       isWrite: true,

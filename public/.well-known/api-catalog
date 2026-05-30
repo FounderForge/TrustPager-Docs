@@ -1,0 +1,46 @@
+{
+  "links": [
+    {
+      "href": "https://docs.trustpager.com/openapi.json",
+      "rel": "service-desc",
+      "type": "application/vnd.oai.openapi+json",
+      "title": "TrustPager REST API — OpenAPI 3.1 specification"
+    },
+    {
+      "href": "https://docs.trustpager.com",
+      "rel": "service-doc",
+      "type": "text/html",
+      "title": "TrustPager Developer Documentation"
+    },
+    {
+      "href": "https://docs.trustpager.com/llms.txt",
+      "rel": "service-doc",
+      "type": "text/plain",
+      "title": "TrustPager API — AI-friendly index (llmstxt.org)"
+    },
+    {
+      "href": "https://docs.trustpager.com/llms-full.txt",
+      "rel": "service-doc",
+      "type": "text/plain",
+      "title": "TrustPager API — full reference with every endpoint inlined"
+    },
+    {
+      "href": "https://docs.trustpager.com/api-index.json",
+      "rel": "service-meta",
+      "type": "application/json",
+      "title": "TrustPager API — machine-readable resource and endpoint index"
+    },
+    {
+      "href": "https://docs.trustpager.com/mcp-setup",
+      "rel": "service-doc",
+      "type": "text/html",
+      "title": "TrustPager MCP server — installation guide for AI assistants"
+    },
+    {
+      "href": "https://app.trustpager.com/settings/api",
+      "rel": "service",
+      "type": "text/html",
+      "title": "TrustPager API key management"
+    }
+  ]
+}

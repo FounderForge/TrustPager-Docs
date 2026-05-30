@@ -40,9 +40,7 @@ export { INTEGRATIONS } from './integrations.js';
 export { WEBHOOKS } from './webhooks.js';
 export { AI } from './ai.js';
 export { BILLING } from './billing.js';
-export { SCHEDULED_EVENT_TYPES } from './scheduled-event-types.js';
-export { SCHEDULING_AVAILABILITY } from './scheduling-availability.js';
-export { SCHEDULING_BOOKINGS } from './scheduling-bookings.js';
+export { SCHEDULING } from './scheduling.js';
 export { SERVICE_REQUESTS } from './service-requests.js';
 export { APPROVALS } from './approvals.js';
 export { AI_INSTRUCTIONS } from './ai-instructions.js';
@@ -102,9 +100,7 @@ import { INTEGRATIONS } from './integrations.js';
 import { WEBHOOKS } from './webhooks.js';
 import { AI } from './ai.js';
 import { BILLING } from './billing.js';
-import { SCHEDULED_EVENT_TYPES } from './scheduled-event-types.js';
-import { SCHEDULING_AVAILABILITY } from './scheduling-availability.js';
-import { SCHEDULING_BOOKINGS } from './scheduling-bookings.js';
+import { SCHEDULING } from './scheduling.js';
 import { SERVICE_REQUESTS } from './service-requests.js';
 import { APPROVALS } from './approvals.js';
 import { AI_INSTRUCTIONS } from './ai-instructions.js';
@@ -152,9 +148,7 @@ export const RESOURCES: ResourceGroup[] = [
   EVENT_SCHEDULES,
   AUTO_QUEUES,
   AUTO_SCHEDULES,
-  SCHEDULED_EVENT_TYPES,
-  SCHEDULING_AVAILABILITY,
-  SCHEDULING_BOOKINGS,
+  SCHEDULING,
   EMAIL,
   EMAIL_CAMPAIGNS,
   SMS,

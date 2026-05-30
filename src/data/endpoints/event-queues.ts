@@ -9,17 +9,18 @@ export const EVENT_QUEUES: ResourceGroup = {
   label: 'Event Queues',
   description: 'Manage event queues for sequenced multi-step workflows (drip campaigns, follow-up sequences).',
   endpoints: [
-    { method: 'GET', path: '/event-queues', description: 'List all event queues.', scopes: ['automations:read'], isWrite: false },
-    { method: 'GET', path: '/event-queues/:id', description: 'Retrieve an event queue with its steps.', scopes: ['automations:read'], isWrite: false, params: [{ name: 'id', type: 'uuid', required: true, description: 'Event queue ID', in: 'path' }] },
-    { method: 'POST', path: '/event-queues', description: 'Create an event queue.', scopes: ['automations:write'], isWrite: true, params: [{ name: 'name', type: 'string', required: true, description: 'Queue name', in: 'body' }] },
-    { method: 'PATCH', path: '/event-queues/:id', description: 'Update an event queue.', scopes: ['automations:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Event queue ID', in: 'path' }] },
-    { method: 'DELETE', path: '/event-queues/:id', description: 'Delete an event queue.', scopes: ['automations:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Event queue ID', in: 'path' }] },
-    { method: 'POST', path: '/event-queues/:id/steps', description: 'Add a step to an event queue.', scopes: ['automations:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Event queue ID', in: 'path' }] },
-    { method: 'PATCH', path: '/event-queues/:id/steps/:stepId', description: 'Update an event queue step.', scopes: ['automations:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Event queue ID', in: 'path' }, { name: 'stepId', type: 'uuid', required: true, description: 'Step ID', in: 'path' }] },
-    { method: 'DELETE', path: '/event-queues/:id/steps/:stepId', description: 'Delete an event queue step.', scopes: ['automations:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Event queue ID', in: 'path' }, { name: 'stepId', type: 'uuid', required: true, description: 'Step ID', in: 'path' }] },
+    { method: 'GET', path: '/event-queues', toolName: 'list_auto_queues', description: 'List all event queues.', scopes: ['automations:read'], isWrite: false },
+    { method: 'GET', path: '/event-queues/:id', toolName: 'get_auto_queue', description: 'Retrieve an event queue with its steps.', scopes: ['automations:read'], isWrite: false, params: [{ name: 'id', type: 'uuid', required: true, description: 'Event queue ID', in: 'path' }] },
+    { method: 'POST', path: '/event-queues', toolName: 'create_auto_queue', description: 'Create an event queue.', scopes: ['automations:write'], isWrite: true, params: [{ name: 'name', type: 'string', required: true, description: 'Queue name', in: 'body' }] },
+    { method: 'PATCH', path: '/event-queues/:id', toolName: 'update_auto_queue', description: 'Update an event queue.', scopes: ['automations:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Event queue ID', in: 'path' }] },
+    { method: 'DELETE', path: '/event-queues/:id', toolName: 'delete_auto_queue', description: 'Delete an event queue.', scopes: ['automations:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Event queue ID', in: 'path' }] },
+    { method: 'POST', path: '/event-queues/:id/steps', toolName: 'add_auto_queue_step', description: 'Add a step to an event queue.', scopes: ['automations:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Event queue ID', in: 'path' }] },
+    { method: 'PATCH', path: '/event-queues/:id/steps/:stepId', toolName: 'update_auto_queue_step', description: 'Update an event queue step.', scopes: ['automations:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Event queue ID', in: 'path' }, { name: 'stepId', type: 'uuid', required: true, description: 'Step ID', in: 'path' }] },
+    { method: 'DELETE', path: '/event-queues/:id/steps/:stepId', toolName: 'delete_auto_queue_step', description: 'Delete an event queue step.', scopes: ['automations:write'], isWrite: true, params: [{ name: 'id', type: 'uuid', required: true, description: 'Event queue ID', in: 'path' }, { name: 'stepId', type: 'uuid', required: true, description: 'Step ID', in: 'path' }] },
     {
       method: 'GET',
       path: '/event-queues/:id/enrollments',
+      toolName: 'list_auto_queue_enrollments',
       description: 'List enrollment timer tasks for an event queue. Shows all scheduled step executions with their status, scheduled_for time, enrollment_time (the anchor time used for delay calculation when set via attach_to_event_queue action config), and linked CRM entity IDs (contact, customer, deal). Supports optional status filter and cursor pagination.',
       scopes: ['automations:read'],
       isWrite: false,
@@ -65,6 +66,7 @@ export const EVENT_QUEUES: ResourceGroup = {
     {
       method: 'POST',
       path: '/event-queues/:id/bulk-enroll',
+      toolName: 'bulk_enrol_in_auto_queue',
       description: `Enrol contacts into an event queue in bulk. Requires EXACTLY ONE of three mutually exclusive targeting modes:
 
 - contact_ids -- explicit list of contact UUIDs (max 500)
