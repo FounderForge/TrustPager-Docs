@@ -22,7 +22,7 @@ export const SCHEMAS: ResourceGroup = {
   -H "Authorization: Bearer YOUR_API_KEY"`,
       responseExample: `{
   "data": {
-    "count": 43,
+    "count": 47,
     "enriched_variables": {
       "contact.*": "Contact record fields (first_name, last_name, email, phone, custom fields) - populated after opportunity matching.",
       "deal.*": "Deal/opportunity fields (name, value, status, opportunity_type, tags).",
