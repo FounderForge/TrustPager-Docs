@@ -237,12 +237,15 @@ export const AUTOMATIONS: ResourceGroup = {
       method: 'POST',
       path: '/automations/:automation_id/triggers',
       toolName: 'add_automation_trigger',
-      description: 'Add a trigger to an automation.',
+      description: 'Add a trigger to an automation. An automation may have multiple triggers — it fires when ANY of them matches (OR logic). Pass trigger_type to give this trigger its own event class (e.g. add a webhook_received trigger to a form_completed automation so both entry points run the same actions); omit it to inherit the automation\'s primary trigger_type.',
       scopes: ['automations:write'],
       isWrite: true,
       params: [
         { name: 'automation_id', type: 'string', required: true, description: '', in: 'path' },
-        { name: 'trigger_type', type: 'string', required: false, description: '', in: 'body' },
+        { name: 'trigger_type', type: 'string', required: false, description: 'Optional. This trigger\'s own event class. Omit to inherit the automation\'s primary trigger_type. Set it to fire one automation from multiple different event types (OR-matched).', in: 'body' },
+        { name: 'source_type', type: 'string', required: false, description: '', in: 'body' },
+        { name: 'source_id', type: 'string', required: false, description: '', in: 'body' },
+        { name: 'config', type: 'object', required: false, description: '', in: 'body' },
       ],
       requestExample: `curl -X POST \
   "${API_BASE_URL}/automations/:automation_id/triggers" \

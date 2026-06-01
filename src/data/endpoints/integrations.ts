@@ -71,5 +71,19 @@ export const INTEGRATIONS: ResourceGroup = {
   -H "Content-Type: application/json" \
   -d '{"action":"...","args":"..."}'`,
     },
+    {
+      method: 'POST',
+      path: '/integrations/:integration_id/sync-receivables',
+      toolName: 'sync_receivables',
+      description: 'Backfill / reconcile the outstanding-invoices (accounts receivable) ledger from a connected Xero integration. Pages all sales invoices into the workspace and powers the Invoices / Receivables report source. Idempotent — safe to re-run.',
+      scopes: ['invoices:write'],
+      isWrite: true,
+      params: [
+        { name: 'integration_id', type: 'string', required: true, description: '', in: 'path' },
+      ],
+      requestExample: `curl -X POST \
+  "${API_BASE_URL}/integrations/:integration_id/sync-receivables" \
+  -H "Authorization: Bearer YOUR_API_KEY"`,
+    },
   ],
 };
