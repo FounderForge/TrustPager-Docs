@@ -191,23 +191,6 @@ export const AI: ResourceGroup = {
     },
     {
       method: 'POST',
-      path: '/ai/generate-website-page',
-      toolName: 'ai_generate_website_page',
-      description: 'Generate a website page from a prompt.',
-      scopes: ['ai:use', 'websites:write'],
-      isWrite: true,
-      params: [
-        { name: 'prompt', type: 'string', required: true, description: '', in: 'body' },
-        { name: 'website_id', type: 'string', required: false, description: '', in: 'body' },
-      ],
-      requestExample: `curl -X POST \
-  "${API_BASE_URL}/ai/generate-website-page" \
-  -H "Authorization: Bearer YOUR_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{"prompt":"...","website_id":"..."}'`,
-    },
-    {
-      method: 'POST',
       path: '/ai/generate-image',
       toolName: 'ai_generate_image',
       description: 'Generate an image from a prompt. Costs credits.',

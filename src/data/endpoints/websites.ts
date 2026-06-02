@@ -25,7 +25,7 @@ export const WEBSITES: ResourceGroup = {
       method: 'POST',
       path: '/websites',
       toolName: 'create_website',
-      description: 'Create a new website.',
+      description: 'Create a new website. Registers the site record (site_key, domain, branding) used by public-form embeds and the website lead gateway.',
       scopes: ['websites:write'],
       isWrite: true,
       params: [
@@ -42,7 +42,7 @@ export const WEBSITES: ResourceGroup = {
       method: 'GET',
       path: '/websites/:website_id',
       toolName: 'get_website',
-      description: 'Fetch a website by UUID.',
+      description: 'Fetch a website by UUID — including site_key, domain, branding, navbar, footer, and SEO configuration.',
       scopes: ['websites:read'],
       isWrite: false,
       params: [
@@ -56,7 +56,7 @@ export const WEBSITES: ResourceGroup = {
       method: 'PATCH',
       path: '/websites/:website_id',
       toolName: 'update_website',
-      description: 'Update a website.',
+      description: 'Update a website — name, domain, branding, navbar, footer, SEO meta tags, lead gen form, or custom scripts.',
       scopes: ['websites:write'],
       isWrite: true,
       params: [
@@ -70,7 +70,7 @@ export const WEBSITES: ResourceGroup = {
       method: 'DELETE',
       path: '/websites/:website_id',
       toolName: 'delete_website',
-      description: 'Delete a website.',
+      description: 'Delete a website and its associated content. This action cannot be undone.',
       scopes: ['websites:delete'],
       isWrite: true,
       params: [
@@ -78,166 +78,6 @@ export const WEBSITES: ResourceGroup = {
       ],
       requestExample: `curl -X DELETE \
   "${API_BASE_URL}/websites/:website_id" \
-  -H "Authorization: Bearer YOUR_API_KEY"`,
-    },
-    {
-      method: 'GET',
-      path: '/websites/:website_id/pages',
-      toolName: 'list_website_pages',
-      description: 'List pages on a website.',
-      scopes: ['websites:read'],
-      isWrite: false,
-      params: [
-        { name: 'website_id', type: 'string', required: true, description: '', in: 'path' },
-      ],
-      requestExample: `curl \
-  "${API_BASE_URL}/websites/:website_id/pages" \
-  -H "Authorization: Bearer YOUR_API_KEY"`,
-    },
-    {
-      method: 'POST',
-      path: '/websites/:website_id/pages',
-      toolName: 'create_website_page',
-      description: 'Add a page to a website.',
-      scopes: ['websites:write'],
-      isWrite: true,
-      params: [
-        { name: 'website_id', type: 'string', required: true, description: '', in: 'path' },
-        { name: 'title', type: 'string', required: true, description: '', in: 'body' },
-        { name: 'slug', type: 'string', required: true, description: '', in: 'body' },
-      ],
-      requestExample: `curl -X POST \
-  "${API_BASE_URL}/websites/:website_id/pages" \
-  -H "Authorization: Bearer YOUR_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{"title":"...","slug":"..."}'`,
-    },
-    {
-      method: 'GET',
-      path: '/websites/:website_id/pages/:page_id',
-      toolName: 'get_website_page',
-      description: 'Fetch a website page by UUID.',
-      scopes: ['websites:read'],
-      isWrite: false,
-      params: [
-        { name: 'website_id', type: 'string', required: true, description: '', in: 'path' },
-        { name: 'page_id', type: 'string', required: true, description: '', in: 'path' },
-      ],
-      requestExample: `curl \
-  "${API_BASE_URL}/websites/:website_id/pages/:page_id" \
-  -H "Authorization: Bearer YOUR_API_KEY"`,
-    },
-    {
-      method: 'PATCH',
-      path: '/websites/:website_id/pages/:page_id',
-      toolName: 'update_website_page',
-      description: 'Update a website page.',
-      scopes: ['websites:write'],
-      isWrite: true,
-      params: [
-        { name: 'website_id', type: 'string', required: true, description: '', in: 'path' },
-        { name: 'page_id', type: 'string', required: true, description: '', in: 'path' },
-      ],
-      requestExample: `curl -X PATCH \
-  "${API_BASE_URL}/websites/:website_id/pages/:page_id" \
-  -H "Authorization: Bearer YOUR_API_KEY"`,
-    },
-    {
-      method: 'DELETE',
-      path: '/websites/:website_id/pages/:page_id',
-      toolName: 'delete_website_page',
-      description: 'Delete a website page.',
-      scopes: ['websites:delete'],
-      isWrite: true,
-      params: [
-        { name: 'website_id', type: 'string', required: true, description: '', in: 'path' },
-        { name: 'page_id', type: 'string', required: true, description: '', in: 'path' },
-      ],
-      requestExample: `curl -X DELETE \
-  "${API_BASE_URL}/websites/:website_id/pages/:page_id" \
-  -H "Authorization: Bearer YOUR_API_KEY"`,
-    },
-    {
-      method: 'GET',
-      path: '/websites/:website_id/pages/:page_id/sections',
-      toolName: 'list_website_page_sections',
-      description: 'List sections on a website page.',
-      scopes: ['websites:read'],
-      isWrite: false,
-      params: [
-        { name: 'website_id', type: 'string', required: true, description: '', in: 'path' },
-        { name: 'page_id', type: 'string', required: true, description: '', in: 'path' },
-      ],
-      requestExample: `curl \
-  "${API_BASE_URL}/websites/:website_id/pages/:page_id/sections" \
-  -H "Authorization: Bearer YOUR_API_KEY"`,
-    },
-    {
-      method: 'POST',
-      path: '/websites/:website_id/pages/:page_id/sections',
-      toolName: 'create_website_page_section',
-      description: 'Add a section to a website page.',
-      scopes: ['websites:write'],
-      isWrite: true,
-      params: [
-        { name: 'website_id', type: 'string', required: true, description: '', in: 'path' },
-        { name: 'page_id', type: 'string', required: true, description: '', in: 'path' },
-        { name: 'type', type: 'string', required: true, description: '', in: 'body' },
-      ],
-      requestExample: `curl -X POST \
-  "${API_BASE_URL}/websites/:website_id/pages/:page_id/sections" \
-  -H "Authorization: Bearer YOUR_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{"type":"..."}'`,
-    },
-    {
-      method: 'POST',
-      path: '/websites/:website_id/pages/:page_id/sections/reorder',
-      toolName: 'reorder_website_page_sections',
-      description: 'Reorder sections on a website page.',
-      scopes: ['websites:write'],
-      isWrite: true,
-      params: [
-        { name: 'website_id', type: 'string', required: true, description: '', in: 'path' },
-        { name: 'page_id', type: 'string', required: true, description: '', in: 'path' },
-        { name: 'section_ids', type: 'array', required: true, description: '', in: 'body' },
-      ],
-      requestExample: `curl -X POST \
-  "${API_BASE_URL}/websites/:website_id/pages/:page_id/sections/reorder" \
-  -H "Authorization: Bearer YOUR_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{"section_ids":"..."}'`,
-    },
-    {
-      method: 'PATCH',
-      path: '/websites/:website_id/pages/:page_id/sections/:section_id',
-      toolName: 'update_website_page_section',
-      description: 'Update a section.',
-      scopes: ['websites:write'],
-      isWrite: true,
-      params: [
-        { name: 'website_id', type: 'string', required: true, description: '', in: 'path' },
-        { name: 'page_id', type: 'string', required: true, description: '', in: 'path' },
-        { name: 'section_id', type: 'string', required: true, description: '', in: 'path' },
-      ],
-      requestExample: `curl -X PATCH \
-  "${API_BASE_URL}/websites/:website_id/pages/:page_id/sections/:section_id" \
-  -H "Authorization: Bearer YOUR_API_KEY"`,
-    },
-    {
-      method: 'DELETE',
-      path: '/websites/:website_id/pages/:page_id/sections/:section_id',
-      toolName: 'delete_website_page_section',
-      description: 'Delete a section.',
-      scopes: ['websites:delete'],
-      isWrite: true,
-      params: [
-        { name: 'website_id', type: 'string', required: true, description: '', in: 'path' },
-        { name: 'page_id', type: 'string', required: true, description: '', in: 'path' },
-        { name: 'section_id', type: 'string', required: true, description: '', in: 'path' },
-      ],
-      requestExample: `curl -X DELETE \
-  "${API_BASE_URL}/websites/:website_id/pages/:page_id/sections/:section_id" \
   -H "Authorization: Bearer YOUR_API_KEY"`,
     },
   ],
