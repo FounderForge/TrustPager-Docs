@@ -273,6 +273,24 @@ export const FORMS: ResourceGroup = {
   -H "Authorization: Bearer YOUR_API_KEY"`,
     },
     {
+      method: 'POST',
+      path: '/forms/templates/:template_id/submit',
+      toolName: 'submit_public_form',
+      description: 'Submit a public form. Find-or-creates a contact + opportunity from the submitted answers (matched by the fields wired to contact.email / first_name / last_name / phone / account.name), then writes every wired field onto the records. The template must have public mode enabled. Credit-free.',
+      scopes: ['forms:write'],
+      isWrite: true,
+      params: [
+        { name: 'template_id', type: 'string', required: true, description: 'Form template id (must have public mode enabled).', in: 'path' },
+        { name: 'responses', type: 'array', required: false, description: 'Submitted answers.', in: 'body' },
+        { name: 'fields', type: 'object', required: false, description: 'Convenience alternative to responses — an object keyed by form field id with the answer as the value.', in: 'body' },
+      ],
+      requestExample: `curl -X POST \
+  "${API_BASE_URL}/forms/templates/:template_id/submit" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"responses":"...","fields":"..."}'`,
+    },
+    {
       method: 'GET',
       path: '/forms/templates/:template_id/fields',
       toolName: 'list_form_fields',
