@@ -68,6 +68,48 @@ export const COMPANY: ResourceGroup = {
     },
     {
       method: 'GET',
+      path: '/company/ai-fill-prompts',
+      toolName: 'list_ai_fill_prompts',
+      description: 'List every "Fill with AI" form in the workspace with its label, what it controls, the built-in default master prompt, and the current workspace override (if any). Call this first when configuring how AI Fill writes fields — it returns the valid form_ids to pass to set_ai_fill_prompt. The create-opportunity form is form_id "create-deal-multi-step"; per-entity custom fields are "custom-fields-deal" / "custom-fields-contact" / "custom-fields-account".',
+      scopes: ['company:read'],
+      isWrite: false,
+      requestExample: `curl \
+  "${API_BASE_URL}/company/ai-fill-prompts" \
+  -H "Authorization: Bearer YOUR_API_KEY"`,
+    },
+    {
+      method: 'PUT',
+      path: '/company/ai-fill-prompts/:form_id|str',
+      toolName: 'set_ai_fill_prompt',
+      description: 'Set the master prompt for one "Fill with AI" form. The master prompt is prepended to the AI Fill system prompt for that form, so it steers tone, format, and field rules every time AI Fill runs there (e.g. set form_id "create-deal-multi-step" to enforce a consistent Opportunity Title format). Get valid form_ids from list_ai_fill_prompts. Overrides only the named form; other forms are untouched.',
+      scopes: ['company:write'],
+      isWrite: true,
+      params: [
+        { name: 'form_id', type: 'string', required: true, description: 'Form to configure. Get valid ids from list_ai_fill_prompts (e.g. "create-deal-multi-step").', in: 'body' },
+        { name: 'master_prompt', type: 'string', required: true, description: 'Instruction prepended to the AI Fill system prompt for this form.', in: 'body' },
+      ],
+      requestExample: `curl -X PUT \
+  "${API_BASE_URL}/company/ai-fill-prompts/:form_id|str" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"form_id":"...","master_prompt":"..."}'`,
+    },
+    {
+      method: 'DELETE',
+      path: '/company/ai-fill-prompts/:form_id|str',
+      toolName: 'reset_ai_fill_prompt',
+      description: 'Remove the workspace master-prompt override for one "Fill with AI" form, reverting it to the built-in default. Get valid form_ids from list_ai_fill_prompts.',
+      scopes: ['company:write'],
+      isWrite: true,
+      params: [
+        { name: 'form_id', type: 'string', required: true, description: 'Form to reset to its built-in default.', in: 'query' },
+      ],
+      requestExample: `curl -X DELETE \
+  "${API_BASE_URL}/company/ai-fill-prompts/:form_id|str" \
+  -H "Authorization: Bearer YOUR_API_KEY"`,
+    },
+    {
+      method: 'GET',
       path: '/company/settings',
       toolName: 'get_company_settings',
       description: 'Get aggregate company settings.',
