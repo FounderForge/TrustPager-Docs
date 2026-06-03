@@ -110,6 +110,33 @@ export const COMPANY: ResourceGroup = {
     },
     {
       method: 'GET',
+      path: '/company/pipeline-card-config',
+      toolName: 'get_pipeline_card_config',
+      description: 'Get the pipeline (Workflows) opportunity-card POPOUT configuration — which sections show on the hover/popout panel for cards on the board. Returns available_sections (the toggleable sections with labels + defaults) and popout_sections (the resolved on/off state per section). This controls the popout only; the card face itself is fixed. Sections default to ON.',
+      scopes: ['company:read'],
+      isWrite: false,
+      requestExample: `curl \
+  "${API_BASE_URL}/company/pipeline-card-config" \
+  -H "Authorization: Bearer YOUR_API_KEY"`,
+    },
+    {
+      method: 'PATCH',
+      path: '/company/pipeline-card-config',
+      toolName: 'update_pipeline_card_config',
+      description: 'Set which sections show on the opportunity-card popout on the pipeline (Workflows) board. Pass popout_sections as a partial map of section_key -> boolean (true = show, false = hide); only the keys you pass change. Valid keys come from get_pipeline_card_config.available_sections (e.g. "next_action", "tasks", "notes"). Sections default to ON; e.g. send { "tasks": false } to hide the Tasks section from the popout. Does not affect the card face.',
+      scopes: ['company:write'],
+      isWrite: true,
+      params: [
+        { name: 'popout_sections', type: 'object', required: true, description: 'Partial map of section_key -> show(boolean). e.g. { "tasks": false, "next_action": true }.', in: 'body' },
+      ],
+      requestExample: `curl -X PATCH \
+  "${API_BASE_URL}/company/pipeline-card-config" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"popout_sections":"..."}'`,
+    },
+    {
+      method: 'GET',
       path: '/company/settings',
       toolName: 'get_company_settings',
       description: 'Get aggregate company settings.',
