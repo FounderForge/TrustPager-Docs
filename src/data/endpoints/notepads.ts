@@ -25,11 +25,12 @@ export const NOTEPADS: ResourceGroup = {
       method: 'POST',
       path: '/notepads/folders',
       toolName: 'create_notepad_folder',
-      description: 'Create a new notepad folder.',
+      description: 'Create a new notepad folder. Set is_public=true to mark it a public content collection that can be integrated as a section on a website (the public notepads inside it then appear there).',
       scopes: ['notepads:write'],
       isWrite: true,
       params: [
         { name: 'name', type: 'string', required: true, description: '', in: 'body' },
+        { name: 'is_public', type: 'boolean', required: false, description: 'Mark the folder as a public content collection (integratable on websites).', in: 'body' },
       ],
       requestExample: `curl -X POST \
   "${API_BASE_URL}/notepads/folders" \
@@ -55,12 +56,13 @@ export const NOTEPADS: ResourceGroup = {
       method: 'PATCH',
       path: '/notepads/folders/:folder_id',
       toolName: 'update_notepad_folder',
-      description: 'Rename or update a notepad folder.',
+      description: 'Rename or update a notepad folder. Set is_public to mark it (true) or unmark it (false) as a public content collection integratable on websites.',
       scopes: ['notepads:write'],
       isWrite: true,
       params: [
         { name: 'folder_id', type: 'string', required: true, description: '', in: 'path' },
         { name: 'name', type: 'string', required: false, description: '', in: 'body' },
+        { name: 'is_public', type: 'boolean', required: false, description: 'Public content collection flag.', in: 'body' },
       ],
       requestExample: `curl -X PATCH \
   "${API_BASE_URL}/notepads/folders/:folder_id" \
@@ -133,13 +135,14 @@ export const NOTEPADS: ResourceGroup = {
       method: 'GET',
       path: '/notepads',
       toolName: 'list_notepads',
-      description: 'List notepads in the workspace. Filter by folder_id or free-text search.',
+      description: 'List notepads in the workspace. Filter by folder_id, is_public, or free-text search.',
       scopes: ['notepads:read'],
       isWrite: false,
       params: [
         { name: 'limit', type: 'number', required: false, description: '', in: 'query' },
         { name: 'q', type: 'string', required: false, description: '', in: 'query' },
         { name: 'folder_id', type: 'string', required: false, description: '', in: 'query' },
+        { name: 'is_public', type: 'boolean', required: false, description: 'Filter to public (blog-published) notepads only.', in: 'query' },
       ],
       requestExample: `curl \
   "${API_BASE_URL}/notepads" \
@@ -149,13 +152,16 @@ export const NOTEPADS: ResourceGroup = {
       method: 'POST',
       path: '/notepads',
       toolName: 'create_notepad',
-      description: 'Create a new notepad. Supports markdown content.',
+      description: 'Create a new notepad. Supports markdown content. Set is_public=true to publish it to the public blog (a slug is derived from the title); notepads are private by default.',
       scopes: ['notepads:write'],
       isWrite: true,
       params: [
         { name: 'title', type: 'string', required: true, description: '', in: 'body' },
         { name: 'content', type: 'string', required: false, description: '', in: 'body' },
         { name: 'folder_id', type: 'string', required: false, description: '', in: 'body' },
+        { name: 'is_public', type: 'boolean', required: false, description: 'Publish to the public blog. Private by default. The post only appears publicly when it is also in a website\'s designated blog folder.', in: 'body' },
+        { name: 'slug', type: 'string', required: false, description: 'Optional public URL slug. Derived from the title when omitted.', in: 'body' },
+        { name: 'cover_image', type: 'string', required: false, description: 'Cover image URL — shown on the Notepads card grid and at the top of the public blog post.', in: 'body' },
       ],
       requestExample: `curl -X POST \
   "${API_BASE_URL}/notepads" \
@@ -181,13 +187,16 @@ export const NOTEPADS: ResourceGroup = {
       method: 'PATCH',
       path: '/notepads/:notepad_id',
       toolName: 'update_notepad',
-      description: 'Update the title and/or content of a notepad.',
+      description: 'Update the title and/or content of a notepad. Set is_public=true to publish it to the public blog, or false to unpublish; a slug is derived from the title on first publish.',
       scopes: ['notepads:write'],
       isWrite: true,
       params: [
         { name: 'notepad_id', type: 'string', required: true, description: '', in: 'path' },
         { name: 'title', type: 'string', required: false, description: '', in: 'body' },
         { name: 'content', type: 'string', required: false, description: '', in: 'body' },
+        { name: 'is_public', type: 'boolean', required: false, description: 'Publish (true) or unpublish (false) to the public blog.', in: 'body' },
+        { name: 'slug', type: 'string', required: false, description: 'Optional public URL slug. Derived from the title when omitted.', in: 'body' },
+        { name: 'cover_image', type: 'string', required: false, description: 'Cover image URL (shown on the card grid + public post). Pass null to clear.', in: 'body' },
       ],
       requestExample: `curl -X PATCH \
   "${API_BASE_URL}/notepads/:notepad_id" \
