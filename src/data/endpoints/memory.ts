@@ -39,6 +39,30 @@ export const MEMORY: ResourceGroup = {
       ],
     },
     {
+      method: 'POST',
+      path: '/memory/purge',
+      toolName: 'purge_memory',
+      description: 'Bulk-retract agent memories matching a filter, in one call. Soft-deletes by default (reversible, audit-preserving); pass hard:true to physically remove rows for PII / right-to-be-forgotten. This is the "forget everything about this contact / opportunity / company" primitive — filter by subject, agent, kind, tag, or linked entity. Refuses to run with no filter unless you set all:true. Requires the memory:delete scope.',
+      scopes: ['memory:delete'],
+      isWrite: true,
+      params: [
+        { name: 'subject_type', type: 'string', required: false, description: 'Purge memories about this subject type — e.g. "contact", "opportunity", "company", "self".', in: 'body' },
+        { name: 'subject_id', type: 'string', required: false, description: 'Purge memories about this specific subject id (use with subject_type for "forget this contact").', in: 'body' },
+        { name: 'agent_registry_id', type: 'string', required: false, description: 'Purge memories owned by this agent.', in: 'body' },
+        { name: 'kind', type: 'string', required: false, description: 'Purge memories of this kind.', in: 'body' },
+        { name: 'tag', type: 'string', required: false, description: 'Purge memories carrying this tag.', in: 'body' },
+        { name: 'linked_entity_type', type: 'string', required: false, description: 'Purge memories linked to an entity of this type (combine with linked_entity_id).', in: 'body' },
+        { name: 'linked_entity_id', type: 'string', required: false, description: 'Purge memories linked to this entity id (combine with linked_entity_type).', in: 'body' },
+        { name: 'hard', type: 'boolean', required: false, description: 'Default false (soft-delete). true physically removes the rows — irreversible.', in: 'body' },
+        { name: 'all', type: 'boolean', required: false, description: 'Set true to purge EVERY memory in the workspace. Required when no filter is provided; ignored otherwise.', in: 'body' },
+      ],
+      requestExample: `curl -X POST \
+  "${API_BASE_URL}/memory/purge" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"subject_type":"...","subject_id":"...","agent_registry_id":"..."}'`,
+    },
+    {
       method: 'GET',
       path: '/memory',
       toolName: 'list_memory',
