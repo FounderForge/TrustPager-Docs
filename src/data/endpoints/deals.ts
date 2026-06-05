@@ -31,14 +31,34 @@ export const DEALS: ResourceGroup = {
       method: 'POST',
       path: '/deals/bulk-create',
       toolName: 'bulk_create_opportunities',
-      description: 'Create up to 100 opportunities in one request.',
+      description: 'Create up to 100 opportunities in one request. Pass dedup_key (a metadata field name, e.g. "external_id") to make the call idempotent: any record whose metadata[dedup_key] already exists on an opportunity is skipped, so a half-finished import can be re-run safely. Returns created[], skipped[], errors[].',
+      scopes: ['opportunities:write'],
+      isWrite: true,
+      params: [
+        { name: 'records', type: 'array', required: true, description: '', in: 'body' },
+        { name: 'pipeline_id', type: 'string', required: false, description: '', in: 'body' },
+        { name: 'stage_id', type: 'string', required: false, description: '', in: 'body' },
+        { name: 'skip_automations', type: 'boolean', required: false, description: '', in: 'body' },
+        { name: 'dedup_key', type: 'string', required: false, description: 'Name of a metadata field to treat as a stable external id for idempotent re-runs.', in: 'body' },
+      ],
+      requestExample: `curl -X POST \
+  "${API_BASE_URL}/deals/bulk-create" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"records":"..."}'`,
+    },
+    {
+      method: 'POST',
+      path: '/deals/bulk-link-contacts',
+      toolName: 'bulk_add_opportunity_contacts',
+      description: 'Link up to 100 contact-to-opportunity pairs in one request. Each record is { deal_id, contact_id, role?, notes? }. Already-linked pairs are returned in skipped[] (idempotent), unknown ids in errors[]. Returns created[], skipped[], errors[].',
       scopes: ['opportunities:write'],
       isWrite: true,
       params: [
         { name: 'records', type: 'array', required: true, description: '', in: 'body' },
       ],
       requestExample: `curl -X POST \
-  "${API_BASE_URL}/deals/bulk-create" \
+  "${API_BASE_URL}/deals/bulk-link-contacts" \
   -H "Authorization: Bearer YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{"records":"..."}'`,
