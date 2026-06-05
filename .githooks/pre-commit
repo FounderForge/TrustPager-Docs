@@ -1,0 +1,16 @@
+#!/bin/sh
+# CLAUDE.md rule 34: block commits when HEAD is not 'main' in this shared working tree.
+# All parallel Claude sessions share one tree; off-main commits cause branch drift.
+# Escape hatch for isolated recovery worktrees: TP_ALLOW_OFF_MAIN=1 git commit ...
+[ "$TP_ALLOW_OFF_MAIN" = "1" ] && exit 0
+branch=$(git rev-parse --abbrev-ref HEAD)
+if [ "$branch" != "main" ]; then
+  echo "" >&2
+  echo "BLOCKED (rule 34): HEAD is '$branch', not 'main'." >&2
+  echo "This shared working tree must stay on main; all Claude sessions share it." >&2
+  echo "Do NOT commit here. Self-heal: reference_branch_drift_self_heal.md" >&2
+  echo "Isolated recovery worktree? prefix: TP_ALLOW_OFF_MAIN=1 git commit ..." >&2
+  echo "" >&2
+  exit 1
+fi
+exit 0
