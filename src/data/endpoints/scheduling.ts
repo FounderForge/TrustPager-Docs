@@ -67,6 +67,7 @@ export const SCHEDULING: ResourceGroup = {
         { name: 'duration_minutes', type: 'number', required: false, description: '', in: 'body' },
         { name: 'host_user_id', type: 'string', required: false, description: '', in: 'body' },
         { name: 'description', type: 'string', required: false, description: '', in: 'body' },
+        { name: 'embed_config', type: 'object', required: false, description: 'Embed theme for the /embed booking page (colours, card style, width). Keys: surface, pageBg, field, text, muted, border, primary, secondary, cardStyle ("card"|"flat"), showLogoHeader (bool), maxWidth ("sm"|"md"|"lg"|"full"), align ("left"|"center"). Only affects the embeddable variant, not the public booking link.', in: 'body' },
       ],
       requestExample: `curl -X PATCH \
   "${API_BASE_URL}/scheduling/event-types/:event_type_id" \
