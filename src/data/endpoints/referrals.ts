@@ -35,6 +35,10 @@ export const REFERRALS: ResourceGroup = {
       "category": "CT",
       "notes": null,
       "converted_at": null,
+      "commission_paid_to_date": 250,
+      "commission_pending": 500,
+      "commission_next_payment_date": "2026-07-01",
+      "commission_next_payment_amount": 500,
       "created_at": "2026-05-01T09:00:00.000Z",
       "updated_at": "2026-05-01T09:00:00.000Z"
     }
@@ -165,7 +169,9 @@ export const REFERRALS: ResourceGroup = {
         },
         "total_referrals": 5,
         "converted_referrals": 3,
-        "conversion_rate": 0.6
+        "conversion_rate": 0.6,
+        "commission_paid_to_date": 750,
+        "commission_pending": 500
       }
     ]
   },
