@@ -236,5 +236,77 @@ export const REFERRALS: ResourceGroup = {
   "${API_BASE_URL}/referrals/:referral_id" \
   -H "Authorization: Bearer YOUR_API_KEY"`,
     },
+    {
+      method: 'GET',
+      path: '/referrals/:referral_id/commissions',
+      toolName: 'list_referral_commissions',
+      description: 'List the commission instalments (scheduled / paid / cancelled) attached to a referral, ordered by due date.',
+      scopes: ['referrals:read'],
+      isWrite: false,
+      params: [
+        { name: 'referral_id', type: 'string', required: true, description: '', in: 'path' },
+      ],
+      requestExample: `curl \
+  "${API_BASE_URL}/referrals/:referral_id/commissions" \
+  -H "Authorization: Bearer YOUR_API_KEY"`,
+    },
+    {
+      method: 'POST',
+      path: '/referrals/:referral_id/commissions',
+      toolName: 'add_referral_commission',
+      description: 'Add a commission instalment to a referral. amount is required; status defaults to scheduled. The cached commission summary (paid-to-date / pending / next-payment) on the referral updates automatically.',
+      scopes: ['referrals:write'],
+      isWrite: true,
+      params: [
+        { name: 'referral_id', type: 'string', required: true, description: '', in: 'path' },
+        { name: 'amount', type: 'number', required: true, description: '', in: 'body' },
+        { name: 'status', type: 'string', required: false, description: 'scheduled | paid | cancelled. Defaults to scheduled.', in: 'body' },
+        { name: 'due_date', type: 'string', required: false, description: 'ISO date (YYYY-MM-DD) the instalment is expected.', in: 'body' },
+        { name: 'paid_date', type: 'string', required: false, description: 'ISO date (YYYY-MM-DD) the instalment was paid.', in: 'body' },
+        { name: 'notes', type: 'string', required: false, description: '', in: 'body' },
+      ],
+      requestExample: `curl -X POST \
+  "${API_BASE_URL}/referrals/:referral_id/commissions" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"amount":"...","status":"...","due_date":"..."}'`,
+    },
+    {
+      method: 'PATCH',
+      path: '/referrals/:referral_id/commissions/:payment_id',
+      toolName: 'update_referral_commission',
+      description: 'Update a commission instalment (amount, status, due_date, paid_date, notes). Setting status to paid auto-stamps paid_date when none is supplied.',
+      scopes: ['referrals:write'],
+      isWrite: true,
+      params: [
+        { name: 'referral_id', type: 'string', required: true, description: '', in: 'path' },
+        { name: 'payment_id', type: 'string', required: true, description: '', in: 'path' },
+        { name: 'amount', type: 'number', required: false, description: '', in: 'body' },
+        { name: 'status', type: 'string', required: false, description: '', in: 'body' },
+        { name: 'due_date', type: 'string', required: false, description: '', in: 'body' },
+        { name: 'paid_date', type: 'string', required: false, description: '', in: 'body' },
+        { name: 'notes', type: 'string', required: false, description: '', in: 'body' },
+      ],
+      requestExample: `curl -X PATCH \
+  "${API_BASE_URL}/referrals/:referral_id/commissions/:payment_id" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"amount":"...","status":"...","due_date":"..."}'`,
+    },
+    {
+      method: 'DELETE',
+      path: '/referrals/:referral_id/commissions/:payment_id',
+      toolName: 'delete_referral_commission',
+      description: 'Delete a commission instalment from a referral. The cached commission summary on the referral updates automatically.',
+      scopes: ['referrals:write'],
+      isWrite: true,
+      params: [
+        { name: 'referral_id', type: 'string', required: true, description: '', in: 'path' },
+        { name: 'payment_id', type: 'string', required: true, description: '', in: 'path' },
+      ],
+      requestExample: `curl -X DELETE \
+  "${API_BASE_URL}/referrals/:referral_id/commissions/:payment_id" \
+  -H "Authorization: Bearer YOUR_API_KEY"`,
+    },
   ],
 };
