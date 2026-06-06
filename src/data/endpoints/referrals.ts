@@ -173,6 +173,24 @@ export const REFERRALS: ResourceGroup = {
 }`,
     },
     {
+      method: 'POST',
+      path: '/referrals/attribute',
+      toolName: 'set_opportunity_referrer',
+      description: 'Set, reassign, or clear the primary referrer on an opportunity. Pass referrer_contact_id to attribute it to a contact, or null to clear. Updates the referral graph in place so commission tracking and history survive a reassignment, and leaves form/automation-sourced referrals intact.',
+      scopes: ['referrals:write'],
+      isWrite: true,
+      params: [
+        { name: 'opportunity_id', type: 'string', required: true, description: 'Opportunity (deal) UUID to attribute. Required.', in: 'body' },
+        { name: 'referrer_contact_id', type: 'string,null', required: true, description: 'Contact UUID of the referrer. Pass null to clear the referrer.', in: 'body' },
+        { name: 'category', type: 'string', required: false, description: 'Optional referral category (modality, service type, lead source).', in: 'body' },
+      ],
+      requestExample: `curl -X POST \
+  "${API_BASE_URL}/referrals/attribute" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"opportunity_id":"...","referrer_contact_id":"...","category":"..."}'`,
+    },
+    {
       method: 'GET',
       path: '/referrals/:referral_id',
       toolName: 'get_referral',
