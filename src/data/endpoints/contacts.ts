@@ -66,7 +66,7 @@ export const CONTACTS: ResourceGroup = {
       method: 'POST',
       path: '/contacts/bulk-update',
       toolName: 'bulk_update_contacts',
-      description: 'Update up to 100 contacts in one request. Each record must include id plus fields to change.',
+      description: 'Update up to 100 contacts in one request. Each record must include id plus fields to change. Include archived:true to bulk-archive (or archived:false to bulk-restore).',
       scopes: ['contacts:write'],
       isWrite: true,
       params: [
@@ -127,7 +127,7 @@ curl -X POST \\
       method: 'GET',
       path: '/contacts',
       toolName: 'list_contacts',
-      description: 'List contacts in the current workspace. Supports cursor-based pagination, free-text search via `search`, and filtering by source, customer_id, created date range, and unsubscribe flags.',
+      description: 'List contacts in the current workspace. Returns active (non-archived) contacts by default. Supports cursor-based pagination, free-text search via `search`, and filtering by source, customer_id, created date range, and unsubscribe flags. Pass archived="true" for only archived, or archived="all" for both.',
       scopes: ['contacts:read'],
       isWrite: false,
       params: [
@@ -136,6 +136,7 @@ curl -X POST \\
         { name: 'search', type: 'string', required: false, description: 'Free-text across first_name, last_name, email, phone', in: 'query' },
         { name: 'source', type: 'string', required: false, description: '', in: 'query' },
         { name: 'customer_id', type: 'string', required: false, description: 'Filter to contacts linked to a specific company', in: 'query' },
+        { name: 'archived', type: 'string', required: false, description: 'Archive scope. "false" (default) = active only, "true" = archived only, "all" = both.', in: 'query' },
         { name: 'created_after', type: 'string', required: false, description: 'ISO date, return contacts created after this date', in: 'query' },
         { name: 'created_before', type: 'string', required: false, description: 'ISO date, return contacts created before this date', in: 'query' },
         { name: 'cursor', type: 'string', required: false, description: 'Cursor for next page', in: 'query' },
@@ -247,7 +248,7 @@ curl -X POST \\
       method: 'PATCH',
       path: '/contacts/:contact_id',
       toolName: 'update_contact',
-      description: 'Update one or more fields on a contact. Pass only the fields you want to change.',
+      description: 'Update one or more fields on a contact. Pass only the fields you want to change. Set archived=true to archive (hide from active lists) or archived=false to restore.',
       scopes: ['contacts:write'],
       isWrite: true,
       params: [
@@ -261,6 +262,7 @@ curl -X POST \\
         { name: 'contact_type', type: 'string', required: false, description: '', in: 'body' },
         { name: 'date_of_birth', type: 'string', required: false, description: 'ISO date (YYYY-MM-DD). Pass "" to clear.', in: 'body' },
         { name: 'notes', type: 'string', required: false, description: '', in: 'body' },
+        { name: 'archived', type: 'boolean', required: false, description: 'true = archive, false = restore. Archived contacts stay searchable and API-accessible but drop out of active lists.', in: 'body' },
       ],
       requestExample: `curl -X PATCH \
   "${API_BASE_URL}/contacts/:contact_id" \

@@ -47,7 +47,7 @@ export const CUSTOMERS: ResourceGroup = {
       method: 'POST',
       path: '/customers/bulk-update',
       toolName: 'bulk_update_companies',
-      description: 'Update up to 100 companies in one request.',
+      description: 'Update up to 100 companies in one request. Each record is { id, ...fields }. Include archived:true to bulk-archive (or archived:false to bulk-restore).',
       scopes: ['companies:write'],
       isWrite: true,
       params: [
@@ -79,7 +79,7 @@ export const CUSTOMERS: ResourceGroup = {
       method: 'GET',
       path: '/customers',
       toolName: 'list_companies',
-      description: 'List companies (customers) in the workspace. Supports cursor-based pagination, search, and filters.',
+      description: 'List companies (customers) in the workspace. Returns active (non-archived) companies by default. Supports cursor-based pagination, search, and filters. Pass archived="true" for only archived, or archived="all" for both.',
       scopes: ['companies:read'],
       isWrite: false,
       params: [
@@ -87,6 +87,7 @@ export const CUSTOMERS: ResourceGroup = {
         { name: 'after', type: 'string', required: false, description: '', in: 'query' },
         { name: 'search', type: 'string', required: false, description: '', in: 'query' },
         { name: 'industry', type: 'string', required: false, description: '', in: 'query' },
+        { name: 'archived', type: 'string', required: false, description: 'Archive scope. "false" (default) = active only, "true" = archived only, "all" = both.', in: 'query' },
       ],
       requestExample: `curl \
   "${API_BASE_URL}/customers" \
@@ -136,7 +137,7 @@ export const CUSTOMERS: ResourceGroup = {
       method: 'PATCH',
       path: '/customers/:company_id',
       toolName: 'update_company',
-      description: 'Update a company. Pass only the fields you want to change.',
+      description: 'Update a company. Pass only the fields you want to change. Set archived=true to archive (hide from active lists) or archived=false to restore.',
       scopes: ['companies:write'],
       isWrite: true,
       params: [
@@ -152,6 +153,7 @@ export const CUSTOMERS: ResourceGroup = {
         { name: 'postal_code', type: 'string', required: false, description: '', in: 'body' },
         { name: 'country', type: 'string', required: false, description: '', in: 'body' },
         { name: 'notes', type: 'string', required: false, description: '', in: 'body' },
+        { name: 'archived', type: 'boolean', required: false, description: 'true = archive, false = restore. Archived companies stay searchable and API-accessible but drop out of active lists.', in: 'body' },
       ],
       requestExample: `curl -X PATCH \
   "${API_BASE_URL}/customers/:company_id" \

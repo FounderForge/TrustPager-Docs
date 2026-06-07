@@ -67,7 +67,7 @@ export const DEALS: ResourceGroup = {
       method: 'POST',
       path: '/deals/bulk-update',
       toolName: 'bulk_update_opportunities',
-      description: 'Update up to 100 opportunities in one request.',
+      description: 'Update up to 100 opportunities in one request. Each record is { id, ...fields }. Include archived:true to bulk-archive (or archived:false to bulk-restore).',
       scopes: ['opportunities:write'],
       isWrite: true,
       params: [
@@ -117,7 +117,7 @@ export const DEALS: ResourceGroup = {
       method: 'GET',
       path: '/deals',
       toolName: 'list_opportunities',
-      description: 'List opportunities (deals) in the workspace. Supports cursor pagination, search, and filtering by pipeline, stage, status, owner, contact, company, dates.',
+      description: 'List opportunities (deals) in the workspace. Returns active (non-archived) opportunities by default. Supports cursor pagination, search, and filtering by pipeline, stage, status, owner, contact, company, dates. Pass archived="true" for only archived, or archived="all" for both.',
       scopes: ['opportunities:read'],
       isWrite: false,
       params: [
@@ -130,6 +130,7 @@ export const DEALS: ResourceGroup = {
         { name: 'owner_id', type: 'string', required: false, description: '', in: 'query' },
         { name: 'contact_id', type: 'string', required: false, description: '', in: 'query' },
         { name: 'customer_id', type: 'string', required: false, description: '', in: 'query' },
+        { name: 'archived', type: 'string', required: false, description: 'Archive scope. "false" (default) = active only, "true" = archived only, "all" = both.', in: 'query' },
       ],
       requestExample: `curl \
   "${API_BASE_URL}/deals" \
@@ -179,7 +180,7 @@ export const DEALS: ResourceGroup = {
       method: 'PATCH',
       path: '/deals/:opportunity_id',
       toolName: 'update_opportunity',
-      description: 'Update one or more fields on an opportunity. Pass only the fields you want to change.',
+      description: 'Update one or more fields on an opportunity. Pass only the fields you want to change. Set archived=true to archive (hide from active lists, pipeline, and dashboard counts) or archived=false to restore.',
       scopes: ['opportunities:write'],
       isWrite: true,
       params: [
@@ -193,6 +194,7 @@ export const DEALS: ResourceGroup = {
         { name: 'notes', type: 'string', required: false, description: '', in: 'body' },
         { name: 'contact_id', type: 'string', required: false, description: '', in: 'body' },
         { name: 'customer_id', type: 'string', required: false, description: '', in: 'body' },
+        { name: 'archived', type: 'boolean', required: false, description: 'true = archive, false = restore. Archived opportunities stay searchable and API-accessible but drop out of active lists, the pipeline board, and dashboard counts.', in: 'body' },
       ],
       requestExample: `curl -X PATCH \
   "${API_BASE_URL}/deals/:opportunity_id" \

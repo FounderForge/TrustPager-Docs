@@ -26,6 +26,7 @@ export const CRM: ResourceGroup = {
         { name: 'stage_id', type: 'string', required: false, description: '', in: 'query' },
         { name: 'customer_id', type: 'string', required: false, description: '', in: 'query' },
         { name: 'contact_id', type: 'string', required: false, description: '', in: 'query' },
+        { name: 'archived', type: 'string', required: false, description: 'Archive scope (contacts/companies/deals). "false" (default) = active only, "true" = archived only, "all" = both.', in: 'query' },
       ],
       requestExample: `curl \
   "${API_BASE_URL}/crm/export" \
