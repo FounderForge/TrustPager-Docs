@@ -360,7 +360,7 @@ export const EMAIL: ResourceGroup = {
       method: 'PATCH',
       path: '/email/configs/:config_id',
       toolName: 'update_email_config',
-      description: 'Update an email config.',
+      description: 'Update an email config. To send from your own verified domain, pass from_email_handle (local-part) + from_email_domain (a verified sending domain). Set preferred_provider to choose the workspace rail.',
       scopes: ['email-config:write'],
       isWrite: true,
       params: [
@@ -368,6 +368,9 @@ export const EMAIL: ResourceGroup = {
         { name: 'from_name', type: 'string', required: false, description: '', in: 'body' },
         { name: 'reply_to', type: 'string', required: false, description: '', in: 'body' },
         { name: 'staff_email', type: 'string', required: false, description: '', in: 'body' },
+        { name: 'from_email_handle', type: 'string', required: false, description: 'Local-part of the sender address (before the @). With no from_email_domain it composes <handle>@mail.trustpager.net.', in: 'body' },
+        { name: 'from_email_domain', type: 'string', required: false, description: 'A verified sending domain for this workspace (see list_sending_domains). Composes from_email = <handle>@<domain>, e.g. support@yourcompany.com. Must be verified first.', in: 'body' },
+        { name: 'preferred_provider', type: 'string', required: false, description: 'Default Workspace Email Address rail: "trustpager_mail" (send via your verified domain, never expires) or "gmail" (send via connected Team Gmail).', in: 'body' },
       ],
       requestExample: `curl -X PATCH \
   "${API_BASE_URL}/email/configs/:config_id" \
@@ -387,6 +390,61 @@ export const EMAIL: ResourceGroup = {
       ],
       requestExample: `curl -X DELETE \
   "${API_BASE_URL}/email/configs/:config_id" \
+  -H "Authorization: Bearer YOUR_API_KEY"`,
+    },
+    {
+      method: 'GET',
+      path: '/email/sending-domains',
+      toolName: 'list_sending_domains',
+      description: 'List the workspace\'s bring-your-own sending domains and their verification status. A verified domain lets you send from your own address (e.g. support@yourcompany.com) instead of @mail.trustpager.net.',
+      scopes: ['email:read'],
+      isWrite: false,
+      requestExample: `curl \
+  "${API_BASE_URL}/email/sending-domains" \
+  -H "Authorization: Bearer YOUR_API_KEY"`,
+    },
+    {
+      method: 'POST',
+      path: '/email/sending-domains',
+      toolName: 'register_sending_domain',
+      description: 'Register your own domain for sending. Returns two DNS records (a DKIM TXT and a Return-Path CNAME) to add at your DNS host — no SPF or MX change, your existing inbox keeps receiving. After adding them, call verify_sending_domain. Once verified, set it as the sending address via update_email_config { from_email_domain }.',
+      scopes: ['email-config:write'],
+      isWrite: true,
+      params: [
+        { name: 'domain', type: 'string', required: true, description: 'Bare domain, e.g. "yourcompany.com". No scheme, no @, no path.', in: 'body' },
+      ],
+      requestExample: `curl -X POST \
+  "${API_BASE_URL}/email/sending-domains" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"domain":"..."}'`,
+    },
+    {
+      method: 'POST',
+      path: '/email/sending-domains/:domain_id/verify',
+      toolName: 'verify_sending_domain',
+      description: 'Re-check DNS for a sending domain and return its current verification state. Call after adding the DNS records. DNS can take a few minutes to propagate. status becomes "verified" once both DKIM and Return-Path resolve.',
+      scopes: ['email-config:write'],
+      isWrite: true,
+      params: [
+        { name: 'domain_id', type: 'string', required: true, description: '', in: 'path' },
+      ],
+      requestExample: `curl -X POST \
+  "${API_BASE_URL}/email/sending-domains/:domain_id/verify" \
+  -H "Authorization: Bearer YOUR_API_KEY"`,
+    },
+    {
+      method: 'DELETE',
+      path: '/email/sending-domains/:domain_id',
+      toolName: 'remove_sending_domain',
+      description: 'Remove a sending domain. Refused if it is currently your sending address (change update_email_config { from_email_domain } first). Otherwise removes it from TrustPager Mail entirely.',
+      scopes: ['email-config:delete'],
+      isWrite: true,
+      params: [
+        { name: 'domain_id', type: 'string', required: true, description: '', in: 'path' },
+      ],
+      requestExample: `curl -X DELETE \
+  "${API_BASE_URL}/email/sending-domains/:domain_id" \
   -H "Authorization: Bearer YOUR_API_KEY"`,
     },
   ],
