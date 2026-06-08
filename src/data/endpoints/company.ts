@@ -12,31 +12,36 @@ export const COMPANY: ResourceGroup = {
   endpoints: [
     {
       method: 'GET',
-      path: '/company',
-      toolName: 'get_company_profile',
-      description: 'Get the workspace company profile.',
+      path: '/our-company',
+      toolName: 'get_our_company',
+      description: 'Get OUR Company — the workspace\'s own organisation profile (the business that runs this CRM), shown at /settings/company. NOT a CRM account/customer — for those use get_company / list_companies.',
       scopes: ['company:read'],
       isWrite: false,
       requestExample: `curl \
-  "${API_BASE_URL}/company" \
+  "${API_BASE_URL}/our-company" \
   -H "Authorization: Bearer YOUR_API_KEY"`,
     },
     {
       method: 'PATCH',
-      path: '/company',
-      toolName: 'update_company_profile',
-      description: 'Update the workspace company profile.',
+      path: '/our-company',
+      toolName: 'update_our_company',
+      description: 'Update OUR Company — the workspace\'s own organisation profile (branding, contact info, address) shown at /settings/company. NOT a CRM account/customer — to edit a customer record use update_company.',
       scopes: ['company:write'],
       isWrite: true,
       params: [
         { name: 'name', type: 'string', required: false, description: '', in: 'body' },
-        { name: 'brand_color', type: 'string', required: false, description: '', in: 'body' },
+        { name: 'slug', type: 'string', required: false, description: '', in: 'body' },
+        { name: 'industry', type: 'string', required: false, description: '', in: 'body' },
+        { name: 'website_url', type: 'string', required: false, description: '', in: 'body' },
+        { name: 'phone', type: 'string', required: false, description: '', in: 'body' },
+        { name: 'primary_color', type: 'string', required: false, description: '', in: 'body' },
+        { name: 'secondary_color', type: 'string', required: false, description: '', in: 'body' },
       ],
       requestExample: `curl -X PATCH \
-  "${API_BASE_URL}/company" \
+  "${API_BASE_URL}/our-company" \
   -H "Authorization: Bearer YOUR_API_KEY" \
   -H "Content-Type: application/json" \
-  -d '{"name":"...","brand_color":"..."}'`,
+  -d '{"name":"...","slug":"...","industry":"..."}'`,
     },
     {
       method: 'GET',

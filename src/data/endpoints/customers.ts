@@ -12,7 +12,7 @@ export const CUSTOMERS: ResourceGroup = {
   endpoints: [
     {
       method: 'POST',
-      path: '/customers/search',
+      path: '/companies/search',
       toolName: 'search_companies',
       description: 'Fuzzy search across companies by name, email, phone, website. Returns matching company records.',
       scopes: ['companies:read'],
@@ -22,14 +22,14 @@ export const CUSTOMERS: ResourceGroup = {
         { name: 'limit', type: 'number', required: false, description: '', in: 'body' },
       ],
       requestExample: `curl -X POST \
-  "${API_BASE_URL}/customers/search" \
+  "${API_BASE_URL}/companies/search" \
   -H "Authorization: Bearer YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{"query":"...","limit":"..."}'`,
     },
     {
       method: 'POST',
-      path: '/customers/bulk-create',
+      path: '/companies/bulk-create',
       toolName: 'bulk_create_companies',
       description: 'Create up to 100 companies in one request.',
       scopes: ['companies:write'],
@@ -38,14 +38,14 @@ export const CUSTOMERS: ResourceGroup = {
         { name: 'records', type: 'array', required: true, description: '', in: 'body' },
       ],
       requestExample: `curl -X POST \
-  "${API_BASE_URL}/customers/bulk-create" \
+  "${API_BASE_URL}/companies/bulk-create" \
   -H "Authorization: Bearer YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{"records":"..."}'`,
     },
     {
       method: 'POST',
-      path: '/customers/bulk-update',
+      path: '/companies/bulk-update',
       toolName: 'bulk_update_companies',
       description: 'Update up to 100 companies in one request. Each record is { id, ...fields }. Include archived:true to bulk-archive (or archived:false to bulk-restore).',
       scopes: ['companies:write'],
@@ -54,14 +54,14 @@ export const CUSTOMERS: ResourceGroup = {
         { name: 'records', type: 'array', required: true, description: '', in: 'body' },
       ],
       requestExample: `curl -X POST \
-  "${API_BASE_URL}/customers/bulk-update" \
+  "${API_BASE_URL}/companies/bulk-update" \
   -H "Authorization: Bearer YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{"records":"..."}'`,
     },
     {
       method: 'POST',
-      path: '/customers/bulk-delete',
+      path: '/companies/bulk-delete',
       toolName: 'bulk_delete_companies',
       description: 'Delete up to 100 companies in one request. Destructive.',
       scopes: ['companies:delete'],
@@ -70,14 +70,14 @@ export const CUSTOMERS: ResourceGroup = {
         { name: 'ids', type: 'array', required: true, description: '', in: 'body' },
       ],
       requestExample: `curl -X POST \
-  "${API_BASE_URL}/customers/bulk-delete" \
+  "${API_BASE_URL}/companies/bulk-delete" \
   -H "Authorization: Bearer YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{"ids":"..."}'`,
     },
     {
       method: 'GET',
-      path: '/customers',
+      path: '/companies',
       toolName: 'list_companies',
       description: 'List companies (customers) in the workspace. Returns active (non-archived) companies by default. Supports cursor-based pagination, search, and filters. Pass archived="true" for only archived, or archived="all" for both.',
       scopes: ['companies:read'],
@@ -90,38 +90,47 @@ export const CUSTOMERS: ResourceGroup = {
         { name: 'archived', type: 'string', required: false, description: 'Archive scope. "false" (default) = active only, "true" = archived only, "all" = both.', in: 'query' },
       ],
       requestExample: `curl \
-  "${API_BASE_URL}/customers" \
+  "${API_BASE_URL}/companies" \
   -H "Authorization: Bearer YOUR_API_KEY"`,
     },
     {
       method: 'POST',
-      path: '/customers',
+      path: '/companies',
       toolName: 'create_company',
-      description: 'Create a new company (customer). Requires name.',
+      description: 'Create a new CRM company (customer/account). Requires name. This creates a CRM account record — NOT the workspace org profile.',
       scopes: ['companies:write'],
       isWrite: true,
       params: [
         { name: 'name', type: 'string', required: true, description: '', in: 'body' },
         { name: 'email', type: 'string', required: false, description: '', in: 'body' },
-        { name: 'phone', type: 'string', required: false, description: '', in: 'body' },
+        { name: 'phone', type: 'string', required: false, description: 'Mobile in E.164, e.g. +61412345678.', in: 'body' },
+        { name: 'landline', type: 'string', required: false, description: 'Landline in E.164, e.g. +61299991234.', in: 'body' },
         { name: 'website', type: 'string', required: false, description: '', in: 'body' },
         { name: 'industry', type: 'string', required: false, description: '', in: 'body' },
+        { name: 'account_type', type: 'string', required: false, description: 'Account/organisation type. Get options from get_crm_settings.account_type_options.', in: 'body' },
+        { name: 'is_customer', type: 'boolean', required: false, description: 'Is this a customer/client (default true).', in: 'body' },
+        { name: 'is_supplier', type: 'boolean', required: false, description: 'Is this a supplier/vendor (default false).', in: 'body' },
+        { name: 'tax_number', type: 'string', required: false, description: 'Tax number (e.g. ABN).', in: 'body' },
+        { name: 'relationship_started_at', type: 'string', required: false, description: 'When the real-world relationship began (YYYY-MM-DD or ISO 8601). Cannot be in the future.', in: 'body' },
         { name: 'address_line1', type: 'string', required: false, description: '', in: 'body' },
+        { name: 'address_line2', type: 'string', required: false, description: '', in: 'body' },
         { name: 'city', type: 'string', required: false, description: '', in: 'body' },
         { name: 'state', type: 'string', required: false, description: '', in: 'body' },
         { name: 'postal_code', type: 'string', required: false, description: '', in: 'body' },
         { name: 'country', type: 'string', required: false, description: '', in: 'body' },
+        { name: 'timezone', type: 'string', required: false, description: '', in: 'body' },
         { name: 'notes', type: 'string', required: false, description: '', in: 'body' },
+        { name: 'metadata', type: 'object', required: false, description: 'Custom field values keyed by field_id (get ids from get_crm_settings.custom_fields.account).', in: 'body' },
       ],
       requestExample: `curl -X POST \
-  "${API_BASE_URL}/customers" \
+  "${API_BASE_URL}/companies" \
   -H "Authorization: Bearer YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{"name":"...","email":"...","phone":"..."}'`,
     },
     {
       method: 'GET',
-      path: '/customers/:company_id',
+      path: '/companies/:company_id',
       toolName: 'get_company',
       description: 'Fetch a single company by UUID. Returns the full record including custom fields.',
       scopes: ['companies:read'],
@@ -130,40 +139,49 @@ export const CUSTOMERS: ResourceGroup = {
         { name: 'company_id', type: 'string', required: true, description: '', in: 'path' },
       ],
       requestExample: `curl \
-  "${API_BASE_URL}/customers/:company_id" \
+  "${API_BASE_URL}/companies/:company_id" \
   -H "Authorization: Bearer YOUR_API_KEY"`,
     },
     {
       method: 'PATCH',
-      path: '/customers/:company_id',
+      path: '/companies/:company_id',
       toolName: 'update_company',
-      description: 'Update a company. Pass only the fields you want to change. Set archived=true to archive (hide from active lists) or archived=false to restore.',
+      description: 'Update a CRM company (customer/account). Pass only the fields you want to change. Set archived=true to archive (hide from active lists) or archived=false to restore. This edits a CRM account record — NOT the workspace org profile (use update_our_company for that).',
       scopes: ['companies:write'],
       isWrite: true,
       params: [
         { name: 'company_id', type: 'string', required: true, description: '', in: 'path' },
         { name: 'name', type: 'string', required: false, description: '', in: 'body' },
         { name: 'email', type: 'string', required: false, description: '', in: 'body' },
-        { name: 'phone', type: 'string', required: false, description: '', in: 'body' },
+        { name: 'phone', type: 'string', required: false, description: 'Mobile in E.164, e.g. +61412345678.', in: 'body' },
+        { name: 'landline', type: 'string', required: false, description: 'Landline in E.164, e.g. +61299991234. Set null to clear.', in: 'body' },
         { name: 'website', type: 'string', required: false, description: '', in: 'body' },
         { name: 'industry', type: 'string', required: false, description: '', in: 'body' },
+        { name: 'account_type', type: 'string', required: false, description: 'Account/organisation type (e.g. Client, Trustee-Liquidator). Get options from get_crm_settings.account_type_options. Set null to clear.', in: 'body' },
+        { name: 'is_customer', type: 'boolean', required: false, description: 'Is this a customer/client.', in: 'body' },
+        { name: 'is_supplier', type: 'boolean', required: false, description: 'Is this a supplier/vendor.', in: 'body' },
+        { name: 'tax_number', type: 'string', required: false, description: 'Tax number (e.g. ABN).', in: 'body' },
+        { name: 'relationship_started_at', type: 'string', required: false, description: 'When the real-world relationship began (YYYY-MM-DD or ISO 8601). Set null to clear. Cannot be in the future.', in: 'body' },
         { name: 'address_line1', type: 'string', required: false, description: '', in: 'body' },
+        { name: 'address_line2', type: 'string', required: false, description: '', in: 'body' },
         { name: 'city', type: 'string', required: false, description: '', in: 'body' },
         { name: 'state', type: 'string', required: false, description: '', in: 'body' },
         { name: 'postal_code', type: 'string', required: false, description: '', in: 'body' },
         { name: 'country', type: 'string', required: false, description: '', in: 'body' },
+        { name: 'timezone', type: 'string', required: false, description: '', in: 'body' },
         { name: 'notes', type: 'string', required: false, description: '', in: 'body' },
+        { name: 'metadata', type: 'object', required: false, description: 'Custom field values keyed by field_id (get ids from get_crm_settings.custom_fields.account). Replaces the whole object — read with get_company and merge first.', in: 'body' },
         { name: 'archived', type: 'boolean', required: false, description: 'true = archive, false = restore. Archived companies stay searchable and API-accessible but drop out of active lists.', in: 'body' },
       ],
       requestExample: `curl -X PATCH \
-  "${API_BASE_URL}/customers/:company_id" \
+  "${API_BASE_URL}/companies/:company_id" \
   -H "Authorization: Bearer YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{"name":"...","email":"...","phone":"..."}'`,
     },
     {
       method: 'DELETE',
-      path: '/customers/:company_id',
+      path: '/companies/:company_id',
       toolName: 'delete_company',
       description: 'Delete a company by UUID. Destructive.',
       scopes: ['companies:delete'],
@@ -172,12 +190,12 @@ export const CUSTOMERS: ResourceGroup = {
         { name: 'company_id', type: 'string', required: true, description: '', in: 'path' },
       ],
       requestExample: `curl -X DELETE \
-  "${API_BASE_URL}/customers/:company_id" \
+  "${API_BASE_URL}/companies/:company_id" \
   -H "Authorization: Bearer YOUR_API_KEY"`,
     },
     {
       method: 'GET',
-      path: '/customers/:company_id/contacts',
+      path: '/companies/:company_id/contacts',
       toolName: 'get_company_contacts',
       description: 'List all contacts linked to a company.',
       scopes: ['companies:read', 'contacts:read'],
@@ -186,12 +204,12 @@ export const CUSTOMERS: ResourceGroup = {
         { name: 'company_id', type: 'string', required: true, description: '', in: 'path' },
       ],
       requestExample: `curl \
-  "${API_BASE_URL}/customers/:company_id/contacts" \
+  "${API_BASE_URL}/companies/:company_id/contacts" \
   -H "Authorization: Bearer YOUR_API_KEY"`,
     },
     {
       method: 'GET',
-      path: '/customers/:company_id/deals',
+      path: '/companies/:company_id/deals',
       toolName: 'get_company_opportunities',
       description: 'List all opportunities/deals tied to a company.',
       scopes: ['companies:read', 'opportunities:read'],
@@ -200,12 +218,12 @@ export const CUSTOMERS: ResourceGroup = {
         { name: 'company_id', type: 'string', required: true, description: '', in: 'path' },
       ],
       requestExample: `curl \
-  "${API_BASE_URL}/customers/:company_id/deals" \
+  "${API_BASE_URL}/companies/:company_id/deals" \
   -H "Authorization: Bearer YOUR_API_KEY"`,
     },
     {
       method: 'GET',
-      path: '/customers/:company_id/activities',
+      path: '/companies/:company_id/activities',
       toolName: 'get_company_activities',
       description: 'List activities (calls, meetings, notes, emails) on a company.',
       scopes: ['companies:read', 'activities:read'],
@@ -214,7 +232,7 @@ export const CUSTOMERS: ResourceGroup = {
         { name: 'company_id', type: 'string', required: true, description: '', in: 'path' },
       ],
       requestExample: `curl \
-  "${API_BASE_URL}/customers/:company_id/activities" \
+  "${API_BASE_URL}/companies/:company_id/activities" \
   -H "Authorization: Bearer YOUR_API_KEY"`,
     },
   ],
