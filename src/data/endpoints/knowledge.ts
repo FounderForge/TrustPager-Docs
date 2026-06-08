@@ -14,12 +14,15 @@ export const KNOWLEDGE: ResourceGroup = {
       method: 'POST',
       path: '/knowledge/search',
       toolName: 'search_knowledge',
-      description: 'Semantic search across the workspace knowledge base. Use to find relevant context before answering a customer question.',
+      description: 'Semantic search across the workspace knowledge base. Use to find relevant context before answering a customer question. Pass kb_ids to scope to specific knowledge bases, or agent_type + agent_id to auto-scope to the knowledge bases attached to that agent.',
       scopes: ['knowledge:read'],
       isWrite: false,
       params: [
         { name: 'query', type: 'string', required: true, description: 'Search query', in: 'body' },
         { name: 'limit', type: 'number', required: false, description: 'Max results (default 5)', in: 'body' },
+        { name: 'kb_ids', type: 'array', required: false, description: 'Optional: restrict search to these knowledge base IDs', in: 'body' },
+        { name: 'agent_type', type: 'string', required: false, description: 'Optional: with agent_id, auto-scope to the KBs attached to this agent', in: 'body' },
+        { name: 'agent_id', type: 'string', required: false, description: 'Optional: the agent whose attached KBs scope the search', in: 'body' },
       ],
       requestExample: `curl -X POST \
   "${API_BASE_URL}/knowledge/search" \
