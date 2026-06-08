@@ -216,7 +216,18 @@ const TOOL_CATEGORIES = [
     label: 'AI Knowledge',
     tools: [
       'list_knowledge', 'get_knowledge', 'create_knowledge', 'update_knowledge', 'delete_knowledge',
-      'search_knowledge',
+      'search_knowledge', 'sync_knowledge_from_products',
+    ],
+  },
+  {
+    label: 'Knowledge Bases',
+    tools: [
+      'list_knowledge_bases', 'get_knowledge_base', 'create_knowledge_base', 'update_knowledge_base', 'delete_knowledge_base',
+      'list_knowledge_base_entries', 'list_knowledge_base_agents',
+      'attach_knowledge_base', 'detach_knowledge_base',
+      'sync_knowledge_base_help_center', 'sync_knowledge_base_products',
+      'ingest_knowledge_base_url', 'ingest_knowledge_base_text',
+      'adopt_retell_knowledge_base',
     ],
   },
   {
