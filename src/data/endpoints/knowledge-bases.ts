@@ -45,6 +45,23 @@ export const KNOWLEDGE_BASES: ResourceGroup = {
   -d '{"name":"...","description":"...","auto_resync_enabled":"..."}'`,
     },
     {
+      method: 'POST',
+      path: '/knowledge-bases/adopt',
+      toolName: 'adopt_retell_knowledge_base',
+      description: 'Adopt an existing voice-provider knowledge base into the unified system: links it in place (no duplicate), imports its web-page sources into search, and attaches any voice agents already using it. Pass retell_kb_id.',
+      scopes: ['knowledge:write'],
+      isWrite: true,
+      params: [
+        { name: 'retell_kb_id', type: 'string', required: true, description: '', in: 'body' },
+        { name: 'name', type: 'string', required: false, description: '', in: 'body' },
+      ],
+      requestExample: `curl -X POST \
+  "${API_BASE_URL}/knowledge-bases/adopt" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"retell_kb_id":"...","name":"..."}'`,
+    },
+    {
       method: 'GET',
       path: '/knowledge-bases/:kb_id',
       toolName: 'get_knowledge_base',
