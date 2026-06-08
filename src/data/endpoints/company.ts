@@ -45,18 +45,18 @@ export const COMPANY: ResourceGroup = {
     },
     {
       method: 'GET',
-      path: '/company/crm-settings',
+      path: '/our-company/crm-settings',
       toolName: 'get_crm_settings',
       description: 'Get workspace CRM settings (lead sources, lost/won reasons, types).',
       scopes: ['company:read'],
       isWrite: false,
       requestExample: `curl \
-  "${API_BASE_URL}/company/crm-settings" \
+  "${API_BASE_URL}/our-company/crm-settings" \
   -H "Authorization: Bearer YOUR_API_KEY"`,
     },
     {
       method: 'PATCH',
-      path: '/company/crm-settings',
+      path: '/our-company/crm-settings',
       toolName: 'update_crm_settings',
       description: 'Update workspace CRM settings.',
       scopes: ['company:write'],
@@ -66,25 +66,25 @@ export const COMPANY: ResourceGroup = {
         { name: 'lost_reasons', type: 'array', required: false, description: '', in: 'body' },
       ],
       requestExample: `curl -X PATCH \
-  "${API_BASE_URL}/company/crm-settings" \
+  "${API_BASE_URL}/our-company/crm-settings" \
   -H "Authorization: Bearer YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{"lead_sources":"...","lost_reasons":"..."}'`,
     },
     {
       method: 'GET',
-      path: '/company/ai-fill-prompts',
+      path: '/our-company/ai-fill-prompts',
       toolName: 'list_ai_fill_prompts',
       description: 'List every "Fill with AI" form in the workspace with its label, what it controls, the built-in default master prompt, and the current workspace override (if any). Call this first when configuring how AI Fill writes fields — it returns the valid form_ids to pass to set_ai_fill_prompt. The create-opportunity form is form_id "create-deal-multi-step"; per-entity custom fields are "custom-fields-deal" / "custom-fields-contact" / "custom-fields-account".',
       scopes: ['company:read'],
       isWrite: false,
       requestExample: `curl \
-  "${API_BASE_URL}/company/ai-fill-prompts" \
+  "${API_BASE_URL}/our-company/ai-fill-prompts" \
   -H "Authorization: Bearer YOUR_API_KEY"`,
     },
     {
       method: 'PUT',
-      path: '/company/ai-fill-prompts/:form_id|str',
+      path: '/our-company/ai-fill-prompts/:form_id|str',
       toolName: 'set_ai_fill_prompt',
       description: 'Set the master prompt for one "Fill with AI" form. The master prompt is prepended to the AI Fill system prompt for that form, so it steers tone, format, and field rules every time AI Fill runs there (e.g. set form_id "create-deal-multi-step" to enforce a consistent Opportunity Title format). Get valid form_ids from list_ai_fill_prompts. Overrides only the named form; other forms are untouched.',
       scopes: ['company:write'],
@@ -94,14 +94,14 @@ export const COMPANY: ResourceGroup = {
         { name: 'master_prompt', type: 'string', required: true, description: 'Instruction prepended to the AI Fill system prompt for this form.', in: 'body' },
       ],
       requestExample: `curl -X PUT \
-  "${API_BASE_URL}/company/ai-fill-prompts/:form_id|str" \
+  "${API_BASE_URL}/our-company/ai-fill-prompts/:form_id|str" \
   -H "Authorization: Bearer YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{"form_id":"...","master_prompt":"..."}'`,
     },
     {
       method: 'DELETE',
-      path: '/company/ai-fill-prompts/:form_id|str',
+      path: '/our-company/ai-fill-prompts/:form_id|str',
       toolName: 'reset_ai_fill_prompt',
       description: 'Remove the workspace master-prompt override for one "Fill with AI" form, reverting it to the built-in default. Get valid form_ids from list_ai_fill_prompts.',
       scopes: ['company:write'],
@@ -110,23 +110,23 @@ export const COMPANY: ResourceGroup = {
         { name: 'form_id', type: 'string', required: true, description: 'Form to reset to its built-in default.', in: 'query' },
       ],
       requestExample: `curl -X DELETE \
-  "${API_BASE_URL}/company/ai-fill-prompts/:form_id|str" \
+  "${API_BASE_URL}/our-company/ai-fill-prompts/:form_id|str" \
   -H "Authorization: Bearer YOUR_API_KEY"`,
     },
     {
       method: 'GET',
-      path: '/company/pipeline-card-config',
+      path: '/our-company/pipeline-card-config',
       toolName: 'get_pipeline_card_config',
       description: 'Get the pipeline (Workflows) opportunity-card POPOUT configuration — which sections show on the hover/popout panel for cards on the board. Returns available_sections (toggleable sections with labels + defaults), popout_sections (resolved on/off per section), and custom_field_ids (which opportunity custom fields show when the "custom_fields" section is on). Controls the popout only; the card face is fixed. notes/next_action/tasks default ON, custom_fields defaults OFF.',
       scopes: ['company:read'],
       isWrite: false,
       requestExample: `curl \
-  "${API_BASE_URL}/company/pipeline-card-config" \
+  "${API_BASE_URL}/our-company/pipeline-card-config" \
   -H "Authorization: Bearer YOUR_API_KEY"`,
     },
     {
       method: 'PATCH',
-      path: '/company/pipeline-card-config',
+      path: '/our-company/pipeline-card-config',
       toolName: 'update_pipeline_card_config',
       description: 'Configure the opportunity-card popout on the pipeline (Workflows) board. Pass popout_sections as a partial map of section_key -> boolean (true = show, false = hide); only the keys you pass change. Valid keys from get_pipeline_card_config.available_sections (notes, next_action, tasks, custom_fields). Turn on the "custom_fields" section and pass custom_field_ids (the opportunity custom-field ids from get_crm_settings.custom_fields.deal) to show specific custom fields in the popout. notes/next_action/tasks default ON; custom_fields defaults OFF. Does not affect the card face. e.g. { "popout_sections": { "custom_fields": true }, "custom_field_ids": ["lot_number","slab_type"] }.',
       scopes: ['company:write'],
@@ -136,44 +136,36 @@ export const COMPANY: ResourceGroup = {
         { name: 'custom_field_ids', type: 'array', required: false, description: 'Opportunity custom-field ids to show in the popout when the custom_fields section is on. e.g. ["lot_number","slab_type"].', in: 'body' },
       ],
       requestExample: `curl -X PATCH \
-  "${API_BASE_URL}/company/pipeline-card-config" \
+  "${API_BASE_URL}/our-company/pipeline-card-config" \
   -H "Authorization: Bearer YOUR_API_KEY" \
   -H "Content-Type: application/json" \
-  -d '{"popout_sections":"..."}'`,
+  -d '{"popout_sections":"...","custom_field_ids":"..."}'`,
     },
     {
       method: 'GET',
-      path: '/company/settings',
+      path: '/our-company/settings',
       toolName: 'get_company_settings',
       description: 'Get aggregate company settings.',
       scopes: ['company:read'],
       isWrite: false,
       requestExample: `curl \
-  "${API_BASE_URL}/company/settings" \
+  "${API_BASE_URL}/our-company/settings" \
   -H "Authorization: Bearer YOUR_API_KEY"`,
     },
     {
       method: 'GET',
-      path: '/company/settings/tag-palette',
+      path: '/our-company/settings/tag-palette',
       toolName: 'get_tag_palette',
       description: 'Get the workspace tag colour palette.',
       scopes: ['company:read'],
       isWrite: false,
       requestExample: `curl \
-  "${API_BASE_URL}/company/settings/tag-palette" \
+  "${API_BASE_URL}/our-company/settings/tag-palette" \
   -H "Authorization: Bearer YOUR_API_KEY"`,
-      responseExample: `{
-  "data": [
-    { "name": "Hot Lead", "color": "#ef4444" },
-    { "name": "Priority", "color": "#f97316" },
-    { "name": "Follow Up", "color": "#3b82f6" }
-  ],
-  "meta": { "credits_remaining": 9490, "url": "https://app.trustpager.com/settings/crm" }
-}`,
     },
     {
       method: 'PATCH',
-      path: '/company/settings/tag-palette',
+      path: '/our-company/settings/tag-palette',
       toolName: 'update_tag_palette',
       description: 'Update the workspace tag colour palette.',
       scopes: ['company:write'],
@@ -181,79 +173,48 @@ export const COMPANY: ResourceGroup = {
       params: [
         { name: 'palette', type: 'object', required: false, description: '', in: 'body' },
       ],
-      requestExample: `curl -X PATCH \\
-  "\${API_BASE_URL}/company/settings/tag-palette" \\
-  -H "Authorization: Bearer YOUR_API_KEY" \\
-  -H "Content-Type: application/json" \\
-  -d '[
-    { "name": "Hot Lead", "color": "#ef4444" },
-    { "name": "Priority", "color": "#f97316" },
-    { "name": "Follow Up", "color": "#3b82f6" }
-  ]'`,
-      responseExample: `{
-  "data": [
-    { "name": "Hot Lead", "color": "#ef4444" },
-    { "name": "Priority", "color": "#f97316" },
-    { "name": "Follow Up", "color": "#3b82f6" }
-  ],
-  "meta": { "credits_remaining": 9489, "url": "https://app.trustpager.com/settings/crm" }
-}`,
+      requestExample: `curl -X PATCH \
+  "${API_BASE_URL}/our-company/settings/tag-palette" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"palette":"..."}'`,
     },
     {
       method: 'GET',
-      path: '/company/settings/embeddings',
+      path: '/our-company/settings/embeddings',
       toolName: 'get_embeddings_settings',
       description: 'Get embedding-pipeline settings.',
       scopes: ['company:read'],
       isWrite: false,
       requestExample: `curl \
-  "${API_BASE_URL}/company/settings/embeddings" \
+  "${API_BASE_URL}/our-company/settings/embeddings" \
   -H "Authorization: Bearer YOUR_API_KEY"`,
     },
     {
       method: 'PATCH',
-      path: '/company/settings/embeddings',
+      path: '/our-company/settings/embeddings',
       toolName: 'update_embeddings_settings',
       description: 'Update embedding-pipeline settings.',
       scopes: ['company:write'],
       isWrite: true,
       requestExample: `curl -X PATCH \
-  "${API_BASE_URL}/company/settings/embeddings" \
+  "${API_BASE_URL}/our-company/settings/embeddings" \
   -H "Authorization: Bearer YOUR_API_KEY"`,
     },
     {
       method: 'GET',
-      path: '/company/birthday-messages',
+      path: '/our-company/birthday-messages',
       toolName: 'get_birthday_messages',
       description: 'Get configured birthday message templates.',
       scopes: ['company:read'],
       isWrite: false,
       requestExample: `curl \
-  "${API_BASE_URL}/company/birthday-messages" \
+  "${API_BASE_URL}/our-company/birthday-messages" \
   -H "Authorization: Bearer YOUR_API_KEY"`,
-      responseExample: `{
-  "data": [
-    {
-      "label": "Year 1",
-      "channels": ["email", "sms"],
-      "email_subject": "Happy Birthday {first_name}!",
-      "email_body": "Hi {first_name}, wishing you a wonderful birthday from {company_name}!",
-      "sms_body": "Happy Birthday {first_name}! From {company_name}."
-    },
-    {
-      "label": "Year 2",
-      "channels": ["email"],
-      "email_subject": "Another year, {first_name}!",
-      "email_body": "Happy Birthday {first_name}! Hope year {age} treats you well.",
-      "sms_body": ""
-    }
-  ],
-  "meta": { "credits_remaining": 9490 }
-}`,
     },
     {
       method: 'PUT',
-      path: '/company/birthday-messages',
+      path: '/our-company/birthday-messages',
       toolName: 'update_birthday_messages',
       description: 'Update birthday message templates.',
       scopes: ['company:write'],
@@ -261,46 +222,26 @@ export const COMPANY: ResourceGroup = {
       params: [
         { name: 'messages', type: 'array', required: true, description: '', in: 'body' },
       ],
-      requestExample: `curl -X PUT \\
-  "${'' /* API_BASE_URL */}/company/birthday-messages" \\
-  -H "Authorization: Bearer YOUR_API_KEY" \\
-  -H "Content-Type: application/json" \\
-  -d '[
-    {
-      "label": "Year 1",
-      "channels": ["email", "sms"],
-      "email_subject": "Happy Birthday {first_name}!",
-      "email_body": "Hi {first_name}, best wishes from {company_name}!",
-      "sms_body": "Happy Birthday {first_name}! From {company_name}."
-    }
-  ]'`,
-      responseExample: `{
-  "data": [
-    {
-      "label": "Year 1",
-      "channels": ["email", "sms"],
-      "email_subject": "Happy Birthday {first_name}!",
-      "email_body": "Hi {first_name}, best wishes from {company_name}!",
-      "sms_body": "Happy Birthday {first_name}! From {company_name}."
-    }
-  ],
-  "meta": { "credits_remaining": 9489 }
-}`,
+      requestExample: `curl -X PUT \
+  "${API_BASE_URL}/our-company/birthday-messages" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"messages":"..."}'`,
     },
     {
       method: 'GET',
-      path: '/company/users',
+      path: '/our-company/users',
       toolName: 'list_company_users',
       description: 'List workspace users.',
       scopes: ['users:read'],
       isWrite: false,
       requestExample: `curl \
-  "${API_BASE_URL}/company/users" \
+  "${API_BASE_URL}/our-company/users" \
   -H "Authorization: Bearer YOUR_API_KEY"`,
     },
     {
       method: 'POST',
-      path: '/company/users/invite',
+      path: '/our-company/users/invite',
       toolName: 'invite_user',
       description: 'Invite a new user to the workspace.',
       scopes: ['users:write'],
@@ -310,14 +251,14 @@ export const COMPANY: ResourceGroup = {
         { name: 'role', type: 'string', required: true, description: '', in: 'body' },
       ],
       requestExample: `curl -X POST \
-  "${API_BASE_URL}/company/users/invite" \
+  "${API_BASE_URL}/our-company/users/invite" \
   -H "Authorization: Bearer YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{"email":"...","role":"..."}'`,
     },
     {
       method: 'GET',
-      path: '/company/users/:user_id',
+      path: '/our-company/users/:user_id',
       toolName: 'get_company_user',
       description: 'Fetch a workspace user by UUID.',
       scopes: ['users:read'],
@@ -326,12 +267,12 @@ export const COMPANY: ResourceGroup = {
         { name: 'user_id', type: 'string', required: true, description: '', in: 'path' },
       ],
       requestExample: `curl \
-  "${API_BASE_URL}/company/users/:user_id" \
+  "${API_BASE_URL}/our-company/users/:user_id" \
   -H "Authorization: Bearer YOUR_API_KEY"`,
     },
     {
       method: 'GET',
-      path: '/company/users/:user_id/personal-user-profile',
+      path: '/our-company/users/:user_id/personal-user-profile',
       toolName: 'get_personal_user_profile',
       description: 'Get a user personal profile.',
       scopes: ['users:read'],
@@ -340,12 +281,12 @@ export const COMPANY: ResourceGroup = {
         { name: 'user_id', type: 'string', required: true, description: '', in: 'path' },
       ],
       requestExample: `curl \
-  "${API_BASE_URL}/company/users/:user_id/personal-user-profile" \
+  "${API_BASE_URL}/our-company/users/:user_id/personal-user-profile" \
   -H "Authorization: Bearer YOUR_API_KEY"`,
     },
     {
       method: 'GET',
-      path: '/company/users/:user_id/workspace-user-profile',
+      path: '/our-company/users/:user_id/workspace-user-profile',
       toolName: 'get_workspace_user_profile',
       description: 'Get a user workspace profile.',
       scopes: ['users:read'],
@@ -354,12 +295,12 @@ export const COMPANY: ResourceGroup = {
         { name: 'user_id', type: 'string', required: true, description: '', in: 'path' },
       ],
       requestExample: `curl \
-  "${API_BASE_URL}/company/users/:user_id/workspace-user-profile" \
+  "${API_BASE_URL}/our-company/users/:user_id/workspace-user-profile" \
   -H "Authorization: Bearer YOUR_API_KEY"`,
     },
     {
       method: 'PATCH',
-      path: '/company/users/:user_id/workspace-user-profile',
+      path: '/our-company/users/:user_id/workspace-user-profile',
       toolName: 'update_workspace_user_profile',
       description: 'Update a user workspace profile.',
       scopes: ['users:write'],
@@ -368,12 +309,12 @@ export const COMPANY: ResourceGroup = {
         { name: 'user_id', type: 'string', required: true, description: '', in: 'path' },
       ],
       requestExample: `curl -X PATCH \
-  "${API_BASE_URL}/company/users/:user_id/workspace-user-profile" \
+  "${API_BASE_URL}/our-company/users/:user_id/workspace-user-profile" \
   -H "Authorization: Bearer YOUR_API_KEY"`,
     },
     {
       method: 'GET',
-      path: '/company/users/:user_id/workspace-user-connections',
+      path: '/our-company/users/:user_id/workspace-user-connections',
       toolName: 'get_workspace_user_connections',
       description: 'Get a user connected integrations.',
       scopes: ['users:read'],
@@ -382,12 +323,12 @@ export const COMPANY: ResourceGroup = {
         { name: 'user_id', type: 'string', required: true, description: '', in: 'path' },
       ],
       requestExample: `curl \
-  "${API_BASE_URL}/company/users/:user_id/workspace-user-connections" \
+  "${API_BASE_URL}/our-company/users/:user_id/workspace-user-connections" \
   -H "Authorization: Bearer YOUR_API_KEY"`,
     },
     {
       method: 'GET',
-      path: '/company/users/:user_id/workspace-user-roles',
+      path: '/our-company/users/:user_id/workspace-user-roles',
       toolName: 'get_workspace_user_roles',
       description: 'Get a user role assignments.',
       scopes: ['users:read'],
@@ -396,12 +337,12 @@ export const COMPANY: ResourceGroup = {
         { name: 'user_id', type: 'string', required: true, description: '', in: 'path' },
       ],
       requestExample: `curl \
-  "${API_BASE_URL}/company/users/:user_id/workspace-user-roles" \
+  "${API_BASE_URL}/our-company/users/:user_id/workspace-user-roles" \
   -H "Authorization: Bearer YOUR_API_KEY"`,
     },
     {
       method: 'PATCH',
-      path: '/company/users/:user_id/workspace-user-roles',
+      path: '/our-company/users/:user_id/workspace-user-roles',
       toolName: 'update_user_role',
       description: 'Update a user role.',
       scopes: ['users:write'],
@@ -411,14 +352,14 @@ export const COMPANY: ResourceGroup = {
         { name: 'role', type: 'string', required: true, description: '', in: 'body' },
       ],
       requestExample: `curl -X PATCH \
-  "${API_BASE_URL}/company/users/:user_id/workspace-user-roles" \
+  "${API_BASE_URL}/our-company/users/:user_id/workspace-user-roles" \
   -H "Authorization: Bearer YOUR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{"role":"..."}'`,
     },
     {
       method: 'GET',
-      path: '/company/users/:user_id/workspace-user-preferences',
+      path: '/our-company/users/:user_id/workspace-user-preferences',
       toolName: 'get_workspace_user_preferences',
       description: 'Get a user preferences.',
       scopes: ['users:read'],
@@ -427,12 +368,12 @@ export const COMPANY: ResourceGroup = {
         { name: 'user_id', type: 'string', required: true, description: '', in: 'path' },
       ],
       requestExample: `curl \
-  "${API_BASE_URL}/company/users/:user_id/workspace-user-preferences" \
+  "${API_BASE_URL}/our-company/users/:user_id/workspace-user-preferences" \
   -H "Authorization: Bearer YOUR_API_KEY"`,
     },
     {
       method: 'PATCH',
-      path: '/company/users/:user_id/workspace-user-preferences',
+      path: '/our-company/users/:user_id/workspace-user-preferences',
       toolName: 'update_workspace_user_preferences',
       description: 'Update a user preferences.',
       scopes: ['users:write'],
@@ -441,12 +382,12 @@ export const COMPANY: ResourceGroup = {
         { name: 'user_id', type: 'string', required: true, description: '', in: 'path' },
       ],
       requestExample: `curl -X PATCH \
-  "${API_BASE_URL}/company/users/:user_id/workspace-user-preferences" \
+  "${API_BASE_URL}/our-company/users/:user_id/workspace-user-preferences" \
   -H "Authorization: Bearer YOUR_API_KEY"`,
     },
     {
       method: 'DELETE',
-      path: '/company/users/:user_id',
+      path: '/our-company/users/:user_id',
       toolName: 'remove_user',
       description: 'Remove a user from the workspace.',
       scopes: ['users:delete'],
@@ -455,7 +396,7 @@ export const COMPANY: ResourceGroup = {
         { name: 'user_id', type: 'string', required: true, description: '', in: 'path' },
       ],
       requestExample: `curl -X DELETE \
-  "${API_BASE_URL}/company/users/:user_id" \
+  "${API_BASE_URL}/our-company/users/:user_id" \
   -H "Authorization: Bearer YOUR_API_KEY"`,
     },
   ],
