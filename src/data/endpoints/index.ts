@@ -61,6 +61,8 @@ export { SPREADSHEETS } from './spreadsheets.js';
 export { REFERRALS } from './referrals.js';
 export { EVIE } from './evie.js';
 export { AGENT_OPS } from './agent-ops.js';
+export { INVENTORY } from './inventory.js';
+export { COMPONENTS } from './components.js';
 
 import { type ResourceGroup } from './types.js';
 import { SEARCH } from './search.js';
@@ -121,6 +123,8 @@ import { SPREADSHEETS } from './spreadsheets.js';
 import { REFERRALS } from './referrals.js';
 import { EVIE } from './evie.js';
 import { AGENT_OPS } from './agent-ops.js';
+import { INVENTORY } from './inventory.js';
+import { COMPONENTS } from './components.js';
 
 // =============================================================================
 // RESOURCES -- ordered for the sidebar / API hub.
@@ -191,6 +195,8 @@ export const RESOURCES: ResourceGroup[] = [
   EXPORT_TEMPLATES,
   EVIE,
   AGENT_OPS,
+  INVENTORY,
+  COMPONENTS,
 ];
 
 /**
