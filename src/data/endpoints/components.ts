@@ -12,34 +12,139 @@ export const COMPONENTS: ResourceGroup = {
   endpoints: [
     {
       method: 'GET',
-      path: '/components',
-      toolName: 'list_components',
-      description: 'List product components / instances (lab samples = type "unit"). Filter by product_id, opportunity_id, type, or search by label.',
+      path: '/product-components',
+      toolName: 'list_product_components',
+      description: 'List a product\'s template components (bill-of-materials parts/bundles). Filter by product_id, type, or search by label. These are product-level and reused across opportunities — for the actual lab samples/units of a job use list_component_instances.',
       scopes: ['products:read'],
       isWrite: false,
       params: [
         { name: 'limit', type: 'number', required: false, description: '', in: 'query' },
         { name: 'after', type: 'string', required: false, description: '', in: 'query' },
         { name: 'product_id', type: 'string', required: false, description: '', in: 'query' },
-        { name: 'opportunity_id', type: 'string', required: false, description: '', in: 'query' },
         { name: 'type', type: 'string', required: false, description: '', in: 'query' },
         { name: 'search', type: 'string', required: false, description: '', in: 'query' },
       ],
       requestExample: `curl \
-  "${API_BASE_URL}/components" \
+  "${API_BASE_URL}/product-components" \
   -H "Authorization: Bearer YOUR_API_KEY"`,
     },
     {
       method: 'POST',
-      path: '/components',
-      toolName: 'create_component',
-      description: 'Create a component / instance of a product (e.g. a lab sample). Requires product_id; optionally link to an opportunity and carry result data in attributes.',
+      path: '/product-components',
+      toolName: 'create_product_component',
+      description: 'Add a template component (a BOM part/bundle) to a product. Product-level, not tied to any opportunity. Requires product_id.',
       scopes: ['products:write'],
       isWrite: true,
       params: [
         { name: 'product_id', type: 'string', required: true, description: '', in: 'body' },
-        { name: 'opportunity_id', type: 'string', required: false, description: '', in: 'body' },
         { name: 'type', type: 'string', required: false, description: '', in: 'body' },
+        { name: 'label', type: 'string', required: false, description: '', in: 'body' },
+        { name: 'status', type: 'string', required: false, description: '', in: 'body' },
+        { name: 'attributes', type: 'object', required: false, description: '', in: 'body' },
+        { name: 'sort_order', type: 'number', required: false, description: '', in: 'body' },
+        { name: 'external_ref', type: 'string', required: false, description: '', in: 'body' },
+        { name: 'source', type: 'string', required: false, description: '', in: 'body' },
+      ],
+      requestExample: `curl -X POST \
+  "${API_BASE_URL}/product-components" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"product_id":"...","type":"...","label":"..."}'`,
+    },
+    {
+      method: 'POST',
+      path: '/product-components/bulk',
+      toolName: 'bulk_create_product_components',
+      description: 'Create up to 500 product template components in one call. Body: { components: [...] }, each item the same shape as create_product_component.',
+      scopes: ['products:write'],
+      isWrite: true,
+      params: [
+        { name: 'components', type: 'array', required: true, description: '', in: 'body' },
+      ],
+      requestExample: `curl -X POST \
+  "${API_BASE_URL}/product-components/bulk" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"components":"..."}'`,
+    },
+    {
+      method: 'GET',
+      path: '/product-components/:product_component_id',
+      toolName: 'get_product_component',
+      description: 'Fetch a single product template component by UUID.',
+      scopes: ['products:read'],
+      isWrite: false,
+      params: [
+        { name: 'product_component_id', type: 'string', required: true, description: '', in: 'path' },
+      ],
+      requestExample: `curl \
+  "${API_BASE_URL}/product-components/:product_component_id" \
+  -H "Authorization: Bearer YOUR_API_KEY"`,
+    },
+    {
+      method: 'PATCH',
+      path: '/product-components/:product_component_id',
+      toolName: 'update_product_component',
+      description: 'Update a product template component. The product it belongs to cannot be changed.',
+      scopes: ['products:write'],
+      isWrite: true,
+      params: [
+        { name: 'product_component_id', type: 'string', required: true, description: '', in: 'path' },
+        { name: 'type', type: 'string', required: false, description: '', in: 'body' },
+        { name: 'label', type: 'string', required: false, description: '', in: 'body' },
+        { name: 'status', type: 'string', required: false, description: '', in: 'body' },
+        { name: 'attributes', type: 'object', required: false, description: '', in: 'body' },
+        { name: 'sort_order', type: 'number', required: false, description: '', in: 'body' },
+      ],
+      requestExample: `curl -X PATCH \
+  "${API_BASE_URL}/product-components/:product_component_id" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"type":"...","label":"...","status":"..."}'`,
+    },
+    {
+      method: 'DELETE',
+      path: '/product-components/:product_component_id',
+      toolName: 'delete_product_component',
+      description: 'Delete a product template component by UUID. Destructive.',
+      scopes: ['products:delete'],
+      isWrite: true,
+      params: [
+        { name: 'product_component_id', type: 'string', required: true, description: '', in: 'path' },
+      ],
+      requestExample: `curl -X DELETE \
+  "${API_BASE_URL}/product-components/:product_component_id" \
+  -H "Authorization: Bearer YOUR_API_KEY"`,
+    },
+    {
+      method: 'GET',
+      path: '/component-instances',
+      toolName: 'list_component_instances',
+      description: 'List component instances (the actual units / lab samples processed for jobs), carrying result data in attributes. Filter by opportunity_id, product_id, status, or search by label.',
+      scopes: ['products:read'],
+      isWrite: false,
+      params: [
+        { name: 'limit', type: 'number', required: false, description: '', in: 'query' },
+        { name: 'after', type: 'string', required: false, description: '', in: 'query' },
+        { name: 'opportunity_id', type: 'string', required: false, description: '', in: 'query' },
+        { name: 'product_id', type: 'string', required: false, description: '', in: 'query' },
+        { name: 'status', type: 'string', required: false, description: '', in: 'query' },
+        { name: 'search', type: 'string', required: false, description: '', in: 'query' },
+      ],
+      requestExample: `curl \
+  "${API_BASE_URL}/component-instances" \
+  -H "Authorization: Bearer YOUR_API_KEY"`,
+    },
+    {
+      method: 'POST',
+      path: '/component-instances',
+      toolName: 'create_component_instance',
+      description: 'Create a component instance (a unit / lab sample) for a job. REQUIRES both product_id and opportunity_id — an instance always belongs to a product and a specific opportunity. Carry result data in attributes.',
+      scopes: ['products:write'],
+      isWrite: true,
+      params: [
+        { name: 'product_id', type: 'string', required: true, description: '', in: 'body' },
+        { name: 'opportunity_id', type: 'string', required: true, description: '', in: 'body' },
         { name: 'label', type: 'string', required: false, description: '', in: 'body' },
         { name: 'status', type: 'string', required: false, description: '', in: 'body' },
         { name: 'attributes', type: 'object', required: false, description: '', in: 'body' },
@@ -47,73 +152,74 @@ export const COMPONENTS: ResourceGroup = {
         { name: 'source', type: 'string', required: false, description: '', in: 'body' },
       ],
       requestExample: `curl -X POST \
-  "${API_BASE_URL}/components" \
+  "${API_BASE_URL}/component-instances" \
   -H "Authorization: Bearer YOUR_API_KEY" \
   -H "Content-Type: application/json" \
-  -d '{"product_id":"...","opportunity_id":"...","type":"..."}'`,
+  -d '{"product_id":"...","opportunity_id":"...","label":"..."}'`,
     },
     {
       method: 'POST',
-      path: '/components/bulk',
-      toolName: 'bulk_create_components',
-      description: 'Create up to 500 components in one call. Body: { components: [...] }, each item the same shape as create_component. Used for sample-data imports.',
+      path: '/component-instances/bulk',
+      toolName: 'bulk_create_component_instances',
+      description: 'Create up to 500 component instances in one call. Body: { instances: [...] }, each item the same shape as create_component_instance (product_id + opportunity_id required). Used for sample-data imports.',
       scopes: ['products:write'],
       isWrite: true,
       params: [
-        { name: 'components', type: 'array', required: true, description: '', in: 'body' },
+        { name: 'instances', type: 'array', required: true, description: '', in: 'body' },
       ],
       requestExample: `curl -X POST \
-  "${API_BASE_URL}/components/bulk" \
+  "${API_BASE_URL}/component-instances/bulk" \
   -H "Authorization: Bearer YOUR_API_KEY" \
   -H "Content-Type: application/json" \
-  -d '{"components":"..."}'`,
+  -d '{"instances":"..."}'`,
     },
     {
       method: 'GET',
-      path: '/components/:component_id',
-      toolName: 'get_component',
-      description: 'Fetch a single component by UUID.',
+      path: '/component-instances/:instance_id',
+      toolName: 'get_component_instance',
+      description: 'Fetch a single component instance by UUID.',
       scopes: ['products:read'],
       isWrite: false,
       params: [
-        { name: 'component_id', type: 'string', required: true, description: '', in: 'path' },
+        { name: 'instance_id', type: 'string', required: true, description: '', in: 'path' },
       ],
       requestExample: `curl \
-  "${API_BASE_URL}/components/:component_id" \
+  "${API_BASE_URL}/component-instances/:instance_id" \
   -H "Authorization: Bearer YOUR_API_KEY"`,
     },
     {
       method: 'PATCH',
-      path: '/components/:component_id',
-      toolName: 'update_component',
-      description: 'Update a component. The product it belongs to cannot be changed. Pass only the fields you want to change.',
+      path: '/component-instances/:instance_id',
+      toolName: 'update_component_instance',
+      description: 'Update a component instance. The product and opportunity it belongs to cannot be changed. Pass only the fields you want to change (e.g. status, attributes).',
       scopes: ['products:write'],
       isWrite: true,
       params: [
-        { name: 'component_id', type: 'string', required: true, description: '', in: 'path' },
-        { name: 'opportunity_id', type: 'string', required: false, description: '', in: 'body' },
+        { name: 'instance_id', type: 'string', required: true, description: '', in: 'path' },
         { name: 'label', type: 'string', required: false, description: '', in: 'body' },
         { name: 'status', type: 'string', required: false, description: '', in: 'body' },
         { name: 'attributes', type: 'object', required: false, description: '', in: 'body' },
+        { name: 'external_ref', type: 'string', required: false, description: '', in: 'body' },
+        { name: 'source', type: 'string', required: false, description: '', in: 'body' },
       ],
       requestExample: `curl -X PATCH \
-  "${API_BASE_URL}/components/:component_id" \
+  "${API_BASE_URL}/component-instances/:instance_id" \
   -H "Authorization: Bearer YOUR_API_KEY" \
   -H "Content-Type: application/json" \
-  -d '{"opportunity_id":"...","label":"...","status":"..."}'`,
+  -d '{"label":"...","status":"...","attributes":"..."}'`,
     },
     {
       method: 'DELETE',
-      path: '/components/:component_id',
-      toolName: 'delete_component',
-      description: 'Delete a component by UUID. Destructive.',
+      path: '/component-instances/:instance_id',
+      toolName: 'delete_component_instance',
+      description: 'Delete a component instance by UUID. Destructive.',
       scopes: ['products:delete'],
       isWrite: true,
       params: [
-        { name: 'component_id', type: 'string', required: true, description: '', in: 'path' },
+        { name: 'instance_id', type: 'string', required: true, description: '', in: 'path' },
       ],
       requestExample: `curl -X DELETE \
-  "${API_BASE_URL}/components/:component_id" \
+  "${API_BASE_URL}/component-instances/:instance_id" \
   -H "Authorization: Bearer YOUR_API_KEY"`,
     },
   ],
