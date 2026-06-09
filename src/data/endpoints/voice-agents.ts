@@ -344,7 +344,7 @@ export const VOICE_AGENTS: ResourceGroup = {
       method: 'POST',
       path: '/voice-agents/:agent_id/outbound-config',
       toolName: 'create_voice_agent_outbound_config',
-      description: 'Add an outbound-call config to a voice agent. Outbound dialer settings are per-agent and do not require a website.',
+      description: 'Enable OUTBOUND dialling for a voice agent. Set default_phone_number_id to an imported number: that number becomes the caller ID and is all outbound needs (each call passes the agent itself, so no number-level binding is required and ONE number can be the default for many agents). Do NOT use update_phone_number to bind the number to the agent for outbound; that binding is inbound-only. Per-agent, no website required.',
       scopes: ['voice-agents:write'],
       isWrite: true,
       params: [

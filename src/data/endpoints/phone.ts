@@ -74,7 +74,7 @@ export const PHONE: ResourceGroup = {
       method: 'PATCH',
       path: '/phone/numbers/:phone_number_id',
       toolName: 'update_phone_number',
-      description: 'Update phone number assignment (voice agent binding).',
+      description: 'Update a phone number: friendly_name and voice-agent routing. IMPORTANT: binding an agent here (inbound_voice_agent_id / outbound_voice_agent_id) controls INBOUND answering (who picks up calls TO this number) and is one-agent-per-number. OUTBOUND dialling does NOT use this binding; set the caller-ID number on the agent via create_voice_agent_outbound_config (default_phone_number_id), which lets one number serve many agents.',
       scopes: ['phone:write'],
       isWrite: true,
       params: [
