@@ -705,7 +705,7 @@ export const DEALS: ResourceGroup = {
       method: 'GET',
       path: '/deals/:opportunity_id/invoices',
       toolName: 'list_opportunity_invoices',
-      description: 'List invoices linked to an opportunity (cached from accounting integration).',
+      description: 'List native invoices linked to an opportunity. Returns invoice headers (invoice_number, status, total, amount_due, amount_paid, due_date, …); use get_invoice for line items.',
       scopes: ['opportunities:read'],
       isWrite: false,
       params: [
