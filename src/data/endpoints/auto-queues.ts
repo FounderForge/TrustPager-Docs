@@ -134,6 +134,25 @@ export const AUTO_QUEUES: ResourceGroup = {
   -d '{"entity_type":"...","entity_ids":"..."}'`,
     },
     {
+      method: 'POST',
+      path: '/event-queues/:queue_id/remove-enrollment',
+      toolName: 'remove_from_auto_queue',
+      description: 'Remove a contact or deal from an auto queue (drip sequence) by cancelling their pending steps. Pass queue_id plus ONE of: enrollment_id (most precise — from get_auto_queue_board cards or list_auto_queue_enrollments), contact_id, or deal_id. This is the direct unenrol — no need to build, enable, and trigger a remove_from_event_queue automation. Returns cancelled_count (the real number of pending steps stopped) and a message; cancelled_count: 0 with an explanatory message means nothing was pending for that enrolment (already completed, already removed, or never enrolled).',
+      scopes: ['automations:write'],
+      isWrite: true,
+      params: [
+        { name: 'queue_id', type: 'string', required: true, description: 'The auto queue UUID.', in: 'path' },
+        { name: 'enrollment_id', type: 'string', required: false, description: 'Preferred. The enrolment UUID from the board or enrollments list.', in: 'body' },
+        { name: 'contact_id', type: 'string', required: false, description: 'Cancel this contact\'s pending steps in the queue.', in: 'body' },
+        { name: 'deal_id', type: 'string', required: false, description: 'Cancel this deal\'s pending steps in the queue.', in: 'body' },
+      ],
+      requestExample: `curl -X POST \
+  "${API_BASE_URL}/event-queues/:queue_id/remove-enrollment" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"enrollment_id":"...","contact_id":"...","deal_id":"..."}'`,
+    },
+    {
       method: 'GET',
       path: '/event-queues/:queue_id/steps',
       toolName: 'list_auto_queue_steps',
