@@ -122,6 +122,24 @@ export const PORTALS: ResourceGroup = {
   -d '{"email":"...","user_id":"..."}'`,
     },
     {
+      method: 'POST',
+      path: '/portals/:portal_id/invite',
+      toolName: 'invite_portal_member',
+      description: 'Invite an external person to a portal by email. Creates a company-less login (broker / client / site staff), emails them an acceptance link, and records them as an active member. They NEVER join your company. Idempotent per email; if a login for that email already exists it is linked without a second invite.',
+      scopes: ['portals:write'],
+      isWrite: true,
+      params: [
+        { name: 'portal_id', type: 'string', required: true, description: '', in: 'path' },
+        { name: 'email', type: 'string', required: true, description: 'The person to invite. Required.', in: 'body' },
+        { name: 'full_name', type: 'string', required: false, description: 'Optional display name shown in the portal.', in: 'body' },
+      ],
+      requestExample: `curl -X POST \
+  "${API_BASE_URL}/portals/:portal_id/invite" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"email":"...","full_name":"..."}'`,
+    },
+    {
       method: 'DELETE',
       path: '/portals/:portal_id/members/:member_id',
       toolName: 'remove_portal_member',
