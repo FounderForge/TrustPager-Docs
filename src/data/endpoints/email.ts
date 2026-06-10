@@ -137,7 +137,7 @@ export const EMAIL: ResourceGroup = {
       method: 'POST',
       path: '/email/send',
       toolName: 'send_email',
-      description: 'Send a new email from the user default outbound address. For replies use reply_to_email. Costs credits. Pass opportunity_id (canonical) or deal_id (legacy alias) to auto-link the resulting thread to a deal.',
+      description: 'Send a new email from the user default outbound address. For replies use reply_to_email. Costs credits. Pass opportunity_id (canonical) or deal_id (legacy alias) to auto-link the resulting thread to a deal. Set raw_html: true to send a fully-designed HTML email verbatim with no TrustPager header/footer chrome (for pixel-perfect branded sends).',
       scopes: ['email:send'],
       isWrite: true,
       params: [
@@ -149,6 +149,7 @@ export const EMAIL: ResourceGroup = {
         { name: 'contact_id', type: 'string', required: false, description: '', in: 'body' },
         { name: 'opportunity_id', type: 'string', required: false, description: 'Link to an opportunity UUID. Stamps email_logs.deal_id and registers the thread under the opportunity activity feed.', in: 'body' },
         { name: 'deal_id', type: 'string', required: false, description: 'Legacy alias for opportunity_id.', in: 'body' },
+        { name: 'raw_html', type: 'boolean', required: false, description: 'When true, send html_body verbatim with no header/footer chrome — for fully-designed branded emails. Default false wraps the body in the standard branded template.', in: 'body' },
       ],
       requestExample: `curl -X POST \\
   "${API_BASE_URL}/email/send" \\
