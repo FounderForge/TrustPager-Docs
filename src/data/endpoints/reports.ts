@@ -14,7 +14,7 @@ export const REPORTS: ResourceGroup = {
       method: 'POST',
       path: '/reports/query',
       toolName: 'query_report',
-      description: 'Run a report query against the workspace. Free read.',
+      description: 'Run a report query against the workspace. Free read. The "deals" source excludes pipelines flagged exclude_from_lead_reporting by default; pass include_excluded_pipelines:true to include them.',
       scopes: ['opportunities:read'],
       isWrite: false,
       params: [
@@ -22,6 +22,7 @@ export const REPORTS: ResourceGroup = {
         { name: 'measures', type: 'array', required: false, description: '', in: 'body' },
         { name: 'dimensions', type: 'array', required: false, description: '', in: 'body' },
         { name: 'filters', type: 'array', required: false, description: '', in: 'body' },
+        { name: 'include_excluded_pipelines', type: 'boolean', required: false, description: 'Deals source only. Include pipelines flagged exclude_from_lead_reporting (excluded by default).', in: 'body' },
       ],
       requestExample: `curl -X POST \
   "${API_BASE_URL}/reports/query" \
