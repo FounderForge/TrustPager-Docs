@@ -58,6 +58,22 @@ export const INVOICES: ResourceGroup = {
   -d '{"opportunity_id":"...","customer_id":"...","external_order_id":"..."}'`,
     },
     {
+      method: 'POST',
+      path: '/invoices/bulk',
+      toolName: 'bulk_create_invoices',
+      description: 'Create up to 100 native invoices in one request, each with inline line_items (header totals computed from the lines). Per-row errors are isolated. Built for high-volume migrations and batch invoicing.',
+      scopes: ['invoices:write'],
+      isWrite: true,
+      params: [
+        { name: 'invoices', type: 'array', required: true, description: '', in: 'body' },
+      ],
+      requestExample: `curl -X POST \
+  "${API_BASE_URL}/invoices/bulk" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"invoices":"..."}'`,
+    },
+    {
       method: 'GET',
       path: '/invoices/:invoice_id',
       toolName: 'get_invoice',

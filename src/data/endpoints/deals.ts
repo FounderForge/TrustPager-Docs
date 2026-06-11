@@ -81,6 +81,22 @@ export const DEALS: ResourceGroup = {
     },
     {
       method: 'POST',
+      path: '/deals/bulk-products',
+      toolName: 'bulk_add_opportunity_products_multi',
+      description: 'Add product line items to up to 100 opportunities in a single request (cross-opportunity bulk). Each item is { opportunity_id, products: [{ product_id, quantity, unit_price, discount_percent?, sort_order?, section? }] }. Per-item errors are isolated; each affected opportunity\'s value rolls up automatically. Built for high-volume migrations / batch quoting.',
+      scopes: ['opportunities:write'],
+      isWrite: true,
+      params: [
+        { name: 'items', type: 'array', required: true, description: '', in: 'body' },
+      ],
+      requestExample: `curl -X POST \
+  "${API_BASE_URL}/deals/bulk-products" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"items":"..."}'`,
+    },
+    {
+      method: 'POST',
       path: '/deals/bulk-delete',
       toolName: 'bulk_delete_opportunities',
       description: 'Delete up to 100 opportunities in one request. Destructive.',
@@ -303,6 +319,23 @@ export const DEALS: ResourceGroup = {
     },
     {
       method: 'POST',
+      path: '/deals/:opportunity_id/products/bulk',
+      toolName: 'bulk_add_opportunity_products',
+      description: 'Add multiple products to an opportunity in a single request.',
+      scopes: ['opportunities:write'],
+      isWrite: true,
+      params: [
+        { name: 'opportunity_id', type: 'string', required: true, description: '', in: 'path' },
+        { name: 'products', type: 'array', required: true, description: '', in: 'body' },
+      ],
+      requestExample: `curl -X POST \
+  "${API_BASE_URL}/deals/:opportunity_id/products/bulk" \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"products":"..."}'`,
+    },
+    {
+      method: 'POST',
       path: '/deals/:opportunity_id/products',
       toolName: 'add_opportunity_product',
       description: 'Attach a product to an opportunity.',
@@ -311,6 +344,11 @@ export const DEALS: ResourceGroup = {
       params: [
         { name: 'opportunity_id', type: 'string', required: true, description: '', in: 'path' },
         { name: 'product_id', type: 'string', required: false, description: '', in: 'body' },
+        { name: 'quantity', type: 'number', required: false, description: '', in: 'body' },
+        { name: 'unit_price', type: 'number', required: false, description: '', in: 'body' },
+        { name: 'discount_percent', type: 'number', required: false, description: '', in: 'body' },
+        { name: 'deposit_percent', type: 'number', required: false, description: '', in: 'body' },
+        { name: 'section', type: 'string', required: false, description: 'Optional Section heading this line item belongs to (e.g. "Main Bathroom"). Give several line items the same section to group them under one heading on proposals/estimates.', in: 'body' },
       ],
       requestExample: `curl -X POST \
   "${API_BASE_URL}/deals/:opportunity_id/products" \
@@ -345,6 +383,11 @@ export const DEALS: ResourceGroup = {
       params: [
         { name: 'opportunity_id', type: 'string', required: true, description: '', in: 'path' },
         { name: 'deal_product_id', type: 'string', required: true, description: '', in: 'path' },
+        { name: 'quantity', type: 'number', required: false, description: '', in: 'body' },
+        { name: 'unit_price', type: 'number', required: false, description: '', in: 'body' },
+        { name: 'discount_percent', type: 'number', required: false, description: '', in: 'body' },
+        { name: 'deposit_percent', type: 'number', required: false, description: '', in: 'body' },
+        { name: 'section', type: 'string', required: false, description: 'Section heading this line item belongs to (e.g. "Main Bathroom"). Pass an empty string to clear it. Items sharing a section group together on proposals/estimates.', in: 'body' },
       ],
       requestExample: `curl -X PATCH \
   "${API_BASE_URL}/deals/:opportunity_id/products/:deal_product_id" \

@@ -137,7 +137,7 @@ export const EMAIL: ResourceGroup = {
       method: 'POST',
       path: '/email/send',
       toolName: 'send_email',
-      description: 'Send a new email from the user default outbound address. For replies use reply_to_email. Costs credits. Pass opportunity_id (canonical) or deal_id (legacy alias) to auto-link the resulting thread to a deal. Set raw_html: true to send a fully-designed HTML email verbatim with no TrustPager header/footer chrome (for pixel-perfect branded sends).',
+      description: 'Send a new email from the user default outbound address. For replies use reply_to_email. Costs credits. Pass opportunity_id (canonical) or deal_id (legacy alias) to auto-link the resulting thread to a deal. Set raw_html: true to send a fully-designed HTML email verbatim with no TrustPager header/footer chrome (for pixel-perfect branded sends). Attachments are supported on both the TrustPager Mail rail (<=7MB total) and the Gmail rail (<=25MB total).',
       scopes: ['email:send'],
       isWrite: true,
       params: [
@@ -149,7 +149,8 @@ export const EMAIL: ResourceGroup = {
         { name: 'contact_id', type: 'string', required: false, description: '', in: 'body' },
         { name: 'opportunity_id', type: 'string', required: false, description: 'Link to an opportunity UUID. Stamps email_logs.deal_id and registers the thread under the opportunity activity feed.', in: 'body' },
         { name: 'deal_id', type: 'string', required: false, description: 'Legacy alias for opportunity_id.', in: 'body' },
-        { name: 'raw_html', type: 'boolean', required: false, description: 'When true, send html_body verbatim with no header/footer chrome — for fully-designed branded emails. Default false wraps the body in the standard branded template.', in: 'body' },
+        { name: 'raw_html', type: 'boolean', required: false, description: 'When true, send html_body verbatim with no header/footer chrome for fully-designed branded emails. Default false wraps the body in the standard branded template.', in: 'body' },
+        { name: 'attachments', type: 'array', required: false, description: 'File attachments. Supported on TrustPager Mail (<=7MB total) and Gmail (<=25MB total). Max 20 items. Each item: {file_id} for a CRM-stored file (fetched server-side), or {filename, mime_type, content} for base64 inline content.', in: 'body' },
       ],
       requestExample: `curl -X POST \\
   "${API_BASE_URL}/email/send" \\
@@ -175,7 +176,7 @@ export const EMAIL: ResourceGroup = {
       method: 'POST',
       path: '/email/send-with-file',
       toolName: 'send_email_with_file',
-      description: 'Send an email with a workspace file attached. Costs credits. Pass opportunity_id (canonical) or deal_id (legacy alias) to auto-link the resulting thread to a deal.',
+      description: 'Send an email with a workspace CRM file attached. Costs credits. Works on both TrustPager Mail (<=7MB) and Gmail (<=25MB) rails. Pass opportunity_id (canonical) or deal_id (legacy alias) to auto-link the resulting thread to a deal.',
       scopes: ['files:read', 'email:send'],
       isWrite: true,
       params: [
