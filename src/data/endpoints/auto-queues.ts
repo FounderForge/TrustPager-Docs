@@ -34,6 +34,7 @@ export const AUTO_QUEUES: ResourceGroup = {
       params: [
         { name: 'name', type: 'string', required: true, description: '', in: 'body' },
         { name: 'description', type: 'string', required: false, description: '', in: 'body' },
+        { name: 'respect_business_hours', type: 'boolean', required: false, description: 'Respect business hours: when true, steps only send during the workspace business-hours window (held to the next window otherwise). Defaults to false.', in: 'body' },
       ],
       requestExample: `curl -X POST \
   "${API_BASE_URL}/event-queues" \
@@ -66,6 +67,7 @@ export const AUTO_QUEUES: ResourceGroup = {
         { name: 'queue_id', type: 'string', required: true, description: '', in: 'path' },
         { name: 'name', type: 'string', required: false, description: '', in: 'body' },
         { name: 'description', type: 'string', required: false, description: '', in: 'body' },
+        { name: 'respect_business_hours', type: 'boolean', required: false, description: 'Respect business hours: when true, steps only send during the workspace business-hours window (held to the next window otherwise). Defaults to false.', in: 'body' },
       ],
       requestExample: `curl -X PATCH \
   "${API_BASE_URL}/event-queues/:queue_id" \
